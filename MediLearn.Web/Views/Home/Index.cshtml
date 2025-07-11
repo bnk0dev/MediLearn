@@ -1,20 +1,89 @@
-﻿@{
-    ViewData["Title"] = "Ana Sayfa";
-}
+﻿<!DOCTYPE html>
+<html lang="tr">
 
-        <div class="content">
-            <div class="card">
-                <h2>📚 Sağlık Alanında Uzmanlaşmaya Hazır mısınız?</h2>
-                <p>Sağlık Bakanlığı tarafından sunulan bu platform, sağlık personellerinin yetkinliğini artırmayı ve sürekli eğitimi teşvik etmeyi amaçlar.</p>
-            </div>
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Ana Sayfa - Online Personel Eğitim Portalı</title>
 
-            <div class="card">
-                <h2>💡 Neden Bu Platform?</h2>
-                <p>Güncel eğitim içerikleri, alanında uzman eğitmenler, kolay erişim ve kişisel gelişim fırsatlarıyla kariyerinize katkı sağlayın.</p>
-            </div>
+    <!-- Bootstrap CSS -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 
-            <div class="card">
-                <h2>🎯 Kimler İçin?</h2>
-                <p>Tüm sağlık personelleri ve eğitmenler için özel olarak hazırlanmıştır. Hedefimiz: daha donanımlı bir sağlık ordusu!</p>
-            </div>
-        </div>
+    <style>
+        /* Tüm sayfa yüksekliği ve genişliği kaplayan arka plan resmi */
+        body, html {
+          height: 100%;
+          margin: 0;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .bg-image {
+          /* Arka plan resmi */
+            background-image: url('~/wwwroot/img/inde.png');
+          filter: brightness(0.5); /* Karartma efekti */
+          height: 100%;
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: cover;
+          position: fixed;
+          width: 100%;
+          z-index: -1; /* İçeriğin altında kalması için */
+          top: 0;
+          left: 0;
+        }
+
+        .content-center {
+          /* Ortaya hizalama */
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          text-align: center;
+          color: white;
+          padding: 0 1rem;
+        }
+
+        .content-center h1 {
+          font-size: 3.5rem;
+          margin-bottom: 1.5rem;
+          font-weight: 700;
+          text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+        }
+
+        .start-btn {
+          font-size: 1.5rem;
+          padding: 1rem 3rem;
+          border-radius: 50px;
+          background-color: #a10000;
+          border: none;
+          color: white;
+          font-weight: 600;
+          cursor: pointer;
+          box-shadow: 0 5px 15px rgba(161, 0, 0, 0.6);
+          transition: background-color 0.3s ease;
+          text-decoration: none;
+          display: inline-block;
+        }
+
+        .start-btn:hover {
+          background-color: #7a0000;
+          text-decoration: none;
+          color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-image"></div>
+
+    <div class="content-center">
+        <h1>Online Personel Eğitim Portalına Hoşgeldiniz</h1>
+        <a href="/Account/Login" class="start-btn">Hadi Eğitime Başla</a>
+    </div>
+
+    <!-- Bootstrap JS (isteğe bağlı) -->
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

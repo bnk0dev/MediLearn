@@ -4,46 +4,140 @@
     var name = ViewBag.AdminName as string ?? "Admin";
 }
 
-<div class="container d-flex justify-content-center">
-    <div class="w-100" style="max-width: 1400px;">
+<div class="courses-container">
+    <h2 class="section-title">Kayıtlı Kullanıcılar</h2>
 
-        <h2 class="text-danger text-center my-4">Kayıtlı Kullanıcılar</h2>
-
-        <table class="table custom-table table-bordered align-middle text-center shadow-sm mx-auto">
-            <thead class="table-danger text-white">
-                <tr style="font-weight: 600;">
-                    <th class="wide-col">TC Kimlik No</th>
-                    <th class="wide-col">Ad</th>
-                    <th class="wide-col">Soyad</th>
-                    <th class="wide-col">Email</th>
-                    <th class="wide-col">Rol</th>
-                    <th class="wide-col">İşlemler</th>
+    <table class="custom-table">
+        <thead>
+            <tr>
+                <th>TC Kimlik No</th>
+                <th>Ad</th>
+                <th>Soyad</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.TCNo</td>
+                    <td>@user.FirstName</td>
+                    <td>@user.LastName</td>
+                    <td>@user.Email</td>
+                    <td><span class="role-badge">@user.Role.ToString()</span></td>
+                    <td>
+                        <a asp-action="EditUser" asp-route-id="@user.TCNo" class="btn btn-outline-danger btn-sm me-2 action-btn">
+                            <i class="fa fa-edit"></i> Düzenle
+                        </a>
+                        <a asp-action="DeleteUser" asp-route-id="@user.TCNo" class="btn btn-outline-secondary btn-sm action-btn"
+                           onclick="return confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?');">
+                            <i class="fa fa-trash"></i> Sil
+                        </a>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var user in Model)
-                {
-                    <tr style="height: 75px;">
-                        <td>@user.TCNo</td>
-                        <td>@user.FirstName</td>
-                        <td>@user.LastName</td>
-                        <td>@user.Email</td>
-                        <td>
-                            <span class="badge bg-danger text-white">@user.Role.ToString()</span>
-                        </td>
-                        <td>
-                            <a asp-action="EditUser" asp-route-id="@user.TCNo" class="btn btn-outline-danger btn-sm me-2">
-                                <i class="fa fa-edit"></i> Düzenle
-                            </a>
-                            <a asp-action="DeleteUser" asp-route-id="@user.TCNo" class="btn btn-outline-secondary btn-sm"
-                               onclick="return confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?');">
-                                <i class="fa fa-trash"></i> Sil
-                            </a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-    </div>
+            }
+        </tbody>
+    </table>
 </div>
+
+<style>
+    /* Genel kapsayıcı */
+    .courses-container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    /* Başlık stili */
+    .section-title {
+        color: #a10000;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-size: 2rem;
+    }
+
+    /* Tablo genel */
+    .custom-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0 0.8rem;
+        background: #fff0f0;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 3px 8px rgba(161,0,0,0.3);
+    }
+
+        /* Tablo başlığı */
+        .custom-table thead {
+            background-color: #a10000;
+            color: white;
+        }
+
+            .custom-table thead th {
+                padding: 12px 15px;
+                font-weight: 600;
+                text-align: center;
+            }
+
+        /* Satırlar */
+        .custom-table tbody tr {
+            background-color: #fff8f5;
+            box-shadow: 0 2px 5px rgba(161,0,0,0.15);
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+            .custom-table tbody tr:hover {
+                background-color: #ffe5e5;
+            }
+
+        .custom-table tbody td {
+            padding: 12px 15px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+    /* Rol rozeti */
+    .role-badge {
+        background-color: #a10000;
+        color: white;
+        font-weight: 600;
+        padding: 5px 12px;
+        border-radius: 12px;
+        display: inline-block;
+        min-width: 60px;
+    }
+
+    /* Butonlar */
+    .action-btn {
+        border-radius: 5px;
+        font-size: 0.9rem;
+        padding: 5px 10px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-danger.action-btn {
+        border-color: #a10000;
+        color: #a10000;
+    }
+
+        .btn-outline-danger.action-btn:hover {
+            background-color: #7a0000;
+            border-color: #7a0000;
+            color: white;
+        }
+
+    .btn-outline-secondary.action-btn {
+        border-color: #bfbfbf;
+        color: #555;
+    }
+
+        .btn-outline-secondary.action-btn:hover {
+            background-color: #d6d6d6;
+            border-color: #d6d6d6;
+            color: #333;
+        }
+</style>

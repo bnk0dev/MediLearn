@@ -3,18 +3,15 @@
     Layout = "_LayoutAdmin";
     var name = ViewBag.AdminName as string ?? "Admin";
 }
-@using System.Text.Json
 
-<h2 style="text-align:center; color:#a10000;">İstatistikler</h2>
+<h2 class="text-center mb-4" style="color:#6c757d;">İstatistikler</h2>
 
-<div class="charts-wrapper">
-    <!-- Eğitmen vs Personel Sayısı - Pasta -->
-    <div class="chart-card">
+<div class="charts-wrapper" style="display:flex; gap:2rem; justify-content:center; flex-wrap: wrap;">
+    <div class="chart-card" style="width: 350px; background: #fff8f5; padding: 1rem; border-radius: 10px; box-shadow: 0 0 10px rgb(161 0 0 / 0.15);">
         <canvas id="userTypeChart"></canvas>
     </div>
 
-    <!-- Personel Sayısı vs Katılım Sayısı - Bar -->
-    <div class="chart-card">
+    <div class="chart-card" style="width: 350px; background: #f0f7fa; padding: 1rem; border-radius: 10px; box-shadow: 0 0 10px rgb(23 162 184 / 0.15);">
         <canvas id="personnelParticipationChart"></canvas>
     </div>
 </div>
@@ -22,7 +19,26 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // 🥧 Eğitmen ve Personel Sayısı
+        // Ortak opsiyonlar (başlık renkleri vb)
+        const commonOptions = (titleText) => ({
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#6c757d', // nötr gri
+                        font: { size: 14 }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: titleText,
+                    color: '#6c757d',
+                    font: { size: 16, weight: 'bold' }
+                }
+            }
+        });
+
+        // 🥧 Eğitmen ve Personel Sayısı - Pasta
         const userTypeCtx = document.getElementById('userTypeChart').getContext('2d');
         new Chart(userTypeCtx, {
             type: 'pie',
@@ -31,24 +47,16 @@
                 datasets: [{
                     label: 'Kullanıcı Türleri',
                     data: [@Model.TotalInstructors, @Model.TotalPersonnel],
-                    backgroundColor: ['#dc3545', '#ffc107']
+                    backgroundColor: ['#a10000cc', '#f5e9dfcc']  // koyu kırmızı ve bej transparan
                 }]
             },
-            options: {
-                responsive: true,
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Kayıtlı Eğitmen ve Personel Sayısı'
-                    }
-                }
-            }
+            options: commonOptions('Kayıtlı Eğitmen ve Personel Sayısı')
         });
 
-        // 📊 Personel Sayısı vs Katılım Sayısı
+        // 🥧 Personel Sayısı vs Katılım Sayısı - Pasta
         const participationCtx = document.getElementById('personnelParticipationChart').getContext('2d');
         new Chart(participationCtx, {
-            type: 'bar',
+            type: 'pie',
             data: {
                 labels: ['Toplam Personel', 'Toplam Katılım'],
                 datasets: [{
@@ -57,23 +65,10 @@
                         @Model.TotalPersonnel,
                         @Model.PersonnelCourseEnrollments.Values.Sum()
                     ],
-                    backgroundColor: ['#17a2b8', '#28a745']
+                    backgroundColor: ['#117a8bcc', '#28a745cc']  // koyu mavi ve yeşil transparan
                 }]
             },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                },
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Personel Sayısı ve Kurs Katılımı'
-                    }
-                }
-            }
+            options: commonOptions('Personel Sayısı ve Kurs Katılımı')
         });
     </script>
 }

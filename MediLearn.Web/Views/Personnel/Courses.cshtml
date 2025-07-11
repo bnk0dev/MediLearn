@@ -4,66 +4,44 @@
     ViewBag.Title = "Kurslar";
 }
 
-<h2>Kurslar</h2>
+<h2 class="text-center my-4">Kurslar</h2>
 
-<div class="courses-container">
-    @foreach (var course in Model.AllCourses)
-    {
-        <div class="course-card">
-            <h3>@course.Title</h3>
-            <p>@course.Description</p>
-            <p><strong>Başlangıç:</strong> @course.StartDate.ToString("yyyy-MM-dd")</p>
-            <p><strong>Bitiş:</strong> @course.EndDate.ToString("yyyy-MM-dd")</p>
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-3 justify-content-center">
 
-            @if (DateTime.Now > course.EndDate)
-            {
-                <button disabled class="btn btn-secondary">Kayıt Süresi Doldu</button>
-            }
-            else
-            {
-                <form asp-action="Enroll" method="post">
-                    <input type="hidden" name="courseId" value="@course.Id" />
-                    <button type="submit" class="btn btn-primary">Kayıt Ol</button>
-                </form>
-            }
-        </div>
-    }
-</div>
+        @foreach (var course in Model.AllCourses)
+        {
+            <div class="col mb-5">
+                <div class="card h-100 shadow-sm border-danger border-1">
+                    <!-- Kart içeriği -->
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <h5 class="fw-bold text-danger">@course.Title</h5>
+                            <p class="text-muted">@course.Description</p>
+                            <p><strong>Başlangıç:</strong> @course.StartDate.ToString("yyyy-MM-dd")</p>
+                            <p><strong>Bitiş:</strong> @course.EndDate.ToString("yyyy-MM-dd")</p>
+                        </div>
+                    </div>
 
-<style>
-    .courses-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-
-    .course-card {
-        border: 1px solid #a10000;
-        border-radius: 8px;
-        padding: 1rem;
-        width: 300px;
-        background-color: #fff0f0;
-    }
-
-    .btn-primary {
-        background-color: #a10000;
-        border: none;
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-        .btn-primary:hover {
-            background-color: #7a0000;
+                    <!-- Buton -->
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center">
+                            @if (DateTime.Now > course.EndDate)
+                            {
+                                <button disabled class="btn btn-secondary w-100">Kayıt Süresi Doldu</button>
+                            }
+                            else
+                            {
+                                <form asp-action="Enroll" method="post" class="d-inline">
+                                    <input type="hidden" name="courseId" value="@course.Id" />
+                                    <button type="submit" class="btn btn-outline-danger w-100">Kayıt Ol</button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
         }
 
-    .btn-secondary {
-        background-color: #ccc;
-        border: none;
-        color: #666;
-        padding: 0.5rem 1rem;
-        border-radius: 5px;
-        cursor: not-allowed;
-    }
-</style>
+    </div>
+</div>

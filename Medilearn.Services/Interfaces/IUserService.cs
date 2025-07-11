@@ -25,6 +25,7 @@ namespace Medilearn.Services.Interfaces
         Task<List<CourseDto>> GetEnrolledCoursesByPersonnelAsync(string personnelTcNo);
         Task<User> GetUserByTCNoAsync(string tcNo);
 
+        Task UpdateUserAsync(User user);
 
 
 

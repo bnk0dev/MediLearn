@@ -1,0 +1,45 @@
+﻿@model Medilearn.Models.ViewModels.ProfileDto
+@{
+    Layout = "_LayoutPersonnel"; // veya uygun layout'unuz
+    ViewBag.Title = "Profilim";
+}
+
+<h2 class="text-danger text-center my-4">Profilim</h2>
+
+@if (ViewBag.Message != null)
+{
+    <div class="alert alert-success text-center">
+        @ViewBag.Message
+    </div>
+}
+
+<form asp-action="Profile" method="post" class="mx-auto" style="max-width: 500px;">
+    <div class="form-floating mb-3">
+        <input asp-for="TCNo" class="form-control" readonly />
+        <label asp-for="TCNo">TC Kimlik No</label>
+    </div>
+
+    <div class="form-floating mb-3">
+        <input asp-for="FirstName" class="form-control" placeholder="Adınızı girin" />
+        <label asp-for="FirstName">Ad</label>
+        <span asp-validation-for="FirstName" class="text-danger"></span>
+    </div>
+
+    <div class="form-floating mb-3">
+        <input asp-for="LastName" class="form-control" placeholder="Soyadınızı girin" />
+        <label asp-for="LastName">Soyad</label>
+        <span asp-validation-for="LastName" class="text-danger"></span>
+    </div>
+
+    <div class="form-floating mb-3">
+        <input asp-for="Email" type="email" class="form-control" placeholder="Email adresinizi girin" />
+        <label asp-for="Email">Email</label>
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-danger w-100">Güncelle</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

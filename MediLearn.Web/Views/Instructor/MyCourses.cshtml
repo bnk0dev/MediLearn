@@ -4,30 +4,34 @@
     Layout = "_LayoutInstructor";
 }
 
-<h2>Kurslarım</h2>
+<div class="courses-container">
+    <h2 class="section-title">Kurslarım</h2>
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Kurs Başlığı</th>
-            <th>Açıklama</th>
-            <th>Başlangıç Tarihi</th>
-            <th>Bitiş Tarihi</th>
-            <th>Materyal Ekle</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var course in Model)
-        {
+    <table class="table table-bordered table-hover table-striped align-middle custom-table">
+        <thead>
             <tr>
-                <td>@course.Title</td>
-                <td>@course.Description</td>
-                <td>@course.StartDate.ToShortDateString()</td>
-                <td>@course.EndDate.ToShortDateString()</td>
-                <td>
-                    <a asp-action="AddMaterial" asp-route-courseId="@course.Id" class="btn btn-success">Materyal Ekle</a>
-                </td>
+                <th>Kurs Başlığı</th>
+                <th>Açıklama</th>
+                <th>Başlangıç Tarihi</th>
+                <th>Bitiş Tarihi</th>
+                <th>Materyal Ekle</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var course in Model)
+            {
+                <tr>
+                    <td class="text-start">@course.Title</td>
+                    <td class="text-start">@course.Description</td>
+                    <td>@course.StartDate.ToString("yyyy-MM-dd")</td>
+                    <td>@course.EndDate.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <a asp-action="AddMaterial" asp-route-courseId="@course.Id" class="btn btn-outline-danger action-btn">
+                            <i class="fa fa-file-upload me-1"></i> Materyal Ekle
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
