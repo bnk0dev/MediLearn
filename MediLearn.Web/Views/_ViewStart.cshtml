@@ -1,0 +1,10 @@
+﻿@{
+    var layout = "_Layout"; // default
+
+    if (ViewData["Layout"] != null)
+    {
+        layout = ViewData["Layout"].ToString();
+    }
+
+    Layout = $"~/Views/Shared/{layout}.cshtml";
+}

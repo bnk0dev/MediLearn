@@ -1,0 +1,13 @@
+﻿@model IEnumerable<Medilearn.Models.DTOs.CourseDto>
+
+@{
+    Layout = "_LayoutInstructor";
+    var fullName = ViewBag.FullName as string ?? "Eğitmen";
+}
+
+<h2>Merhaba @fullName 👋</h2>
+
+<div class="card" style="max-width: 600px; margin: 2rem auto;">
+    <h4>Eğitmen Paneline Hoşgeldiniz</h4>
+    <p>Bu panel üzerinden yeni kurslar oluşturabilir, mevcut kurslarınızı görüntüleyebilir ve kişisel bilgilerinizi güncelleyebilirsiniz.</p>
+</div>

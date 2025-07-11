@@ -1,0 +1,57 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <title>Admin Paneli - Sağlık Eğitim</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="~/js/site.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-title">
+                <img src="~/img/logo.png" alt="Logo" class="logo" style="height:30px;width:30px" />
+                <span>Admin Paneli - Sağlık Eğitim</span>
+            </div>
+            <div class="auth-links">
+                <a href="/Account/Logout">Çıkış</a>
+            </div>
+        </div>
+        <div class="sidebar">
+            <button class="sidebar-toggle" aria-label="Toggle Sidebar">&#9776;</button>
+            <nav>
+                <a href="@Url.Action("InstructorsWithCourses", "Admin")" class="sidebar-link" >
+                    <img src="~/img/course.png" alt="Kurslar" class="sidebar-icon" style="height:30px;width:30px"/>
+                    <span> Kurslar</span>
+                </a>
+                <a href="/Admin/Statistics" class="sidebar-link">
+                    <img src="~/img/statistic.png" alt="İstatistik" class="sidebar-icon" style="height:30px;width:30px" />
+                    <span> İstatistikler</span>
+                </a>
+                <a asp-action="Users" asp-controller="Admin" class="sidebar-link">
+                    <img src="~/img/user.png" alt="Kullanıcılar" class="sidebar-icon" style="height:30px;width:30px" />
+                    <span> Kayıtlı Kullanıcılar</span>
+                </a>
+                <a asp-controller="Account" asp-action="Logout">
+                    <img src="~/img/logout.png" alt="çikiş yap" class="sidebar-icon" style="height:30px;width:30px" />
+                    <span>Çıkış Yap</span>
+                </a>
+            </nav>
+        </div>
+        <div class="content" style="text-align:center">
+           
+            @RenderBody()
+        </div>
+
+        <div class="footer">
+            Admin Modülü © Sağlık Bakanlığı
+        </div>
+
+       
+    </div>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,71 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - Eğitmen Paneli</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Stil -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="container">
+        <!-- Üst Header -->
+        <div class="header">
+            <div class="logo-title">
+                <img src="~/img/logo.png" alt="Logo" class="logo" style="height:30px;width:30px" />
+                <span>Eğitmen Paneli - Sağlık Eğitim</span>
+            </div>
+            <div class="auth-links">
+                <a href="/Account/Logout">Çıkış</a>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <button id="sidebarToggle" class="sidebar-toggle">&#9776;</button>
+            <nav>
+                <a href="/Instructor/Index" class="sidebar-link">
+                    <img src="~/img/home.png" class="sidebar-icon" alt="Ana Sayfa" style="height:30px;width:30px"  />
+                    <span>Ana Sayfa</span>
+                </a>
+                <a href="/Instructor/AddCourse" class="sidebar-link">
+                    <img src="~/img/newCourse.png" class="sidebar-icon" alt="Yeni Kurs" style="height:30px;width:30px"  />
+                    <span>Yeni Kurs Oluştur</span>
+                </a>
+                <a href="/Instructor/MyCourses" class="sidebar-link">
+                    <img src="~/img/Icourse.png" class="sidebar-icon" alt="Kurslarım" style="height:30px;width:30px"  />
+                    <span>Kurslarım</span>
+                </a>
+                <a href="/Instructor/Profile" class="sidebar-link">
+                    <img src="~/img/profile.png" class="sidebar-icon" alt="Profil" style="height:30px;width:30px"  />
+                    <span>Profil</span>
+                </a>
+                <a asp-controller="Account" asp-action="Logout">
+                    <img src="~/img/logout.png" alt="çikiş yap" class="sidebar-icon" style="height:30px;width:30px" />
+                    <span>Çıkış Yap</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- İçerik -->
+        <div class="content">
+            @RenderBody()
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            Eğitmen Modülü © Sağlık Bakanlığı
+        </div>
+    </div>
+
+    <!-- ✅ Scriptler - Doğru Sıra Çok Önemli -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

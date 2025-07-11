@@ -1,0 +1,55 @@
+﻿@using Medilearn.Models.DTOs
+@model IEnumerable<Medilearn.Models.DTOs.CourseDto>
+@*
+@{
+    ViewData["Title"] = "Beklemedeki Personeller";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (!Model.Any())
+{
+    <p>Beklemede olan personel bulunmamaktadır.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>TC No</th>
+                <th>Ad</th>
+                <th>Soyad</th>
+                <th>Email</th>
+                <th>Durum</th>
+                <th>İşlem</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var personnel in Model)
+            {
+                <tr>
+                    <td>@personnel.TCNo</td>
+                    <td>@personnel.FirstName</td>
+                    <td>@personnel.LastName</td>
+                    <td>@personnel.Email</td>
+                    <td>@personnel.Status</td>
+                    <td>
+                        <form asp-action="Approve" method="post" style="display:inline;">
+                            <input type="hidden" name="tcNo" value="@personnel.TCNo" />
+                            <button type="submit" class="btn btn-success btn-sm">Onayla</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+*@
+@using System
+
+@{
+    ViewData["Title"] = "Personel Anasayfa";
+    Layout = "_LayoutPersonnel";
+}
+
+<h1> Merhaba</h1>

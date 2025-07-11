@@ -1,0 +1,25 @@
+﻿@model Medilearn.Models.ViewModels.AddMaterialViewModel
+@{
+    ViewData["Title"] = "Materyal Ekle";
+    Layout = "_LayoutInstructor";
+
+}
+
+<h2>Materyal Ekle</h2>
+
+<form asp-action="AddMaterial" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="CourseId" value="@ViewBag.CourseId" />
+
+    <div class="form-group">
+        <label>Dosya Seç</label>
+        <input type="file" name="file" class="form-control" />
+        <span asp-validation-summary="All" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Yükle</button>
+    <a asp-action="MyCourses" class="btn btn-secondary">Geri</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

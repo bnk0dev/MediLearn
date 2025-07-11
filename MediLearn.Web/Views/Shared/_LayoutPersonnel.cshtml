@@ -1,0 +1,118 @@
+﻿<!--<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ET ViewData["Title"] - Personel Paneli</title>
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
+
+    ET RenderSection("Styles", required: false)
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-area="" asp-controller="Personnel" asp-action="Index">Personel Paneli</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#personnelNavbar" aria-controls="personnelNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="personnelNavbar">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Personnel" asp-action="Index">Anasayfa</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Personnel" asp-action="MyCourses">Kurslarım</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Account" asp-action="Logout">Çıkış</a>
+                    </li>
+                </ul>
+                <span class="navbar-text text-white">
+                    Hoşgeldiniz, ET User.Identity.Name
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-4">
+        ET RenderBody()
+    </div>
+
+    <footer class="footer-custom">
+        &copy; 2025 Medilearn - Personel Paneli
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    ET RenderSection("Scripts", required: false)
+</body>
+</html>
+-->
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <title>Personel Paneli - Sağlık Eğitim</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="~/js/site.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-title">
+                <img src="~/img/logo.png" alt="Logo" class="logo" />
+                <span>Personel Paneli</span>
+            </div>
+            <div class="auth-links">
+                <a href="/Account/Logout">Çıkış</a>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <button id="sidebarToggle" class="sidebar-toggle">&#9776;</button>
+            <nav >                        <a asp-controller="Personnel" asp-action="Index">
+                        <img src="~/img/home.png" alt="Anasayfa" class="sidebar-icon" style="height:30px;width:30px" />
+                            <span>Anasayfa</span>
+                        </a>
+                 
+                        <a asp-controller="Personnel" asp-action="Courses">
+                        <img src="~/img/course.png" alt="Kurslar" class="sidebar-icon" style="height:30px;width:30px" />
+                            <span>Kurslar</span>
+                        </a>
+     
+                        <a asp-controller="Personnel" asp-action="RegisteredCourses">
+                        <img src="~/img/newCourse.png" alt="Kayıtlı Kurslar" class="sidebar-icon" style="height:30px;width:30px" />
+                            <span>Kayıtlı Kurslar</span>
+                        </a>
+                
+                        <a asp-controller="Personnel" asp-action="Profile">
+                        <img src="~/img/profile.png" alt="Profil" class="sidebar-icon" style="height:30px;width:30px"/>
+                            <span>Profil</span>
+                        </a>
+                        <a asp-controller="Account" asp-action="Logout">
+                            <img src="~/img/logout.png" alt="çikiş yap" class="sidebar-icon" style="height:30px;width:30px" />
+                            <span>Çıkış Yap</span>
+                        </a>
+  
+            </nav>
+
+        </div>
+        <div class="content">
+            @RenderBody()
+        </div>
+
+        <div class="footer">
+            Eğitmen Modülü © Sağlık Bakanlığı
+        </div>
+    </div>
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

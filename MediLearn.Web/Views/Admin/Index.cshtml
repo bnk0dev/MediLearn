@@ -1,0 +1,25 @@
+﻿@model Medilearn.Models.DTOs.AdminDashboardViewModel
+@{
+    Layout = "_LayoutAdmin";
+    var name = ViewBag.AdminName as string ?? "Admin";
+}
+
+<div class="card">
+    <h1>Merhaba 👋 @User.Identity.Name</h1>
+    <p>Yönetim paneline hoş geldiniz. Aşağıda yetki ve sorumluluklarınızı bulabilirsiniz.</p>
+</div>
+
+<div class="card">
+    <h3>✅ Yetkileriniz</h3>
+    <ul>
+        <li>Eğitmenleri onaylama ve yönetme</li>
+        <li>Tüm kurs içeriklerine erişim ve düzenleme</li>
+        <li>İstatistikleri görüntüleme</li>
+        <li>Kullanıcıları listeleme ve yönetme</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h3>⚠️ Sorumluluklarınız</h3>
+    <p>Admin olarak sistemde yapılan yanlış işlemlerin takibi ve geri dönüşü sizin sorumluluğunuzdadır. Kullanıcı kayıtlarını, kurs güncellemelerini dikkatle kontrol edin.</p>
+</div>

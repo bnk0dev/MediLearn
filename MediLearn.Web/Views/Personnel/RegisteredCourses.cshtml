@@ -1,0 +1,31 @@
+﻿@model List<Medilearn.Models.DTOs.CourseDto>
+@{
+    Layout = "_LayoutPersonnel";
+    ViewBag.Title = "Kayıtlı Kurslarım";
+}
+
+<h2>Kayıtlı Kurslarım</h2>
+
+@if (!Model.Any())
+{
+    <p>Henüz herhangi bir kursa kayıtlı değilsiniz.</p>
+}
+else
+{
+    <div class="courses-container" style="display:flex; flex-wrap:wrap; gap:20px;">
+        @foreach (var course in Model)
+        {
+            <div class="course-card" style="border:1px solid #a10000; border-radius:8px; padding:15px; width: 300px; background:#fff0f0;">
+                <h3>@course.Title</h3>
+                <p>@course.Description</p>
+                <p><strong>Başlangıç:</strong> @course.StartDate.ToString("yyyy-MM-dd")</p>
+                <p><strong>Bitiş:</strong> @course.EndDate.ToString("yyyy-MM-dd")</p>
+                @if (!string.IsNullOrEmpty(course.MaterialFileName))
+                {
+                    <p><a href="@course.MaterialFileName" target="_blank" style="color:#a10000;">Materyali Görüntüle</a></p>
+                }
+                <a href="@Url.Action("CourseDetails", "Personnel", new { id = course.Id })" class="btn btn-outline-danger">Başla</a>
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,79 @@
+﻿@model Medilearn.Models.DTOs.AdminStatisticsDto
+@{
+    Layout = "_LayoutAdmin";
+    var name = ViewBag.AdminName as string ?? "Admin";
+}
+@using System.Text.Json
+
+<h2 style="text-align:center; color:#a10000;">İstatistikler</h2>
+
+<div class="charts-wrapper">
+    <!-- Eğitmen vs Personel Sayısı - Pasta -->
+    <div class="chart-card">
+        <canvas id="userTypeChart"></canvas>
+    </div>
+
+    <!-- Personel Sayısı vs Katılım Sayısı - Bar -->
+    <div class="chart-card">
+        <canvas id="personnelParticipationChart"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // 🥧 Eğitmen ve Personel Sayısı
+        const userTypeCtx = document.getElementById('userTypeChart').getContext('2d');
+        new Chart(userTypeCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Eğitmen', 'Personel'],
+                datasets: [{
+                    label: 'Kullanıcı Türleri',
+                    data: [@Model.TotalInstructors, @Model.TotalPersonnel],
+                    backgroundColor: ['#dc3545', '#ffc107']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Kayıtlı Eğitmen ve Personel Sayısı'
+                    }
+                }
+            }
+        });
+
+        // 📊 Personel Sayısı vs Katılım Sayısı
+        const participationCtx = document.getElementById('personnelParticipationChart').getContext('2d');
+        new Chart(participationCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Toplam Personel', 'Toplam Katılım'],
+                datasets: [{
+                    label: 'Katılım Durumu',
+                    data: [
+                        @Model.TotalPersonnel,
+                        @Model.PersonnelCourseEnrollments.Values.Sum()
+                    ],
+                    backgroundColor: ['#17a2b8', '#28a745']
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Personel Sayısı ve Kurs Katılımı'
+                    }
+                }
+            }
+        });
+    </script>
+}

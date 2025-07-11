@@ -1,0 +1,30 @@
+﻿@model Medilearn.Models.DTOs.ManageCourseEnrollmentsViewModel
+
+@if (Model.PersonnelList != null && Model.Enrollments != null && Model.Enrollments.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>TC Kimlik No</th>
+                <th>Ad Soyad</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var enrollment in Model.Enrollments)
+            {
+                var person = Model.PersonnelList.FirstOrDefault(p => p.TCNo == enrollment.PersonnelTCNo);
+                if (person != null)
+                {
+                    <tr>
+                        <td>@person.TCNo</td>
+                        <td>@person.FirstName @person.LastName</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Bu kursa henüz kimse kayıtlı değil.</p>
+}

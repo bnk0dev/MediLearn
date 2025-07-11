@@ -1,0 +1,38 @@
+﻿@model List<Medilearn.Models.DTOs.PersonnelEnrollmentViewModel>
+
+<h2>Kayıtlı Kurslarım</h2>
+
+@if (!Model.Any())
+{
+    <p>Henüz kurs kaydınız yok.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Kurs Başlığı</th>
+                <th>Durum</th>
+                <th>İşlem</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var enrollment in Model)
+            {
+                <tr>
+                    <td>@enrollment.CourseTitle</td>
+                    <td>@(enrollment.Completed ? "Tamamlandı" : "Devam Ediyor")</td>
+                    <td>
+                        @if (!enrollment.Completed)
+                        {
+                            <form asp-action="MarkComplete" method="post">
+                                <input type="hidden" name="enrollmentId" value="@enrollment.EnrollmentId" />
+                                <button type="submit" class="btn btn-success">Tamamla</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

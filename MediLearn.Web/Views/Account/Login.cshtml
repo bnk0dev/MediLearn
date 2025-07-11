@@ -1,0 +1,38 @@
+﻿@model Medilearn.Models.DTOs.UserLoginDto
+
+@{
+    ViewData["Title"] = "Giriş Yap";
+    Layout = "_Layout";
+}
+<div class="card">
+<form asp-action="Login" method="post">
+    <div>
+        <label>TC Kimlik No</label>
+        <input asp-for="TCNo" />
+        <span asp-validation-for="TCNo"></span>
+    </div>
+    <div>
+        <label>Şifre</label>
+        <input asp-for="Password" type="password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+    <button type="submit">Giriş</button>
+</form>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Success"]
+    </div>
+}
+
+
+@if (ViewData["Error"] != null)
+{
+    <div style="color:red">@ViewData["Error"]</div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
