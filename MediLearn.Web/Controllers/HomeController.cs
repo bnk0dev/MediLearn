@@ -12,6 +12,10 @@ namespace MediLearn.Web.Controllers
         {
             _logger = logger;
         }
+        public IActionResult TermsOfUse()
+        {
+            return View();
+        }
 
         public IActionResult Index()
         {

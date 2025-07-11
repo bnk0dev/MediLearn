@@ -55,7 +55,7 @@ namespace Medilearn.Web.Controllers
         {
             return View();
         }
-        
+
         // POST: /Account/Login
         [HttpPost]
         public async Task<IActionResult> Login(UserLoginDto model)
@@ -68,6 +68,7 @@ namespace Medilearn.Web.Controllers
                 ModelState.AddModelError("", "TC No boş olamaz.");
                 return View(model);
             }
+
             var user = await _userService.GetUserByTCNoAsync(model.TCNo);
             if (user == null || user.Status != UserStatus.Active)
             {
@@ -84,16 +85,13 @@ namespace Medilearn.Web.Controllers
                 return View(model);
             }
 
-            // Claims
-            if (string.IsNullOrEmpty(user.TCNo))
-            {
-                ModelState.AddModelError("", "Geçersiz kullanıcı bilgisi.");
-                return View(model);
-            }
+            // Claims: TCNo yerine kullanıcı adı olarak isim soyisim ekliyoruz
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.TCNo),
-                new Claim(ClaimTypes.Role, user.Role.ToString())
+                new Claim(ClaimTypes.Name, user.TCNo), // Zorunlu, fallback için kalsın
+                new Claim(ClaimTypes.Role, user.Role.ToString()),
+                new Claim("FirstName", user.FirstName ?? ""),
+                new Claim("LastName", user.LastName ?? "")
             };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -101,7 +99,6 @@ namespace Medilearn.Web.Controllers
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-            // Rol bazlı yönlendirme
             return user.Role switch
             {
                 UserRole.Admin => RedirectToAction("Index", "Admin"),
