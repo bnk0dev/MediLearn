@@ -1,5 +1,7 @@
 ﻿using Medilearn.Models.DTOs;
+using Medilearn.Models.ViewModels;
 using Medilearn.Services.Interfaces;
+using Medilearn.Services.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +15,12 @@ namespace Medilearn.Web.Controllers
     public class InstructorController : Controller
     {
         private readonly ICourseService _courseService;
-
-        public InstructorController(ICourseService courseService)
+        private readonly IUserService _userService;
+        public InstructorController(ICourseService courseService, IUserService userService)
         {
             _courseService = courseService;
+            _userService = userService;
         }
-
         [HttpGet]
         public IActionResult AddCourse()
         {
@@ -110,6 +112,54 @@ namespace Medilearn.Web.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        // GET: /Instructor/Profile
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var tcNo = User.Identity?.Name;
+            if (string.IsNullOrEmpty(tcNo))
+                return Unauthorized();
+
+            var user = await _userService.GetUserByTCNoAsync(tcNo);
+            if (user == null)
+                return NotFound();
+
+            var model = new ProfileDto
+            {
+                TCNo = user.TCNo,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email
+            };
+
+            return View(model);
+        }
+
+        // POST: /Instructor/Profile
+        [HttpPost]
+        public async Task<IActionResult> Profile(ProfileDto model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var tcNo = User.Identity?.Name;
+            if (model.TCNo != tcNo)
+                return BadRequest("TC No değiştirilemez.");
+
+            var user = await _userService.GetUserByTCNoAsync(tcNo);
+            if (user == null)
+                return NotFound();
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Email = model.Email;
+
+            await _userService.UpdateUserAsync(user);
+
+            ViewBag.Message = "Profiliniz başarıyla güncellendi.";
+            return View(model);
         }
 
     }

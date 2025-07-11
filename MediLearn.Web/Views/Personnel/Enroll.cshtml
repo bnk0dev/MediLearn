@@ -1,0 +1,35 @@
+﻿@model Medilearn.Models.ViewModels.EnrollCourseViewModel
+@{
+    Layout = "_LayoutPersonnel";
+    ViewBag.Title = "Kursa Kayıt Ol";
+}
+
+<div class="container my-5" style="max-width: 600px;">
+    <div class="card shadow-sm">
+        <div class="card-header bg-danger text-white">
+            <h4 class="mb-0">Kurs Detayı</h4>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">@Model.Course.Title</h5>
+            <p class="card-text">@Model.Course.Description</p>
+            <p><strong>Başlangıç Tarihi:</strong> @Model.Course.StartDate.ToString("dd MMMM yyyy")</p>
+            <p><strong>Bitiş Tarihi:</strong> @Model.Course.EndDate.ToString("dd MMMM yyyy")</p>
+
+            @if (DateTime.Now > Model.Course.EndDate)
+            {
+                <div class="alert alert-warning">Bu kursun süresi dolmuştur. Kayıt olunamaz.</div>
+            }
+            else if (Model.IsAlreadyEnrolled)
+            {
+                <div class="alert alert-info">Zaten bu kursa kayıtlısınız.</div>
+            }
+            else
+            {
+                <form asp-action="EnrollConfirm" method="post">
+                    <input type="hidden" name="courseId" value="@Model.Course.Id" />
+                    <button type="submit" class="btn btn-danger w-100">Kursa Kayıt Ol</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>

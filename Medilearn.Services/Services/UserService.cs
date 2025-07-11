@@ -180,6 +180,11 @@ namespace Medilearn.Services.Services
             }).ToList();
         }
 
+        public async Task UpdateUserAsync(User user)
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+        }
 
     }
 }

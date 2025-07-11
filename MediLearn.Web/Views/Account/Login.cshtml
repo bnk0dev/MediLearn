@@ -1,37 +1,83 @@
 ﻿@model Medilearn.Models.DTOs.UserLoginDto
-
 @{
     ViewData["Title"] = "Giriş Yap";
-    Layout = "_Layout";
+    Layout = null; // İstersen _Layout olarak değiştirebilirsin
 }
-<div class="card">
-<form asp-action="Login" method="post">
-    <div>
-        <label>TC Kimlik No</label>
-        <input asp-for="TCNo" />
-        <span asp-validation-for="TCNo"></span>
-    </div>
-    <div>
-        <label>Şifre</label>
-        <input asp-for="Password" type="password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-    <button type="submit">Giriş</button>
-</form>
-</div>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Medilearn Login" />
+    <meta name="author" content="SB Admin Template" />
+    <title>Giriş Yap - Medilearn</title>
+    <link href="~/css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-primary" style="background: linear-gradient(135deg, #4b0082 0%, #6a0dad 50%, #0000ff 100%)"
+ !important">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-5">
+                            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                <div class="card-header"><h3 class="text-center font-weight-light my-4">Giriş Yap</h3></div>
+                                <div class="card-body">
+                                    <form asp-action="Login" method="post">
+                                        <div class="form-floating mb-3">
+                                            <input asp-for="TCNo" class="form-control" placeholder="TC Kimlik No" />
+                                            <label asp-for="TCNo">TC Kimlik No</label>
+                                            <span asp-validation-for="TCNo" class="text-danger"></span>
+                                        </div>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">
-        @TempData["Success"]
+                                        <div class="form-floating mb-3">
+                                            <input asp-for="Password" type="password" class="form-control" placeholder="Şifre" />
+                                            <label asp-for="Password">Şifre</label>
+                                            <span asp-validation-for="Password" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" id="inputRememberPassword" type="checkbox" value="" />
+                                            <label class="form-check-label" for="inputRememberPassword">Beni Hatırla</label>
+                                        </div>
+
+                                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                                            <a class="small" href="#">Şifremi Unuttum</a>
+                                            <button type="submit" class="btn btn-primary">Giriş</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="card-footer text-center py-3">
+                                    <div class="small">Hesabınız yok mu? <a asp-action="Register">Kayıt Ol</a></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <div id="layoutAuthentication_footer">
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; Medilearn 2025</div>
+                        <div>
+                            <a href="#">Gizlilik Politikası</a>
+                            &middot;
+                            <a href="#">Kullanım Koşulları</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
     </div>
-}
-
-
-@if (ViewData["Error"] != null)
-{
-    <div style="color:red">@ViewData["Error"]</div>
-}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="~/js/scripts.js"></script>
+</body>
+</html>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
