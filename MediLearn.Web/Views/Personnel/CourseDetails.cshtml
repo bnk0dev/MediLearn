@@ -7,24 +7,42 @@
     var tokens = Antiforgery.GetAndStoreTokens(Context);
 }
 
-<h2>@Model.Title</h2>
-<p>@Model.Description</p>
-<p><strong>Başlangıç:</strong> @Model.StartDate.ToString("yyyy-MM-dd")</p>
-<p><strong>Bitiş:</strong> @Model.EndDate.ToString("yyyy-MM-dd")</p>
+<div class="container my-5">
+    <h2 class="text-danger fw-bold mb-4">@Model.Title</h2>
 
-@if (!string.IsNullOrEmpty(Model.MaterialFileName))
-{
-    <div style="height: 600px;">
-        <iframe src="@Model.MaterialFileName" style="width:100%; height:100%;" frameborder="0"></iframe>
+    @if (!string.IsNullOrEmpty(Model.MaterialFileName))
+    {
+        <div class="ratio ratio-16x9 mb-4" style="max-height: 600px;">
+            <iframe src="@Model.MaterialFileName" frameborder="0" allowfullscreen></iframe>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">Bu kurs için materyal bulunmamaktadır.</div>
+    }
+
+    <div class="card shadow-sm border-danger">
+        <div class="card-header bg-danger text-white fw-bold">
+            Kurs Bilgileri
+        </div>
+        <div class="card-body">
+            <p><strong>Açıklama:</strong> @Model.Description</p>
+            <p><strong>Başlangıç Tarihi:</strong> @Model.StartDate.ToString("yyyy-MM-dd")</p>
+            <p><strong>Bitiş Tarihi:</strong> @Model.EndDate.ToString("yyyy-MM-dd")</p>
+        </div>
     </div>
-}
 
-<button id="completeCourseBtn" class="btn btn-danger mt-3" style="display:none;">Kursu Bitir</button>
+    <button id="completeCourseBtn" class="btn btn-danger mt-4" style="display:none;">
+        Kursu Bitir
+    </button>
+</div>
 
 @section Scripts {
     <script>
+        // 30 saniye sonra butonu göster
         setTimeout(() => {
-            document.getElementById('completeCourseBtn').style.display = 'inline-block';
+            const btn = document.getElementById('completeCourseBtn');
+            if (btn) btn.style.display = 'inline-block';
         }, 30000);
 
         document.getElementById('completeCourseBtn').addEventListener('click', () => {

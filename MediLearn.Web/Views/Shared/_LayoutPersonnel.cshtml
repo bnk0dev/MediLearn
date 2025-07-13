@@ -52,9 +52,21 @@
 </body>
 </html>
 -->
+@using System.Security.Claims
+@using System.Globalization
 @{
-    Layout = null;
+    var claimsIdentity = User.Identity as ClaimsIdentity;
+    var firstName = claimsIdentity?.FindFirst("FirstName")?.Value ?? "";
+    var lastName = claimsIdentity?.FindFirst("LastName")?.Value ?? "";
+    var fullName = $"{firstName} {lastName}".Trim();
+    if (string.IsNullOrEmpty(fullName))
+    {
+        fullName = User.Identity.Name; // fallback olarak TCNo veya username
+    }
+    var profileImage = claimsIdentity?.FindFirst("ProfileImage")?.Value ?? "/uploads/profiles/default.png";
 }
+
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -78,8 +90,24 @@
             <i class="fas fa-bars"></i>
         </button>
 
-        <!-- Sağ boşluk -->
-        <div class="ms-auto me-4"></div>
+        <!-- Sağ üst kullanıcı ve dil seçimi -->
+        <ul class="navbar-nav ms-auto me-3 align-items-center">
+            <li class="nav-item d-flex align-items-center me-3">
+                <img src="@profileImage" alt="Kullanıcı" class="rounded-circle" style="width:32px; height:32px; object-fit:cover; border: 1px solid #fff;" />
+                <span class="text-white ms-2">@fullName</span>
+            </li>
+            <form id="cultureForm" asp-controller="Culture" asp-action="SetCulture" method="post" class="d-inline">
+                <select name="culture" onchange="this.form.submit()" class="form-select form-select-sm bg-dark text-white border-0">
+                    <option value="tr" selected="@((CultureInfo.CurrentUICulture.Name == "tr").ToString().ToLower())">TR</option>
+                    <option value="en" selected="@((CultureInfo.CurrentUICulture.Name == "en").ToString().ToLower())">EN</option>
+                    <option value="fr" selected="@((CultureInfo.CurrentUICulture.Name == "fr").ToString().ToLower())">FR</option>
+                </select>
+                <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
+            </form>
+
+
+
+        </ul>
     </nav>
 
     <div id="layoutSidenav">
@@ -96,11 +124,7 @@
                         </a>
                         <a class="nav-link" asp-controller="Personnel" asp-action="Courses">
                             <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
-                            Kurslar
-                        </a>
-                        <a class="nav-link" asp-controller="Personnel" asp-action="RegisteredCourses">
-                            <div class="sb-nav-link-icon"><i class="fas fa-check-circle"></i></div>
-                            Kayıtlı Kurslar
+                            Kursları Keşfet
                         </a>
                         <a class="nav-link" asp-controller="Personnel" asp-action="Profile">
                             <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>

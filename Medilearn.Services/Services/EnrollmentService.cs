@@ -36,6 +36,23 @@ namespace Medilearn.Services
             return courses;
         }
 
+        public async Task<List<CourseDto>> GetCompletedCoursesByPersonnelAsync(string personnelTcNo)
+        {
+            var completedEnrollments = await _context.Enrollments
+                .Include(e => e.Course)
+                .Where(e => e.PersonnelTCNo == personnelTcNo && e.IsCompleted)
+                .ToListAsync();
+
+            return completedEnrollments.Select(e => new CourseDto
+            {
+                Id = e.Course.Id,
+                Title = e.Course.Title,
+                Description = e.Course.Description,
+                StartDate = e.Course.StartDate,
+                EndDate = e.Course.EndDate,
+                MaterialFileName = e.Course.MaterialPath  // Burada MaterialPath kullanılıyor
+            }).ToList();
+        }
 
         public async Task<bool> MarkCourseCompletedAsync(string personnelTcNo, int courseId)
         {

@@ -1,10 +1,13 @@
 ﻿@model Medilearn.Models.DTOs.AdminStatisticsDto
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
 @{
     Layout = "_LayoutAdmin";
     var name = ViewBag.AdminName as string ?? "Admin";
 }
 
-<h2 class="text-center mb-4" style="color:#6c757d;">İstatistikler</h2>
+<br />
+<h2 class="text-center mb-4">@Localizer["StatisticsTitle"]</h2>
 
 <div class="charts-wrapper" style="display:flex; gap:2rem; justify-content:center; flex-wrap: wrap;">
     <div class="chart-card" style="width: 350px; background: #fff8f5; padding: 1rem; border-radius: 10px; box-shadow: 0 0 10px rgb(161 0 0 / 0.15);">
@@ -19,13 +22,12 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Ortak opsiyonlar (başlık renkleri vb)
         const commonOptions = (titleText) => ({
             responsive: true,
             plugins: {
                 legend: {
                     labels: {
-                        color: '#6c757d', // nötr gri
+                        color: '#6c757d',
                         font: { size: 14 }
                     }
                 },
@@ -38,37 +40,43 @@
             }
         });
 
-        // 🥧 Eğitmen ve Personel Sayısı - Pasta
+        // Kullanıcı Türleri Grafiği
         const userTypeCtx = document.getElementById('userTypeChart').getContext('2d');
         new Chart(userTypeCtx, {
             type: 'pie',
             data: {
-                labels: ['Eğitmen', 'Personel'],
+                labels: [
+                    "@Localizer["Instructor"]",
+                    "@Localizer["Personnel"]"
+                ],
                 datasets: [{
-                    label: 'Kullanıcı Türleri',
+                    label: "@Localizer["UserTypes"]",
                     data: [@Model.TotalInstructors, @Model.TotalPersonnel],
-                    backgroundColor: ['#a10000cc', '#f5e9dfcc']  // koyu kırmızı ve bej transparan
+                    backgroundColor: ['#a10000cc', '#f5e9dfcc']
                 }]
             },
-            options: commonOptions('Kayıtlı Eğitmen ve Personel Sayısı')
+            options: commonOptions("@Localizer["TotalInstructorAndPersonnel"]")
         });
 
-        // 🥧 Personel Sayısı vs Katılım Sayısı - Pasta
+        // Katılım Grafiği
         const participationCtx = document.getElementById('personnelParticipationChart').getContext('2d');
         new Chart(participationCtx, {
             type: 'pie',
             data: {
-                labels: ['Toplam Personel', 'Toplam Katılım'],
+                labels: [
+                    "@Localizer["TotalPersonnel"]",
+                    "@Localizer["TotalParticipation"]"
+                ],
                 datasets: [{
-                    label: 'Katılım Durumu',
+                    label: "@Localizer["ParticipationStatus"]",
                     data: [
                         @Model.TotalPersonnel,
                         @Model.PersonnelCourseEnrollments.Values.Sum()
                     ],
-                    backgroundColor: ['#117a8bcc', '#28a745cc']  // koyu mavi ve yeşil transparan
+                    backgroundColor: ['#117a8bcc', '#28a745cc']
                 }]
             },
-            options: commonOptions('Personel Sayısı ve Kurs Katılımı')
+            options: commonOptions("@Localizer["PersonnelAndCourseParticipation"]")
         });
     </script>
 }

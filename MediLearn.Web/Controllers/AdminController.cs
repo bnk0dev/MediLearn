@@ -40,23 +40,31 @@ namespace Medilearn.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            ViewData["Layout"] = "_LayoutAdmin";
-
-            // Onay bekleyen eğitmenleri al
-            var pendingInstructors = await _userService.GetUsersByRoleAndStatusAsync(UserRole.Instructor, UserStatus.Pending);
-
-            // Tüm kurslar ve kullanıcılar
             var allCourses = await _courseService.GetAllCoursesAsync();
-            var allUsers = await _userService.GetAllUsersAsync(); // List<UserDto> döner
+            var allUsers = await _userService.GetAllUsersAsync(); // UserDto listesi
+            var oneWeekAgo = DateTime.Now.AddDays(-2);
+
+            var newInstructors = allUsers
+                .Where(u => u.Role == UserRole.Instructor && u.CreatedDate >= oneWeekAgo)
+                .ToList();
+
+            var newPersonnel = allUsers
+                .Where(u => u.Role == UserRole.Personnel && u.CreatedDate >= oneWeekAgo)
+                .ToList();
+
+            var pendingInstructors = allUsers
+                .Where(u => u.Role == UserRole.Instructor && u.Status == UserStatus.Pending && u.CreatedDate >= oneWeekAgo)
+                .ToList();
 
             var model = new AdminDashboardViewModel
             {
-                PendingInstructors = pendingInstructors.ToList(),
+                PendingInstructors = pendingInstructors,
+                NewInstructors = newInstructors,
+                NewPersonnel = newPersonnel,
                 TotalCourses = allCourses.Count(),
-                TotalInstructors = allUsers.Count(u => u.Role == UserRole.Instructor),  // int
-                TotalPersonnel = allUsers.Count(u => u.Role == UserRole.Personnel)       // int
+                TotalInstructors = allUsers.Count(u => u.Role == UserRole.Instructor),
+                TotalPersonnel = allUsers.Count(u => u.Role == UserRole.Personnel)
             };
-
 
             return View(model);
         }
@@ -112,18 +120,44 @@ namespace Medilearn.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> EditUser(string id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null) return NotFound();
-            return View(user); 
+            if (string.IsNullOrEmpty(id))
+                return BadRequest();
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.TCNo == id);
+            if (user == null)
+                return NotFound();
+
+            return View(user);
         }
 
+
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditUser(User updatedUser)
         {
-            _context.Users.Update(updatedUser);
+            ModelState.Remove("PasswordHash"); // Şifre boş geliyorsa validasyonu kaldır
+
+            if (!ModelState.IsValid)
+            {
+                return View(updatedUser);
+            }
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.TCNo == updatedUser.TCNo);
+            if (user == null)
+                return NotFound();
+
+            user.FirstName = updatedUser.FirstName;
+            user.LastName = updatedUser.LastName;
+            user.Email = updatedUser.Email;
+            user.Role = updatedUser.Role;
+            user.Status = updatedUser.Status;
+
             await _context.SaveChangesAsync();
+
             return RedirectToAction("Users");
         }
+
 
         [HttpGet]
         public async Task<IActionResult> DeleteUser(string id)
