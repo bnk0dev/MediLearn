@@ -4,14 +4,24 @@ using Medilearn.Services.Interfaces;
 using Medilearn.Services.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+// 1. Localization ayarlarý ve desteklenen diller
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
-//Authentication Ekleme
+var supportedCultures = new[] { "tr", "en", "fr" };
+var cultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
+
+// 2. MVC ve View localization desteði
+builder.Services.AddControllersWithViews()
+    .AddViewLocalization();
+
+// 3. Authentication ayarlarý
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -19,30 +29,42 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
     });
 
-
-// DbContext baðlantýsý (MONSTER olarak sunucu adý)
+// 4. DbContext ayarý
 builder.Services.AddDbContext<MedilearnDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IInstructorService, InstructorService>();
-
-//servislerimizi ekledik
+// 5. Scoped servisler
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IInstructorService, InstructorService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 
-
-//bootstrap þeyleri
+// 6. Diðer ayarlar
 builder.Services.AddHttpContextAccessor();
 builder.Services.Configure<FormOptions>(options =>
 {
     options.MultipartBodyLengthLimit = 50 * 1024 * 1024; // 50 MB
 });
 
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 7. Localization middleware ayarlarý
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("tr"),
+    SupportedCultures = cultures,
+    SupportedUICultures = cultures,
+    RequestCultureProviders = new List<IRequestCultureProvider>
+    {
+        new QueryStringRequestCultureProvider(),
+        new CookieRequestCultureProvider(),
+        new AcceptLanguageHeaderRequestCultureProvider()
+    }
+};
+
+app.UseRequestLocalization(localizationOptions);
+
+// 8. Pipeline ayarlarý
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -57,6 +79,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// 9. Route tanýmlamasý
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

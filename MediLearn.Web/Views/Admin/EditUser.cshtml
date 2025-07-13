@@ -1,12 +1,24 @@
 ﻿@model Medilearn.Data.Entities.User
+@using Medilearn.Data.Enums
 @{
     Layout = "_LayoutAdmin";
     var name = ViewBag.AdminName as string ?? "Admin";
 }
 
 <h2 class="text-danger mb-4">Kullanıcı Bilgilerini Güncelle</h2>
-
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+            {
+                <li>@error.ErrorMessage</li>
+            }
+        </ul>
+    </div>
+}
 <form asp-action="EditUser" method="post" class="border p-4 rounded bg-light">
+    @Html.AntiForgeryToken()
     <div class="mb-3">
         <label asp-for="TCNo" class="form-label fw-bold">TC Kimlik No</label>
         <input asp-for="TCNo" class="form-control" readonly />
@@ -29,19 +41,12 @@
 
     <div class="mb-3">
         <label asp-for="Role" class="form-label fw-bold">Rol</label>
-        <select asp-for="Role" class="form-select">
-            <option value="Instructor">Eğitmen</option>
-            <option value="Personnel">Personel</option>
-        </select>
+        <select asp-for="Role" class="form-select" asp-items="Html.GetEnumSelectList<UserRole>()"></select>
     </div>
 
     <div class="mb-3">
         <label asp-for="Status" class="form-label fw-bold">Durum</label>
-        <select asp-for="Status" class="form-select">
-            <option value="Pending">Beklemede</option>
-            <option value="Approved">Onaylandı</option>
-            <option value="Rejected">Reddedildi</option>
-        </select>
+        <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<UserStatus>()"></select>
     </div>
 
     <button type="submit" class="btn btn-danger">Kaydet</button>

@@ -7,6 +7,7 @@ namespace Medilearn.Services.Interfaces
 {
     public interface IEnrollmentService
     {
+        Task<List<CourseDto>> GetCompletedCoursesByPersonnelAsync(string tcNo);
         Task<IEnumerable<CourseDto>> GetCoursesByPersonnelTcNoAsync(string personnelTcNo);
         Task<bool> EnrollPersonnelAsync(string personnelTcNo, int courseId);
         Task<IEnumerable<EnrollmentDto>> GetAllEnrollmentsAsync();

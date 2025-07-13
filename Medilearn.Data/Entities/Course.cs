@@ -33,5 +33,6 @@ namespace Medilearn.Data.Entities
         public List<Enrollment>? Enrollments { get; set; }
 
 
+
     }
 }

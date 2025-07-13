@@ -1,10 +1,11 @@
 ﻿@model List<Medilearn.Models.DTOs.CourseDto>
-@{
-    ViewData["Title"] = "Kurslarım";
-    Layout = "_LayoutInstructor";
-}
 
-<div class="courses-container">
+@{
+    ViewData["Title"] = "Eğitmen Paneli";
+    Layout = "_LayoutInstructor";
+    var fullName = ViewBag.FullName as string ?? "Eğitmen";
+}
+<div class="courses-container my-5">
     <h2 class="section-title">Kurslarım</h2>
 
     <table class="table table-bordered table-hover table-striped align-middle custom-table">

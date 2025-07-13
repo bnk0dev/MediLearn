@@ -1,4 +1,5 @@
 ﻿@using System.Security.Claims
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
     var claimsIdentity = User.Identity as ClaimsIdentity;
@@ -7,8 +8,17 @@
     var fullName = $"{firstName} {lastName}".Trim();
     if (string.IsNullOrEmpty(fullName))
     {
-        fullName = User.Identity.Name; // Fallback (örneğin TCNo)
+        fullName = User.Identity.Name;
     }
+
+    var profileImage = claimsIdentity?.FindFirst("ProfileImage")?.Value;
+    if (string.IsNullOrEmpty(profileImage))
+    {
+        profileImage = Url.Content("~/uploads/profiles/default.png");
+    }
+
+    var currentCulture = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower();
+    var flagCode = currentCulture == "en" ? "us" : currentCulture; // "en" için "us" bayrağı kullan
 }
 
 <!DOCTYPE html>
@@ -17,8 +27,8 @@
     <meta charset="utf-8" />
     <title>Admin Paneli - Sağlık Eğitim</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="~/css/styles.css" rel="stylesheet" /> <!-- SB Admin CSS -->
-    <link href="~/css/site.css" rel="stylesheet" />   <!-- Özel sağlık bakanlığı teması -->
+    <link href="~/css/styles.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <script src="~/js/site.js" defer></script>
 </head>
@@ -26,7 +36,7 @@
 
     <!-- ÜST NAVBAR -->
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand ps-3" href="#">Admin Paneli</a>
+        <a class="navbar-brand ps-3" href="#">@Localizer["welcm"]</a>
 
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle">
             <i class="fas fa-bars"></i>
@@ -34,17 +44,34 @@
 
         <ul class="navbar-nav ms-auto me-3 align-items-center">
             <li class="nav-item d-flex align-items-center me-3">
-                <img src="~/img/user-profile.png" alt="Kullanıcı" class="rounded-circle" style="width:32px; height:32px; object-fit:cover; border: 1px solid #fff;" />
+                <img src="@profileImage" alt="Kullanıcı" class="rounded-circle" style="width:32px; height:32px; object-fit:cover; border: 1px solid #fff;" />
                 <span class="text-white ms-2">@fullName</span>
             </li>
+
+            <!-- Bayrakla Dil Seçimi -->
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle text-white" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Dil: TR
+                <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="~/img/flags/@(flagCode).png" alt="Dil" width="24" height="24" />
                 </a>
+                @{
+                    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+                }
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-                    <li><a class="dropdown-item" href="?culture=tr">Türkçe (TR)</a></li>
-                    <li><a class="dropdown-item" href="?culture=en">English (EN)</a></li>
-                    <li><a class="dropdown-item" href="?culture=fr">Français (FR)</a></li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" asp-controller="Account" asp-action="SetLanguage" asp-route-culture="tr" asp-route-returnUrl="@returnUrl">
+                            <img src="~/img/flags/tr.png" width="24" class="me-2" /> Türkçe
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" asp-controller="Account" asp-action="SetLanguage" asp-route-culture="en" asp-route-returnUrl="@returnUrl">
+                            <img src="~/img/flags/us.png" width="24" class="me-2" /> English
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" asp-controller="Account" asp-action="SetLanguage" asp-route-culture="fr" asp-route-returnUrl="@returnUrl">
+                            <img src="~/img/flags/fr.png" width="24" class="me-2" /> Français
+                        </a>
+                    </li>
                 </ul>
             </li>
         </ul>
@@ -57,36 +84,31 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <div class="sb-sidenav-menu-heading">Admin Menüsü</div>
-
+                        <div class="sb-sidenav-menu-heading">@Localizer["AdminMenuHeading"]</div>
+                        <a class="nav-link" asp-action="Index" asp-controller="Admin">
+                            <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div> @Localizer["Home"]
+                        </a>
                         <a class="nav-link" asp-action="InstructorsWithCourses" asp-controller="Admin">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
-                            Kurslar
+                            <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div> @Localizer["Courses"]
                         </a>
-
                         <a class="nav-link" asp-action="Statistics" asp-controller="Admin">
-                            <div class="sb-nav-link-icon"><i class="fas fa-chart-line"></i></div>
-                            İstatistikler
+                            <div class="sb-nav-link-icon"><i class="fas fa-chart-line"></i></div> @Localizer["Statistics"]
                         </a>
-
-                        <a class="nav-link" asp-action="Users" asp-controller="Admin">
-                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
-                            Kayıtlı Kullanıcılar
+                        <a class="nav-link" asp-controller="Admin" asp-action="Users">
+                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div> @Localizer["RegisteredUsers"]
                         </a>
-
                         <a class="nav-link" asp-controller="Account" asp-action="Logout">
-                            <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt"></i></div>
-                            Çıkış Yap
+                            <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt"></i></div> @Localizer["Logout"]
                         </a>
                     </div>
                 </div>
-
                 <div class="sb-sidenav-footer">
-                    <div class="small">Giriş Yapan:</div>
+                    <div class="small">@Localizer["LoggedInAs"]</div>
                     @fullName
                 </div>
             </nav>
         </div>
+
 
         <!-- SAYFA İÇERİĞİ -->
         <div id="layoutSidenav_content">
@@ -101,9 +123,7 @@
                     <div class="d-flex align-items-center justify-content-between small">
                         <div class="text-muted">Admin Modülü © Sağlık Bakanlığı 2025</div>
                         <div>
-                            <a href="#">Gizlilik</a>
-                            &middot;
-                            <a href="#">Koşullar</a>
+                            <a href="#">Gizlilik</a> &middot; <a href="#">Koşullar</a>
                         </div>
                     </div>
                 </div>

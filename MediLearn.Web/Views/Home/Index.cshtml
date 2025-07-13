@@ -1,18 +1,25 @@
-﻿<!DOCTYPE html>
-<html lang="tr">
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 
+@{
+    var returnUrl = HttpContextAccessor.HttpContext?.Request?.Path + HttpContextAccessor.HttpContext?.Request?.QueryString;
+}
+<!DOCTYPE html>
+<html lang="tr">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ana Sayfa - Online Personel Eğitim Portalı</title>
-
-    <!-- Bootstrap CSS -->
-    <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <title>@Localizer["HomeTitle"] - Online Personel Eğitim Portalı</title>
 
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             height: 100vh;
-            margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: url('/img/inde2.jpg') no-repeat center center fixed;
             background-size: cover;
@@ -26,28 +33,49 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Karartma efekti */
+            background-color: rgba(0, 0, 0, 0.5);
             z-index: 1;
         }
+
+        .language-box {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 3;
+            display: flex;
+            gap: 10px;
+        }
+
+            .language-box a img {
+                width: 28px;
+                height: 28px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: transform 0.2s;
+            }
+
+            .language-box a:hover img {
+                transform: scale(1.1);
+            }
 
         .content {
             position: relative;
             z-index: 2;
             height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
             text-align: center;
             padding: 0 1rem;
         }
 
-        .content h1 {
-            font-size: 3rem;
-            margin-bottom: 1.5rem;
-            font-weight: bold;
-            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
-        }
+            .content h1 {
+                font-size: 3rem;
+                margin-bottom: 2rem;
+                font-weight: bold;
+                text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+            }
 
         .start-btn {
             font-size: 1.5rem;
@@ -63,23 +91,31 @@
             transition: background-color 0.3s ease;
         }
 
-        .start-btn:hover {
-            background-color: #7a0000;
-            text-decoration: none;
-        }
+            .start-btn:hover {
+                background-color: #7a0000;
+            }
     </style>
 </head>
 
 <body>
     <div class="overlay"></div>
 
-    <div class="content">
-        <h1>Online Personel Eğitim Portalına Hoşgeldiniz</h1>
-        <a href="/Account/Login" class="start-btn">Hadi Eğitime Başla</a>
+    <!-- Dil Seçim Kutusu -->
+    <div class="language-box">
+        <a asp-controller="Account" asp-action="SetLanguage" asp-route-culture="tr" asp-route-returnUrl="@returnUrl" title="Türkçe">
+            <img src="~/img/flags/tr.png" alt="TR" />
+        </a>
+        <a asp-controller="Account" asp-action="SetLanguage" asp-route-culture="en" asp-route-returnUrl="@returnUrl" title="English">
+            <img src="~/img/flags/us.png" alt="EN" />
+        </a>
+        <a asp-controller="Account" asp-action="SetLanguage" asp-route-culture="fr" asp-route-returnUrl="@returnUrl" title="Français">
+            <img src="~/img/flags/fr.png" alt="FR" />
+        </a>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <div class="content">
+        <h1>@Localizer["HomeTitle"]</h1>
+        <a href="/Account/Login" class="start-btn">@Localizer["StartLearning"]</a>
+    </div>
 </body>
-
 </html>

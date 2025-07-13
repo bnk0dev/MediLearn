@@ -12,7 +12,6 @@ namespace Medilearn.Services.Interfaces
         Task<bool> CreateUserAsync(UserCreateDto userCreateDto);
         Task<string> GetPasswordHashByTCNoAsync(string tcNo);
 
-
         Task<List<UserDto>> GetUsersByRoleAsync(UserRole role);
         Task<IEnumerable<UserDto>> GetUsersByRoleAndStatusAsync(UserRole role, UserStatus status);
         Task<bool> ApproveUserAsync(string tcNo);
@@ -26,9 +25,5 @@ namespace Medilearn.Services.Interfaces
         Task<User> GetUserByTCNoAsync(string tcNo);
 
         Task UpdateUserAsync(User user);
-
-
-
-
     }
 }

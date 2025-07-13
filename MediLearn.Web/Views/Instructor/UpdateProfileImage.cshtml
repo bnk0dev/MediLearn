@@ -1,0 +1,35 @@
+﻿@model Medilearn.Models.ViewModels.ProfileImageDto
+
+@{
+    Layout = "_LayoutInstructor";
+    ViewBag.Title = "Profil Resmi Güncelle";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm p-4 mx-auto" style="max-width: 500px;">
+        <h2 class="text-center mb-4 text-danger">Profil Resmi Güncelle</h2>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">@TempData["Success"]</div>
+        }
+
+        <form asp-action="UpdateProfileImage" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+
+            <input asp-for="TCNo" type="hidden" />
+
+            <div class="mb-3">
+                <label asp-for="ProfileImage" class="form-label">Yeni Profil Resmi Seç</label>
+                <input asp-for="ProfileImage" type="file" class="form-control" />
+                <span asp-validation-for="ProfileImage" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-danger w-100">Resmi Güncelle</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

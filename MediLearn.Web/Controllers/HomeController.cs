@@ -1,16 +1,19 @@
-using System.Diagnostics;
 using MediLearn.Web.Models;
+using MediLearn.Web.Resources;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
+using System.Diagnostics;
 
 namespace MediLearn.Web.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IStringLocalizer<SharedResource> _localizer;
+        public HomeController(ILogger<HomeController> logger, IStringLocalizer<SharedResource> localizer)
         {
             _logger = logger;
+            _localizer = localizer;
         }
         public IActionResult TermsOfUse()
         {

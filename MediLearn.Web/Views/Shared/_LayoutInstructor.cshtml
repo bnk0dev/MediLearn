@@ -1,4 +1,5 @@
 ﻿@using System.Security.Claims
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
     var claimsIdentity = User.Identity as ClaimsIdentity;
@@ -7,15 +8,25 @@
     var fullName = $"{firstName} {lastName}".Trim();
     if (string.IsNullOrEmpty(fullName))
     {
-        fullName = User.Identity.Name; // fallback olarak TCNo veya username
+        fullName = User.Identity.Name;
     }
+
+    var profileImage = claimsIdentity?.FindFirst("ProfileImage")?.Value;
+    if (string.IsNullOrEmpty(profileImage))
+    {
+        profileImage = Url.Content("~/uploads/profiles/default.png");
+    }
+
+    var currentCulture = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower();
+    var flagCode = currentCulture == "en" ? "us" : currentCulture;
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
 }
 
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="@currentCulture">
 <head>
     <meta charset="utf-8" />
-    <title>@ViewBag.Title - Eğitmen Paneli</title>
+    <title>@ViewBag.Title - @Localizer["InstructorPanel"]</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Stil dosyaları -->
@@ -27,7 +38,7 @@
     <!-- Üst navbar -->
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Sol Logo -->
-        <a class="navbar-brand ps-3" href="#">Eğitmen Paneli</a>
+        <a class="navbar-brand ps-3" href="#">@Localizer["InstructorPanel"]</a>
 
         <!-- Sidebar aç/kapa -->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle">
@@ -37,17 +48,29 @@
         <!-- Sağ üst kullanıcı ve dil seçimi -->
         <ul class="navbar-nav ms-auto me-3 align-items-center">
             <li class="nav-item d-flex align-items-center me-3">
-                <img src="~/img/user-profile.png" alt="Kullanıcı" class="rounded-circle" style="width:32px; height:32px; object-fit:cover; border: 1px solid #fff;" />
+                <img src="@profileImage" alt="Kullanıcı" class="rounded-circle" style="width:32px; height:32px; object-fit:cover; border: 1px solid #fff;" />
                 <span class="text-white ms-2">@fullName</span>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle text-white" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Dil: TR
+                    <img src="~/img/flags/@(flagCode).png" alt="Dil" width="24" height="24" />
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-                    <li><a class="dropdown-item" href="?culture=tr">Türkçe (TR)</a></li>
-                    <li><a class="dropdown-item" href="?culture=en">English (EN)</a></li>
-                    <li><a class="dropdown-item" href="?culture=fr">Français (FR)</a></li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" asp-controller="Account" asp-action="SetLanguage" asp-route-culture="tr" asp-route-returnUrl="@returnUrl">
+                            <img src="~/img/flags/tr.png" width="24" class="me-2" /> Türkçe
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" asp-controller="Account" asp-action="SetLanguage" asp-route-culture="en" asp-route-returnUrl="@returnUrl">
+                            <img src="~/img/flags/us.png" width="24" class="me-2" /> English
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" asp-controller="Account" asp-action="SetLanguage" asp-route-culture="fr" asp-route-returnUrl="@returnUrl">
+                            <img src="~/img/flags/fr.png" width="24" class="me-2" /> Français
+                        </a>
+                    </li>
                 </ul>
             </li>
         </ul>
@@ -59,33 +82,29 @@
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <div class="sb-sidenav-menu-heading">Menü</div>
+                        <div class="sb-sidenav-menu-heading">@Localizer["Menu"]</div>
 
                         <a class="nav-link" href="/Instructor/Index">
                             <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
-                            Ana Sayfa
+                            @Localizer["Home"]
                         </a>
                         <a class="nav-link" href="/Instructor/AddCourse">
                             <div class="sb-nav-link-icon"><i class="fas fa-plus-circle"></i></div>
-                            Yeni Kurs Oluştur
-                        </a>
-                        <a class="nav-link" href="/Instructor/MyCourses">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book"></i></div>
-                            Kurslarım
+                            @Localizer["CreateNewCourse"]
                         </a>
                         <a class="nav-link" href="/Instructor/Profile">
                             <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
-                            Profil
+                            @Localizer["Profile"]
                         </a>
                         <a class="nav-link" asp-controller="Account" asp-action="Logout">
                             <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt"></i></div>
-                            Çıkış Yap
+                            @Localizer["Logout"]
                         </a>
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
-                    <div class="small">Rol:</div>
-                    Eğitmen
+                    <div class="small">@Localizer["Role"]:</div>
+                    @Localizer["Instructor"]
                 </div>
             </nav>
         </div>
@@ -101,11 +120,11 @@
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Eğitmen Modülü © Sağlık Bakanlığı 2025</div>
+                        <div class="text-muted">@Localizer["InstructorModule"] © @Localizer["Ministry"] 2025</div>
                         <div>
-                            <a href="#">Gizlilik</a>
+                            <a href="#">@Localizer["Privacy"]</a>
                             &middot;
-                            <a href="#">Koşullar</a>
+                            <a href="#">@Localizer["Terms"]</a>
                         </div>
                     </div>
                 </div>

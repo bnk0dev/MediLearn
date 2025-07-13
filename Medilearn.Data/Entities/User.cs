@@ -6,7 +6,6 @@ namespace Medilearn.Data.Entities
 {
     public class User
     {
-        
         [Key]
         [Required]
         [StringLength(11, MinimumLength = 11)]
@@ -37,7 +36,11 @@ namespace Medilearn.Data.Entities
         [Required]
         public UserStatus Status { get; set; }
 
-        public virtual ICollection<Course> Courses { get; set; }
+        [MaxLength(255)]
+        public string? ProfileImagePath { get; set; }
 
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+        public virtual ICollection<Course> Courses { get; set; } = new HashSet<Course>();
     }
 }
