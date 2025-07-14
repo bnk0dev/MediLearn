@@ -1,30 +1,33 @@
 ﻿@model Medilearn.Models.ViewModels.CoursesViewModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
 @{
     Layout = "_LayoutPersonnel";
-    ViewBag.Title = "Kurslar";
+    ViewBag.Title = Localizer["CourseListTitle"];
 }
+
+
+
+<!-- DataTables CSS -->
+<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+
+<h2 class="text-center my-4 text-danger fw-bold">@Localizer["CourseListTitle"]</h2>
 @if (TempData["Message"] != null)
 {
     <div class="alert alert-success">
         @TempData["Message"]
     </div>
 }
-
-<!-- DataTables CSS -->
-<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
-
-<h2 class="text-center my-4 text-danger fw-bold">Mevcut Kurslar</h2>
-
 <div class="container px-4 px-lg-5">
     <table id="coursesTable" class="table table-striped table-bordered table-hover align-middle">
         <thead class="table-light">
             <tr>
-                <th>Kurs Başlığı</th>
-                <th>Açıklama</th>
-                <th>Başlangıç Tarihi</th>
-                <th>Bitiş Tarihi</th>
-                <th>Durum</th>
-                <th>Kayıt</th>
+                <th>@Localizer["CourseTitle"]</th>
+                <th>@Localizer["Description"]</th>
+                <th>@Localizer["StartDate"]</th>
+                <th>@Localizer["EndDate"]</th>
+                <th>@Localizer["Status"]</th>
+                <th>@Localizer["Enroll"]</th>
             </tr>
         </thead>
         <tbody>
@@ -38,27 +41,27 @@
                     <td>
                         @if (DateTime.Now > course.EndDate)
                         {
-                            <span class="badge bg-secondary">Kayıt Süresi Doldu</span>
+                            <span class="badge bg-secondary">@Localizer["RegistrationClosed"]</span>
                         }
                         else
                         {
-                            <span class="badge bg-success">Kayıt Açık</span>
+                            <span class="badge bg-success">@Localizer["RegistrationOpen"]</span>
                         }
                     </td>
                     <td>
                         @if (DateTime.Now > course.EndDate)
                         {
-                            <button disabled class="btn btn-sm btn-secondary">Kayıt Ol</button>
+                            <button disabled class="btn btn-sm btn-secondary">@Localizer["Enroll"]</button>
                         }
                         else if (Model.EnrolledCourses.Any(c => c.Id == course.Id))
                         {
-                            <button disabled class="btn btn-sm btn-success">Kayıt Oluşturuldu</button>
+                            <button disabled class="btn btn-sm btn-success">@Localizer["AlreadyEnrolled"]</button>
                         }
                         else
                         {
                             <form asp-action="Enroll" asp-controller="Personnel" method="get" class="m-0 p-0">
                                 <input type="hidden" name="courseId" value="@course.Id" />
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Kayıt Ol</button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger">@Localizer["RegisterNow"]</button>
                             </form>
                         }
                     </td>
@@ -78,20 +81,20 @@
         $(document).ready(function () {
             $('#coursesTable').DataTable({
                 language: {
-                    search: "Ara:",
-                    lengthMenu: "Sayfa başına _MENU_ kayıt göster",
-                    zeroRecords: "Eşleşen kayıt bulunamadı",
-                    info: "_TOTAL_ kayıttan _START_ - _END_ arası gösteriliyor",
-                    infoEmpty: "Gösterilecek kayıt yok",
-                    infoFiltered: "(toplam _MAX_ kayıttan filtrelendi)",
+                    search: "@Localizer["Search"]",
+                    lengthMenu: "@Localizer["LengthMenu"]",
+                    zeroRecords: "@Localizer["ZeroRecords"]",
+                    info: "@Localizer["Info"]",
+                    infoEmpty: "@Localizer["InfoEmpty"]",
+                    infoFiltered: "@Localizer["InfoFiltered"]",
                     paginate: {
-                        next: "Sonraki",
-                        previous: "Önceki"
+                        next: "@Localizer["PaginateNext"]",
+                        previous: "@Localizer["PaginatePrevious"]"
                     }
                 },
                 lengthMenu: [5, 10, 15, 25, 50],
                 pageLength: 10,
-                order: [[2, "asc"]] // Başlangıç tarihine göre sıralama
+                order: [[2, "asc"]]
             });
         });
     </script>

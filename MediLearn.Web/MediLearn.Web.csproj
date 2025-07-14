@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\Views\Instructor\" />
     <Folder Include="wwwroot\uploads\profiles\" />
   </ItemGroup>
 
