@@ -14,7 +14,7 @@
     var profileImage = claimsIdentity?.FindFirst("ProfileImage")?.Value;
     if (string.IsNullOrEmpty(profileImage))
     {
-        profileImage = Url.Content("~/uploads/profiles/default.png");
+        profileImage = Url.Content("~/uploads/profiles/sudo.png");
     }
 
     var currentCulture = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower();
