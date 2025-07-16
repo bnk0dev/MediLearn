@@ -6,6 +6,7 @@
 }
 
 <h2 class="text-danger mb-4">Kullanıcı Bilgilerini Güncelle</h2>
+
 @if (!ViewData.ModelState.IsValid)
 {
     <div class="alert alert-danger">
@@ -17,38 +18,68 @@
         </ul>
     </div>
 }
-<form asp-action="EditUser" method="post" class="border p-4 rounded bg-light">
-    @Html.AntiForgeryToken()
-    <div class="mb-3">
-        <label asp-for="TCNo" class="form-label fw-bold">TC Kimlik No</label>
-        <input asp-for="TCNo" class="form-control" readonly />
+
+<div class="row">
+    <!-- Sol taraf: Kullanıcı bilgileri -->
+    <div class="col-md-6">
+        <form asp-action="EditUser" method="post" class="border p-4 rounded bg-light">
+            @Html.AntiForgeryToken()
+            <div class="mb-3">
+                <label asp-for="TCNo" class="form-label fw-bold">TC Kimlik No</label>
+                <input asp-for="TCNo" class="form-control" readonly />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="FirstName" class="form-label fw-bold">Ad</label>
+                <input asp-for="FirstName" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="LastName" class="form-label fw-bold">Soyad</label>
+                <input asp-for="LastName" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label fw-bold">E-posta</label>
+                <input asp-for="Email" type="email" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Role" class="form-label fw-bold">Rol</label>
+                <select asp-for="Role" class="form-select" asp-items="Html.GetEnumSelectList<UserRole>()"></select>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Status" class="form-label fw-bold">Durum</label>
+                <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<UserStatus>()"></select>
+            </div>
+
+            <button type="submit" class="btn btn-danger">Kaydet</button>
+            <a asp-action="Users" class="btn btn-secondary ms-2">İptal</a>
+        </form>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="FirstName" class="form-label fw-bold">Ad</label>
-        <input asp-for="FirstName" class="form-control" />
-    </div>
+    <!-- Sağ taraf: Şifre değiştirme -->
+    <div class="col-md-6">
+        <div class="border p-4 rounded bg-light">
+            <h4 class="text-primary mb-3">Şifre Değiştir</h4>
+            <form asp-action="ChangePassword" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="TCNo" value="@Model.TCNo" />
 
-    <div class="mb-3">
-        <label asp-for="LastName" class="form-label fw-bold">Soyad</label>
-        <input asp-for="LastName" class="form-control" />
-    </div>
+                <div class="mb-3">
+                    <label for="NewPassword" class="form-label fw-bold">Yeni Şifre</label>
+                    <input type="password" class="form-control" id="NewPassword" name="NewPassword" required />
+                </div>
 
-    <div class="mb-3">
-        <label asp-for="Email" class="form-label fw-bold">E-posta</label>
-        <input asp-for="Email" type="email" class="form-control" />
-    </div>
+                <div class="mb-3">
+                    <label for="ConfirmPassword" class="form-label fw-bold">Yeni Şifre (Tekrar)</label>
+                    <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" required />
+                </div>
 
-    <div class="mb-3">
-        <label asp-for="Role" class="form-label fw-bold">Rol</label>
-        <select asp-for="Role" class="form-select" asp-items="Html.GetEnumSelectList<UserRole>()"></select>
-    </div>
+                <button type="submit" class="btn btn-warning">Şifreyi Güncelle</button>
+            </form>
 
-    <div class="mb-3">
-        <label asp-for="Status" class="form-label fw-bold">Durum</label>
-        <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<UserStatus>()"></select>
+        </div>
     </div>
-
-    <button type="submit" class="btn btn-danger">Kaydet</button>
-    <a asp-action="Users" class="btn btn-secondary ms-2">İptal</a>
-</form>
+</div>

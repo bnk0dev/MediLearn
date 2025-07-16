@@ -1,6 +1,6 @@
 ﻿using Medilearn.Data.Enums;
 using Medilearn.Models.DTOs;
-using Medilearn.Models.ViewModels;  // ProfileDto ve ProfileImageDto
+using Medilearn.Models.ViewModels;
 using Medilearn.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -28,7 +28,7 @@ namespace Medilearn.Web.Controllers
             _env = env;
         }
 
-        //DİL DEĞİŞTİRME
+        // DİL DEĞİŞTİRME
         [AllowAnonymous]
         [HttpGet]
         public IActionResult SetLanguage(string culture, string returnUrl = "/")
@@ -51,7 +51,6 @@ namespace Medilearn.Web.Controllers
             return LocalRedirect(returnUrl);
         }
 
-
         // GET: /Account/Register
         [AllowAnonymous]
         [HttpGet]
@@ -71,8 +70,6 @@ namespace Medilearn.Web.Controllers
             model.Status = ((UserRole)model.Role) == UserRole.Instructor
                  ? UserStatus.Pending
                  : UserStatus.Active;
-
-            // Profil resmi set etmiyoruz, boş bırakıyoruz.
 
             var success = await _userService.CreateUserAsync(model);
             if (!success)
@@ -108,9 +105,22 @@ namespace Medilearn.Web.Controllers
             }
 
             var user = await _userService.GetUserByTCNoAsync(model.TCNo);
-            if (user == null || user.Status != UserStatus.Active)
+            if (user == null)
             {
-                ModelState.AddModelError("", "Kullanıcı bulunamadı veya aktif değil.");
+                ModelState.AddModelError("", "Kullanıcı bulunamadı.");
+                return View(model);
+            }
+
+            //  Ban kontrolü
+            if (user.Status == UserStatus.Banned)
+            {
+                ModelState.AddModelError("", "Hesabınız sistem tarafından engellenmiştir. Yönetim ile iletişime geçiniz.");
+                return View(model);
+            }
+
+            if (user.Status != UserStatus.Active)
+            {
+                ModelState.AddModelError("", "Kullanıcınız henüz aktif değil.");
                 return View(model);
             }
 
@@ -158,7 +168,7 @@ namespace Medilearn.Web.Controllers
             return RedirectToAction("Login");
         }
 
-        // PROFİL BİLGİLERİ GÖRÜNTÜLE VE GÜNCELLE
+        // PROFİL BİLGİLERİ
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
@@ -195,7 +205,7 @@ namespace Medilearn.Web.Controllers
             return View(model);
         }
 
-        // PROFİL RESMİ GÜNCELLEME SAYFASI
+        // PROFİL RESMİ
         [HttpGet]
         public IActionResult UpdateProfileImage()
         {
@@ -204,7 +214,6 @@ namespace Medilearn.Web.Controllers
             return View(model);
         }
 
-        // PROFİL RESMİ GÜNCELLEME POST
         [HttpPost]
         public async Task<IActionResult> UpdateProfileImage(ProfileImageDto model)
         {
@@ -225,11 +234,9 @@ namespace Medilearn.Web.Controllers
             }
 
             user.ProfileImagePath = "/uploads/profiles/" + uniqueFileName;
-
             await _userService.UpdateUserAsync(user);
 
             TempData["Success"] = "Profil resmi güncellendi.";
-
             return RedirectToAction("Profile");
         }
     }

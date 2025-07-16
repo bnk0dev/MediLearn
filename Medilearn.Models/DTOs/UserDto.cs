@@ -1,4 +1,5 @@
 ﻿using Medilearn.Data.Enums;
+using Microsoft.AspNetCore.Http;
 
 namespace Medilearn.Models.DTOs
 {
@@ -12,6 +13,8 @@ namespace Medilearn.Models.DTOs
         public UserRole Role { get; set; }
         public UserStatus Status { get; set; }
         public string? ProfileImagePath { get; set; }
+        public IFormFile? ProfileImageFile { get; set; }
+
 
         public DateTime CreatedDate { get; set; }
 

@@ -1,21 +1,23 @@
 ﻿@model List<Medilearn.Models.DTOs.CourseDto>
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
-    ViewData["Title"] = "Eğitmen Paneli";
+    ViewData["Title"] = Localizer["InstructorPanelTitle"];
     Layout = "_LayoutInstructor";
-    var fullName = ViewBag.FullName as string ?? "Eğitmen";
+    var fullName = ViewBag.FullName as string ?? Localizer["Instructor"].Value;
 }
-<div class="courses-container my-5">
-    <h2 class="section-title">Kurslarım</h2>
 
-    <table class="table table-bordered table-hover table-striped align-middle custom-table">
-        <thead>
+<div class="container my-5">
+    <h2 class="mb-4">@Localizer["MyCoursesHeading"]</h2>
+
+    <table class="table table-bordered table-hover table-striped align-middle">
+        <thead class="table-dark">
             <tr>
-                <th>Kurs Başlığı</th>
-                <th>Açıklama</th>
-                <th>Başlangıç Tarihi</th>
-                <th>Bitiş Tarihi</th>
-                <th>Materyal Ekle</th>
+                <th scope="col">@Localizer["CourseTitle"]</th>
+                <th scope="col">@Localizer["Description"]</th>
+                <th scope="col">@Localizer["StartDate"]</th>
+                <th scope="col">@Localizer["EndDate"]</th>
+                <th scope="col">@Localizer["Actions"]</th>
             </tr>
         </thead>
         <tbody>
@@ -27,8 +29,10 @@
                     <td>@course.StartDate.ToString("yyyy-MM-dd")</td>
                     <td>@course.EndDate.ToString("yyyy-MM-dd")</td>
                     <td>
-                        <a asp-action="AddMaterial" asp-route-courseId="@course.Id" class="btn btn-outline-danger action-btn">
-                            <i class="fa fa-file-upload me-1"></i> Materyal Ekle
+                        <a asp-action="AddMaterial"
+                           asp-route-courseId="@course.Id"
+                           class="btn btn-sm btn-danger">
+                            <i class="fa fa-file-upload me-1"></i> @Localizer["AddMaterialButton"]
                         </a>
                     </td>
                 </tr>

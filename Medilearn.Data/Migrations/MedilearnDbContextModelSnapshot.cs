@@ -195,7 +195,7 @@ namespace Medilearn.Data.Migrations
             modelBuilder.Entity("Medilearn.Data.Entities.CourseMaterial", b =>
                 {
                     b.HasOne("Medilearn.Data.Entities.Course", "Course")
-                        .WithMany()
+                        .WithMany("CourseMaterials")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -228,6 +228,8 @@ namespace Medilearn.Data.Migrations
 
             modelBuilder.Entity("Medilearn.Data.Entities.Course", b =>
                 {
+                    b.Navigation("CourseMaterials");
+
                     b.Navigation("Enrollments");
                 });
 

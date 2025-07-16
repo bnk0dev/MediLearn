@@ -1,5 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Medilearn.Data.Entities
 {
@@ -12,11 +17,11 @@ namespace Medilearn.Data.Entities
         public int CourseId { get; set; }
 
         [Required]
-        public string MaterialPath { get; set; } 
+        public string MaterialPath { get; set; }
 
-        public DateTime UploadDate { get; set; }
+        public DateTime UploadDate { get; set; } = DateTime.Now;
 
-        [ForeignKey("CourseId")]
+        [ForeignKey(nameof(CourseId))]
         public Course Course { get; set; }
     }
 }

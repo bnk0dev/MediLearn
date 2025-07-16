@@ -17,6 +17,8 @@ namespace Medilearn.Services.Interfaces
         Task<bool> ApproveUserAsync(string tcNo);
 
         string HashPassword(string password);
+        Task<User> GetByTCNoAsync(string tcNo);
+        Task UpdateAsync(User user);
 
         Task<int> GetTotalUsersAsync();
         Task<int> GetTotalPersonnelAsync();
@@ -25,5 +27,6 @@ namespace Medilearn.Services.Interfaces
         Task<User> GetUserByTCNoAsync(string tcNo);
 
         Task UpdateUserAsync(User user);
+
     }
 }

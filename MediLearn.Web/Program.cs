@@ -1,27 +1,39 @@
 using Medilearn.Data.Contexts;
+using Medilearn.Data.Entities;
 using Medilearn.Services;
 using Medilearn.Services.Interfaces;
 using Medilearn.Services.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Localization ayarlarý ve desteklenen diller
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
 var supportedCultures = new[] { "tr", "en", "fr" };
 var cultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
 
-// 2. MVC ve View localization desteði
+// 2. Scoped servisler ve baðýmlýlýklar
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IInstructorService, InstructorService>();
+builder.Services.AddScoped<ICourseService, CourseService>();
+builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
+builder.Services.AddScoped<ICourseMaterialService, CourseMaterialService>();
+
+// 3. DbContext ayarý
+builder.Services.AddDbContext<MedilearnDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// 4. MVC ve View Localization
 builder.Services.AddControllersWithViews()
     .AddViewLocalization();
 
-// 3. Authentication ayarlarý
+// 5. Authentication (Cookie) ayarlarý
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -29,26 +41,18 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
     });
 
-// 4. DbContext ayarý
-builder.Services.AddDbContext<MedilearnDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// 5. Scoped servisler
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IInstructorService, InstructorService>();
-builder.Services.AddScoped<ICourseService, CourseService>();
-builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
-
-// 6. Diðer ayarlar
+// 6. HttpContextAccessor mutlaka eklenmeli
 builder.Services.AddHttpContextAccessor();
+
+// 7. Dosya yükleme boyut limiti (max 10 MB)
 builder.Services.Configure<FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = 50 * 1024 * 1024; // 50 MB
+    options.MultipartBodyLengthLimit = 10 * 1024 * 1024; // 10 MB
 });
 
 var app = builder.Build();
 
-// 7. Localization middleware ayarlarý
+// 8. Localization middleware ayarlarý
 var localizationOptions = new RequestLocalizationOptions
 {
     DefaultRequestCulture = new RequestCulture("tr"),
@@ -61,10 +65,9 @@ var localizationOptions = new RequestLocalizationOptions
         new AcceptLanguageHeaderRequestCultureProvider()
     }
 };
-
 app.UseRequestLocalization(localizationOptions);
 
-// 8. Pipeline ayarlarý
+// 9. Pipeline yapýlandýrmasý
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -79,7 +82,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// 9. Route tanýmlamasý
+// 10. Route tanýmlamasý
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

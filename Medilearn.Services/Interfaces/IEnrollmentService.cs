@@ -21,7 +21,6 @@ namespace Medilearn.Services.Interfaces
         Task<bool> MarkCourseCompletedAsync(string personnelTcNo, int courseId);
         Task EnrollAsync(string tcNo, int courseId);
         Task<List<Course>> GetRegisteredCoursesAsync(string tcNo);
-        Task<CourseMaterialViewModel> GetCourseMaterialAsync(int courseId);
         Task MarkCourseCompleteAsync(string tcNo, int courseId);
 
     }

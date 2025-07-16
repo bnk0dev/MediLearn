@@ -35,18 +35,7 @@ namespace Medilearn.Services.Services
                 })
                 .ToListAsync();
         }
-        public async Task AddCourseMaterialAsync(int courseId, string filePath)
-        {
-            var courseMaterial = new CourseMaterial
-            {
-                CourseId = courseId,
-                MaterialPath = filePath,
-                UploadDate = DateTime.Now
-            };
 
-            _context.CourseMaterials.Add(courseMaterial);
-            await _context.SaveChangesAsync();
-        }
         public async Task<int> GetTotalCoursesAsync()
         {
             return await _context.Courses.CountAsync();
@@ -103,20 +92,6 @@ namespace Medilearn.Services.Services
                     StartDate = c.StartDate,
                     EndDate = c.EndDate,
                     InstructorTCNo = c.InstructorTCNo
-                })
-                .ToListAsync();
-        }
-
-
-        public async Task<IEnumerable<CourseMaterialDto>> GetCourseMaterialsAsync(int courseId)
-        {
-            return await _context.CourseMaterials
-                .Where(cm => cm.CourseId == courseId)
-                .Select(cm => new CourseMaterialDto
-                {
-                    Id = cm.Id,
-                    CourseId = cm.CourseId,
-                    FilePath = cm.MaterialPath
                 })
                 .ToListAsync();
         }
@@ -206,7 +181,6 @@ namespace Medilearn.Services.Services
 
         public async Task<int> AddCourseAndReturnIdAsync(CourseDto dto, string instructorTcNo)
         {
-
             var course = new Course
             {
                 Title = dto.Title,

@@ -5,6 +5,7 @@ using Medilearn.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using System.IO;
 
 [Authorize(Roles = "Personnel")]
 public class PersonnelController : Controller
@@ -17,6 +18,7 @@ public class PersonnelController : Controller
         ICourseService courseService,
         IEnrollmentService enrollmentService,
         IUserService userService)
+
     {
         _courseService = courseService;
         _enrollmentService = enrollmentService;
@@ -208,4 +210,70 @@ public class PersonnelController : Controller
         ViewBag.Message = "Profiliniz başarıyla güncellendi.";
         return View(model);
     }
+
+    [HttpGet]
+    public IActionResult UpdateProfileImage()
+    {
+        var tcNo = User.Identity?.Name;
+        if (string.IsNullOrEmpty(tcNo))
+            return Unauthorized();
+
+        var model = new ProfileImageDto { TCNo = tcNo };
+        return View(model);
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateProfileImage(ProfileImageDto model)
+    {
+        if (!ModelState.IsValid)
+            return View(model);
+
+        if (model.ProfileImage == null || model.ProfileImage.Length == 0)
+        {
+            ModelState.AddModelError("ProfileImage", "Lütfen bir dosya seçiniz.");
+            return View(model);
+        }
+
+        // Dosya uzantısını kontrol et (ekstra güvenlik)
+        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+        var extension = Path.GetExtension(model.ProfileImage.FileName).ToLowerInvariant();
+
+        if (!allowedExtensions.Contains(extension))
+        {
+            ModelState.AddModelError("ProfileImage", "Sadece .jpg, .jpeg veya .png dosyaları yüklenebilir.");
+            return View(model);
+        }
+
+        var user = await _userService.GetUserByTCNoAsync(model.TCNo);
+        if (user == null)
+            return NotFound();
+
+        try
+        {
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "profiles");
+            Directory.CreateDirectory(uploadsFolder);
+
+            var uniqueFileName = $"{Guid.NewGuid()}{extension}";
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await model.ProfileImage.CopyToAsync(fileStream);
+            }
+
+            user.ProfileImagePath = "/uploads/profiles/" + uniqueFileName;
+            await _userService.UpdateUserAsync(user);
+
+            TempData["Success"] = "Profil resminiz başarıyla güncellendi.";
+            return RedirectToAction("UpdateProfileImage");
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("", "Dosya yüklenirken hata oluştu: " + ex.Message);
+            return View(model);
+        }
+    }
+
+
+
 }

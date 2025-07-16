@@ -120,17 +120,29 @@
   <data name="AdminMenuHeading" xml:space="preserve">
     <value>Admin Menüsü</value>
   </data>
+  <data name="BannedUsers" xml:space="preserve">
+    <value>Yasaklı Kullanıcılar</value>
+  </data>
   <data name="Courses" xml:space="preserve">
     <value>Kurslar</value>
   </data>
+  <data name="gzllk" xml:space="preserve">
+    <value>Gizlilik Politikası</value>
+  </data>
   <data name="Home" xml:space="preserve">
     <value>Anasayfa</value>
+  </data>
+  <data name="kssl" xml:space="preserve">
+    <value>Kullanım Koşulları</value>
   </data>
   <data name="LoggedInAs" xml:space="preserve">
     <value>Giriş Yapan:</value>
   </data>
   <data name="Logout" xml:space="preserve">
     <value>Çıkış Yap</value>
+  </data>
+  <data name="mod" xml:space="preserve">
+    <value>Admin Modülü</value>
   </data>
   <data name="RegisteredUsers" xml:space="preserve">
     <value>Kayıtlı Kullanıcılar</value>

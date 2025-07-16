@@ -31,6 +31,8 @@ namespace Medilearn.Data.Entities
 
         public string? MaterialPath { get; set; }
         public List<Enrollment>? Enrollments { get; set; }
+        public ICollection<CourseMaterial> CourseMaterials { get; set; } = new List<CourseMaterial>();
+
 
 
 

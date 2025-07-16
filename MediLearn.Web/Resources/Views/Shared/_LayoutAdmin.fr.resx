@@ -120,17 +120,29 @@
   <data name="AdminMenuHeading" xml:space="preserve">
     <value>Menu Admin</value>
   </data>
+  <data name="BannedUsers" xml:space="preserve">
+    <value>Utilisateurs bannis</value>
+  </data>
   <data name="Courses" xml:space="preserve">
     <value>Cours</value>
   </data>
+  <data name="gzllk" xml:space="preserve">
+    <value>Politique de Confidentialité</value>
+  </data>
   <data name="Home" xml:space="preserve">
     <value>Accueil</value>
+  </data>
+  <data name="kssl" xml:space="preserve">
+    <value>Conditions</value>
   </data>
   <data name="LoggedInAs" xml:space="preserve">
     <value>Connecté en tant que :</value>
   </data>
   <data name="Logout" xml:space="preserve">
     <value>Déconnexion</value>
+  </data>
+  <data name="mod" xml:space="preserve">
+    <value>Module d'administration</value>
   </data>
   <data name="RegisteredUsers" xml:space="preserve">
     <value>Utilisateurs enregistrés</value>

@@ -97,6 +97,10 @@
                         <a class="nav-link" asp-controller="Admin" asp-action="Users">
                             <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div> @Localizer["RegisteredUsers"]
                         </a>
+                        <a class="nav-link text-danger fw-bold" asp-controller="Admin" asp-action="BannedUsers" title="Banlı Kullanıcılar">
+                            <div class="sb-nav-link-icon"><i class="fas fa-users-slash"></i></div> @Localizer["BannedUsers"]
+                        </a>
+
                         <a class="nav-link" asp-controller="Account" asp-action="Logout">
                             <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt"></i></div> @Localizer["Logout"]
                         </a>
@@ -121,9 +125,9 @@
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">Admin Modülü © Sağlık Bakanlığı 2025</div>
+                        <div class="text-muted">@Localizer["mod"] © Sağlık Bakanlığı 2025</div>
                         <div>
-                            <a href="#">Gizlilik</a> &middot; <a href="#">Koşullar</a>
+                            <a href="#">@Localizer["gzllk"]</a> &middot; <a href="#">@Localizer["kssl"]</a>
                         </div>
                     </div>
                 </div>

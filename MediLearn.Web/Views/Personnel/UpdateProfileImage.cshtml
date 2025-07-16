@@ -1,4 +1,4 @@
-﻿@model Medilearn.Models.ViewModels.ProfileImageDto
+﻿@model Medilearn.Models.DTOs.ProfileImageDto
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
@@ -14,7 +14,6 @@
         {
             <div class="alert alert-success">@TempData["Success"]</div>
         }
-
         <form asp-action="UpdateProfileImage" method="post" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
 

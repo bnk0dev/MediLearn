@@ -1,11 +1,13 @@
-﻿using Medilearn.Models.DTOs;
+﻿using Medilearn.Data.Contexts;
+using Medilearn.Data.Entities;
+using Medilearn.Models.DTOs;
 using Medilearn.Models.ViewModels;
 using Medilearn.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Medilearn.Web.Controllers
@@ -15,16 +17,15 @@ namespace Medilearn.Web.Controllers
     {
         private readonly ICourseService _courseService;
         private readonly IUserService _userService;
+        private readonly ICourseMaterialService _courseMaterialService;
 
-        public InstructorController(ICourseService courseService, IUserService userService)
+        public InstructorController(ICourseService courseService, IUserService userService, ICourseMaterialService courseMaterialService)
         {
             _courseService = courseService;
             _userService = userService;
+            _courseMaterialService = courseMaterialService;
         }
 
-        // -------------------------------
-        // PANEL INDEX
-        // -------------------------------
         public async Task<IActionResult> Index()
         {
             var instructorTcNo = User.Identity?.Name;
@@ -38,10 +39,6 @@ namespace Medilearn.Web.Controllers
             return View(courses);
         }
 
-
-        // -------------------------------
-        // KURS OLUŞTURMA
-        // -------------------------------
         [HttpGet]
         public IActionResult AddCourse()
         {
@@ -59,7 +56,6 @@ namespace Medilearn.Web.Controllers
             model.InstructorTCNo = instructorTcNo;
             model.InstructorId = instructorTcNo;
 
-            // Bu alanlar view tarafında olmayabilir, o yüzden çıkar
             ModelState.Remove(nameof(model.InstructorTCNo));
             ModelState.Remove(nameof(model.InstructorId));
             ModelState.Remove(nameof(model.MaterialFileName));
@@ -77,9 +73,6 @@ namespace Medilearn.Web.Controllers
             return RedirectToAction(nameof(MyCourses));
         }
 
-        // -------------------------------
-        // EĞİTMENİN KENDİ KURSLARI
-        // -------------------------------
         [HttpGet]
         public async Task<IActionResult> MyCourses()
         {
@@ -91,55 +84,6 @@ namespace Medilearn.Web.Controllers
             return View(courses);
         }
 
-        // -------------------------------
-        // MATERYAL EKLEME
-        // -------------------------------
-        [HttpGet]
-        public IActionResult AddMaterial(int courseId)
-        {
-            ViewBag.CourseId = courseId;
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddMaterial(int courseId, IFormFile file)
-        {
-            if (file == null || file.Length == 0)
-            {
-                ModelState.AddModelError("", "Lütfen dosya seçiniz.");
-                ViewBag.CourseId = courseId;
-                return View();
-            }
-
-            try
-            {
-                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
-                Directory.CreateDirectory(uploadsFolder);
-
-                var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(fileStream);
-                }
-
-                await _courseService.AddCourseMaterialAsync(courseId, uniqueFileName);
-                return RedirectToAction(nameof(MyCourses));
-            }
-            catch (Exception ex)
-            {
-                System.IO.File.WriteAllText("errorlog.txt", ex.ToString());
-                ModelState.AddModelError("", "HATA: " + ex.Message);
-                ViewBag.CourseId = courseId;
-                return View();
-            }
-        }
-
-        // -------------------------------
-        // PROFİL GÖRÜNTÜLEME VE GÜNCELLEME
-        // -------------------------------
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
@@ -162,33 +106,6 @@ namespace Medilearn.Web.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Profile(ProfileDto model)
-        {
-            if (!ModelState.IsValid)
-                return View(model);
-
-            var tcNo = User.Identity?.Name;
-            if (model.TCNo != tcNo)
-                return BadRequest("TC No değiştirilemez.");
-
-            var user = await _userService.GetUserByTCNoAsync(tcNo);
-            if (user == null)
-                return NotFound();
-
-            user.FirstName = model.FirstName;
-            user.LastName = model.LastName;
-            user.Email = model.Email;
-
-            await _userService.UpdateUserAsync(user);
-
-            ViewBag.Message = "Profiliniz başarıyla güncellendi.";
-            return View(model);
-        }
-
-        // -------------------------------
-        // PROFİL RESMİ YÜKLEME
-        // -------------------------------
         [HttpGet]
         public IActionResult UpdateProfileImage()
         {
@@ -207,6 +124,21 @@ namespace Medilearn.Web.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
+            if (model.ProfileImage == null || model.ProfileImage.Length == 0)
+            {
+                ModelState.AddModelError("ProfileImage", "Lütfen bir dosya seçiniz.");
+                return View(model);
+            }
+
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+            var extension = Path.GetExtension(model.ProfileImage.FileName).ToLowerInvariant();
+
+            if (!allowedExtensions.Contains(extension))
+            {
+                ModelState.AddModelError("ProfileImage", "Sadece .jpg, .jpeg veya .png dosyaları yüklenebilir.");
+                return View(model);
+            }
+
             var user = await _userService.GetUserByTCNoAsync(model.TCNo);
             if (user == null)
                 return NotFound();
@@ -216,7 +148,7 @@ namespace Medilearn.Web.Controllers
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "profiles");
                 Directory.CreateDirectory(uploadsFolder);
 
-                var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(model.ProfileImage.FileName)}";
+                var uniqueFileName = $"{Guid.NewGuid()}{extension}";
                 var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
@@ -235,6 +167,77 @@ namespace Medilearn.Web.Controllers
                 ModelState.AddModelError("", "Dosya yüklenirken hata oluştu: " + ex.Message);
                 return View(model);
             }
+        }
+
+        // GET: Kursa ait materyaller
+        [HttpGet]
+        public async Task<IActionResult> CourseMaterials(int courseId)
+        {
+            var materials = await _courseMaterialService.GetCourseMaterialsByCourseIdAsync(courseId);
+            ViewBag.CourseId = courseId;
+            return View(materials);
+        }
+
+        // GET: Materyal ekleme formu
+        [HttpGet]
+        public IActionResult AddMaterial(int courseId)
+        {
+            return View(new AddMaterialViewModel { CourseId = courseId });
+        }
+
+        // POST: PDF materyal yükleme işlemi
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddMaterial(AddMaterialViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            if (model.MaterialFile == null || model.MaterialFile.Length == 0)
+            {
+                ModelState.AddModelError("MaterialFile", "Dosya seçilmedi.");
+                return View(model);
+            }
+
+            var extension = Path.GetExtension(model.MaterialFile.FileName).ToLowerInvariant();
+            if (extension != ".pdf")
+            {
+                ModelState.AddModelError("MaterialFile", "Sadece PDF dosyaları yüklenebilir.");
+                return View(model);
+            }
+
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/materials");
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
+
+            var uniqueFileName = Guid.NewGuid() + extension;
+            var fullPath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                await model.MaterialFile.CopyToAsync(stream);
+            }
+
+            var relativePath = "/uploads/materials/" + uniqueFileName;
+
+            // CourseMaterial tablosuna ekle
+            var material = new CourseMaterial
+            {
+                CourseId = model.CourseId,
+                MaterialPath = relativePath,
+                UploadDate = DateTime.Now
+            };
+            await _courseMaterialService.AddCourseMaterialAsync(material);
+
+            // Course tablosuna tek materyal için yol yaz (personel tarafı için)
+            var course = await _courseService.GetCourseByIdAsync(model.CourseId);
+            if (course != null)
+            {
+                course.MaterialFileName = relativePath;
+                await _courseService.UpdateCourseAsync(course);
+            }
+
+            return RedirectToAction("MyCourses");
         }
     }
 }

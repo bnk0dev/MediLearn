@@ -6,14 +6,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Medilearn.Models.ViewModels
+namespace Medilearn.Models.DTOs
 {
     public class ProfileImageDto
     {
-        [Required]
         public string TCNo { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Lütfen bir resim dosyası seçiniz.")]
+        [DataType(DataType.Upload)]
+       // [FileExtensions(Extensions = "jpg,jpeg,png", ErrorMessage = "Sadece .jpg, .jpeg veya .png dosyaları yüklenebilir.")]
         public IFormFile ProfileImage { get; set; }
     }
 }

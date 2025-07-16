@@ -34,13 +34,31 @@
                     <td>@user.Email</td>
                     <td><span class="role-badge">@user.Role.ToString()</span></td>
                     <td>
-                        <a asp-action="EditUser" asp-route-id="@user.TCNo" class="btn btn-outline-danger btn-sm me-2 action-btn">
+                        <!-- Düzenle -->
+                        <a asp-action="EditUser" asp-route-id="@user.TCNo" class="btn btn-outline-primary btn-sm me-1" title="@Localizer["Edit"]">
                             <i class="fa fa-edit"></i> @Localizer["Edit"]
                         </a>
-                        <a asp-action="DeleteUser" asp-route-id="@user.TCNo" class="btn btn-outline-secondary btn-sm action-btn"
-                           onclick="return confirm('@Localizer["ConfirmDeleteUser"]');">
+
+                        <!-- Sil -->
+                        <a asp-action="DeleteUser" asp-route-id="@user.TCNo" class="btn btn-outline-danger btn-sm me-1"
+                           onclick="return confirm('@Localizer["ConfirmDeleteUser"]');" title="@Localizer["Delete"]">
                             <i class="fa fa-trash"></i> @Localizer["Delete"]
                         </a>
+
+                        <!-- Banla (sadece aktif kullanıcılar için göster) -->
+                        @if (user.Status != Medilearn.Data.Enums.UserStatus.Banned)
+                        {
+                            <form asp-action="BanUser" method="post" class="d-inline" onsubmit="return confirm('@Localizer["ConfirmBanUser"]');">
+                                <input type="hidden" name="tcNo" value="@user.TCNo" />
+                                <button type="submit" class="btn btn-outline-warning btn-sm" title="@Localizer["BanUser"]">
+                                    <i class="fa fa-ban"></i> @Localizer["Ban"]
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">@Localizer["Banned"]</span>
+                        }
                     </td>
                 </tr>
             }

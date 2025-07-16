@@ -7,13 +7,25 @@
     var tokens = Antiforgery.GetAndStoreTokens(Context);
 }
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 <div class="container my-5">
     <h2 class="text-danger fw-bold mb-4">@Model.Title</h2>
 
     @if (!string.IsNullOrEmpty(Model.MaterialFileName))
     {
-        <div class="ratio ratio-16x9 mb-4" style="max-height: 600px;">
-            <iframe src="@Model.MaterialFileName" frameborder="0" allowfullscreen></iframe>
+        <div id="pdf-container" class="mb-4 text-center">
+            <canvas id="pdf-render" style="max-width: 100%; border: 1px solid #ccc;"></canvas>
+
+            <div class="mt-3">
+                <button id="prev-page" class="btn btn-outline-secondary me-2" type="button">
+                    <i class="fa fa-chevron-left"></i> Önceki
+                </button>
+                <span>Sayfa <span id="page-num"></span> / <span id="page-count"></span></span>
+                <button id="next-page" class="btn btn-outline-secondary ms-2" type="button">
+                    Sonraki <i class="fa fa-chevron-right"></i>
+                </button>
+            </div>
         </div>
     }
     else
@@ -32,35 +44,108 @@
         </div>
     </div>
 
-    <button id="completeCourseBtn" class="btn btn-danger mt-4" style="display:none;">
+    <button id="completeCourseBtn" class="btn btn-danger mt-4" style="display:none;" type="button">
         Kursu Bitir
     </button>
 </div>
 
 @section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script>
-        // 30 saniye sonra butonu göster
-        setTimeout(() => {
-            const btn = document.getElementById('completeCourseBtn');
-            if (btn) btn.style.display = 'inline-block';
-        }, 30000);
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('pdf-render');
+            if (!canvas) return; // canvas yoksa scripti durdur
 
-        document.getElementById('completeCourseBtn').addEventListener('click', () => {
-            fetch('@Url.Action("CompleteCourse", "Personnel")', {
-                method: 'POST',
-                headers: {
-                    'RequestVerificationToken': '@tokens.RequestToken',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ courseId: @Model.Id })
-            })
-            .then(response => {
-                if (response.ok) {
-                    alert('Kurs başarıyla tamamlandı!');
-                    window.location.href = '@Url.Action("Index", "Personnel")';
+            const ctx = canvas.getContext('2d');
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+            const url = '@Model.MaterialFileName';
+            let pdfDoc = null,
+                pageNum = 1,
+                pageRendering = false,
+                pageNumPending = null,
+                totalPages = 0;
+
+            function renderPage(num) {
+                pageRendering = true;
+                pdfDoc.getPage(num).then(page => {
+                    const viewport = page.getViewport({ scale: 1.5 });
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    const renderContext = {
+                        canvasContext: ctx,
+                        viewport: viewport
+                    };
+                    const renderTask = page.render(renderContext);
+
+                    renderTask.promise.then(() => {
+                        pageRendering = false;
+                        document.getElementById('page-num').textContent = num;
+
+                        // Son sayfadaysak "Kursu Bitir" butonunu göster, değilse gizle
+                        if (pageNum === totalPages) {
+                            document.getElementById('completeCourseBtn').style.display = 'inline-block';
+                        } else {
+                            document.getElementById('completeCourseBtn').style.display = 'none';
+                        }
+
+                        if (pageNumPending !== null) {
+                            renderPage(pageNumPending);
+                            pageNumPending = null;
+                        }
+                    });
+                });
+            }
+
+            function queueRenderPage(num) {
+                if (pageRendering) {
+                    pageNumPending = num;
                 } else {
-                    alert('Bir hata oluştu.');
+                    renderPage(num);
                 }
+            }
+
+            document.getElementById('prev-page').addEventListener('click', () => {
+                if (pageNum <= 1) return;
+                pageNum--;
+                queueRenderPage(pageNum);
+            });
+
+            document.getElementById('next-page').addEventListener('click', () => {
+                if (pageNum >= totalPages) return;
+                pageNum++;
+                queueRenderPage(pageNum);
+            });
+
+            pdfjsLib.getDocument(url).promise.then(pdfDoc_ => {
+                pdfDoc = pdfDoc_;
+                totalPages = pdfDoc.numPages;
+                document.getElementById('page-count').textContent = totalPages;
+                renderPage(pageNum);
+            }).catch(error => {
+                console.error('PDF yüklenirken hata:', error);
+                alert('Materyal yüklenirken hata oluştu.');
+            });
+
+            document.getElementById('completeCourseBtn').addEventListener('click', () => {
+                fetch('@Url.Action("CompleteCourse", "Personnel")', {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': '@tokens.RequestToken',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ courseId: @Model.Id })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Kurs başarıyla tamamlandı!');
+                        window.location.href = '@Url.Action("Index", "Personnel")';
+                    } else {
+                        alert('Bir hata oluştu.');
+                    }
+                })
+                .catch(() => alert('Bir hata oluştu.'));
             });
         });
     </script>

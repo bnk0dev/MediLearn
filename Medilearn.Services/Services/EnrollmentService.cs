@@ -212,20 +212,6 @@ namespace Medilearn.Services
                 .ToListAsync();
         }
 
-        public async Task<CourseMaterialViewModel> GetCourseMaterialAsync(int courseId)
-        {
-            var course = await _context.Courses.FindAsync(courseId);
-            if (course == null) return null;
-
-            return new CourseMaterialViewModel
-            {
-                CourseId = course.Id,
-                PdfFile = course.MaterialPath, 
-                BaseFile = Path.GetFileNameWithoutExtension(course.MaterialPath),
-                TotalPages = 10 
-            };
-        }
-
         public async Task MarkCourseCompleteAsync(string tcNo, int courseId)
         {
             var enrollment = await _context.Enrollments

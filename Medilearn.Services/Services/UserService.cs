@@ -35,8 +35,19 @@ namespace Medilearn.Services.Services
                 Email = user.Email,
                 Role = user.Role,
                 Status = user.Status,
-                ProfileImagePath = user.ProfileImagePath // ekledim
+                ProfileImagePath = user.ProfileImagePath
             };
+        }
+
+        public async Task<User> GetByTCNoAsync(string tcNo)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.TCNo == tcNo);
+        }
+
+        public async Task UpdateAsync(User user)
+        {
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<int> GetTotalUsersAsync()
@@ -46,13 +57,12 @@ namespace Medilearn.Services.Services
 
         public async Task<int> GetTotalPersonnelAsync()
         {
-            return await _context.Users
-                .CountAsync(u => u.Role == UserRole.Personnel);
+            return await _context.Users.CountAsync(u => u.Role == UserRole.Personnel);
         }
 
         public async Task<List<CourseDto>> GetEnrolledCoursesByPersonnelAsync(string personnelTcNo)
         {
-            var enrollments = await _context.Enrollments
+            return await _context.Enrollments
                 .Include(e => e.Course)
                 .Where(e => e.PersonnelTCNo == personnelTcNo)
                 .Select(e => new CourseDto
@@ -65,8 +75,6 @@ namespace Medilearn.Services.Services
                     InstructorTCNo = e.Course.InstructorTCNo
                 })
                 .ToListAsync();
-
-            return enrollments;
         }
 
         public async Task<User> GetUserByTCNoAsync(string tcNo)
@@ -85,24 +93,20 @@ namespace Medilearn.Services.Services
                 Role = user.Role,
                 Status = user.Status,
                 ProfileImagePath = user.ProfileImagePath,
-                CreatedDate = user.CreatedDate // BURASI EKSİKTİ
+                CreatedDate = user.CreatedDate
             }).ToListAsync();
         }
 
-
         public async Task<bool> CreateUserAsync(UserCreateDto userCreateDto)
         {
-            // TCNo veya Email zaten varsa kayıt yapma
-            var exists = await _context.Users.AnyAsync(u => u.TCNo == userCreateDto.TCNo || u.Email == userCreateDto.Email);
+            var exists = await _context.Users.AnyAsync(u =>
+                u.TCNo == userCreateDto.TCNo || u.Email == userCreateDto.Email);
             if (exists) return false;
 
             var hashedPassword = HashPassword(userCreateDto.Password);
 
             var role = (UserRole)userCreateDto.Role;
-
-            var status = role == UserRole.Instructor
-                ? UserStatus.Pending
-                : UserStatus.Active;
+            var status = role == UserRole.Instructor ? UserStatus.Pending : UserStatus.Active;
 
             var user = new User
             {
@@ -113,8 +117,8 @@ namespace Medilearn.Services.Services
                 PasswordHash = hashedPassword,
                 Role = role,
                 Status = status,
-                ProfileImagePath = userCreateDto.ProfileImagePath ?? "/upload/profiles/default.png",
-                CreatedDate = DateTime.Now 
+                ProfileImagePath = userCreateDto.ProfileImagePath ?? "/uploads/profiles/default.png", // ✅ doğru klasör
+                CreatedDate = DateTime.Now
             };
 
             _context.Users.Add(user);
@@ -136,7 +140,7 @@ namespace Medilearn.Services.Services
         public async Task<string> GetPasswordHashByTCNoAsync(string tcNo)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.TCNo == tcNo);
-            if (user == null || user.PasswordHash == null)
+            if (user == null || string.IsNullOrEmpty(user.PasswordHash))
                 throw new Exception("Kullanıcı bulunamadı veya şifre boş.");
 
             return user.PasswordHash;
@@ -144,16 +148,18 @@ namespace Medilearn.Services.Services
 
         public async Task<IEnumerable<UserDto>> GetUsersByRoleAndStatusAsync(UserRole role, UserStatus status)
         {
-            return await _context.Users.Select(user => new UserDto
-            {
-                TCNo = user.TCNo,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Role = user.Role,
-                Status = user.Status,
-                ProfileImagePath = user.ProfileImagePath
-            }).ToListAsync();
+            return await _context.Users
+                .Where(u => u.Role == role && u.Status == status)
+                .Select(user => new UserDto
+                {
+                    TCNo = user.TCNo,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Role = user.Role,
+                    Status = user.Status,
+                    ProfileImagePath = user.ProfileImagePath
+                }).ToListAsync();
         }
 
         public async Task<bool> ApproveUserAsync(string tcNo)
@@ -163,15 +169,12 @@ namespace Medilearn.Services.Services
 
             user.Status = UserStatus.Active;
             await _context.SaveChangesAsync();
-
             return true;
         }
 
         public async Task<List<UserDto>> GetUsersByRoleAsync(UserRole role)
         {
-            var users = await _context.Users
-                .Where(u => u.Role == role)
-                .ToListAsync();
+            var users = await _context.Users.Where(u => u.Role == role).ToListAsync();
 
             return users.Select(u => new UserDto
             {
@@ -181,7 +184,7 @@ namespace Medilearn.Services.Services
                 Email = u.Email,
                 Role = u.Role,
                 Status = u.Status,
-                ProfileImagePath = u.ProfileImagePath // eklendi
+                ProfileImagePath = u.ProfileImagePath
             }).ToList();
         }
 

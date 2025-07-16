@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Medilearn.Web.Controllers
 {
@@ -22,7 +24,7 @@ namespace Medilearn.Web.Controllers
         private readonly MedilearnDbContext _context;
 
 
-        public AdminController(MedilearnDbContext context,IUserService userService, IEnrollmentService enrollmentService, ICourseService courseService, IInstructorService instructorService)
+        public AdminController(MedilearnDbContext context, IUserService userService, IEnrollmentService enrollmentService, ICourseService courseService, IInstructorService instructorService)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _userService = userService;
@@ -30,7 +32,7 @@ namespace Medilearn.Web.Controllers
             _courseService = courseService;
             _instructorService = instructorService;
         }
-       
+
 
         public async Task<IActionResult> Courses()
         {
@@ -177,7 +179,7 @@ namespace Medilearn.Web.Controllers
         {
             var instructors = await _instructorService.GetAllWithCoursesAsync();
 
-            return View(instructors); 
+            return View(instructors);
         }
 
         [HttpGet]
@@ -247,5 +249,110 @@ namespace Medilearn.Web.Controllers
 
             return View(report);
         }
+
+
+        //BANLANMA
+        [HttpPost]
+        public async Task<IActionResult> BanUser(string tcNo)
+        {
+            if (string.IsNullOrEmpty(tcNo))
+                return BadRequest();
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.TCNo == tcNo);
+            if (user == null)
+                return NotFound();
+
+            user.Status = UserStatus.Banned;
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Kullanıcı başarıyla banlandı.";
+            return RedirectToAction("Users");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UnbanUser(string tcNo)
+        {
+            if (string.IsNullOrEmpty(tcNo))
+                return BadRequest();
+
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.TCNo == tcNo);
+            if (user == null)
+                return NotFound();
+
+            user.Status = UserStatus.Active; // veya önceden neydi onu hatırlayıp set edebilirsin
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Kullanıcının banı kaldırıldı.";
+            return RedirectToAction("BannedUsers");
+        }
+        public async Task<IActionResult> BannedUsers()
+        {
+            var bannedUsers = await _context.Users
+                .Where(u => u.Status == UserStatus.Banned)
+                .ToListAsync();
+
+            return View(bannedUsers);
+        }
+
+        //ŞİFRE DEĞİŞTİRME
+        private string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var bytes = Encoding.UTF8.GetBytes(password);
+                var hashBytes = sha256.ComputeHash(bytes);
+                var builder = new StringBuilder();
+                foreach (var b in hashBytes)
+                    builder.Append(b.ToString("x2"));
+                return builder.ToString();
+            }
+        }
+        [HttpGet]
+        public async Task<IActionResult> ChangePassword()
+        {
+            var tcNo = User.Identity.Name;
+            if (string.IsNullOrEmpty(tcNo))
+                return RedirectToAction("Login", "Account");
+
+            var user = await _userService.GetUserByTCNoAsync(tcNo);
+            if (user == null)
+                return NotFound();
+
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(string TCNo, string NewPassword, string ConfirmPassword)
+        {
+            if (string.IsNullOrEmpty(NewPassword) || string.IsNullOrEmpty(ConfirmPassword))
+            {
+                ModelState.AddModelError("", "Lütfen tüm alanları doldurun.");
+                var user = await _userService.GetUserByTCNoAsync(TCNo);
+                return View("EditUser", user); // aynı edituser view'a dön
+            }
+
+            if (NewPassword != ConfirmPassword)
+            {
+                ModelState.AddModelError("ConfirmPassword", "Yeni şifre ve onaylama şifresi eşleşmiyor.");
+                var user = await _userService.GetUserByTCNoAsync(TCNo);
+                return View("EditUser", user);
+            }
+
+            var userToUpdate = await _userService.GetUserByTCNoAsync(TCNo);
+            if (userToUpdate == null)
+                return NotFound();
+
+            userToUpdate.PasswordHash = HashPassword(NewPassword);
+
+            await _userService.UpdateUserAsync(userToUpdate);
+
+            TempData["Success"] = "Şifre başarıyla değiştirildi.";
+            return RedirectToAction("Users"); // veya EditUser sayfasına dönmek istersen "EditUser", new { id = TCNo }
+        }
+
+
+
+
     }
 }
