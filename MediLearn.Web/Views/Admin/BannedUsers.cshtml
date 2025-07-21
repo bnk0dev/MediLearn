@@ -1,0 +1,39 @@
+﻿@model List<Medilearn.Data.Entities.User>
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["BannedUsersTitle"];
+    Layout = "_LayoutAdmin";
+}
+
+<br />
+<h2 class="text-center mb-4">@Localizer["BannedUsersHeading"]</h2>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>@Localizer["FirstName"]</th>
+            <th>@Localizer["LastName"]</th>
+            <th>@Localizer["TCNo"]</th>
+            <th>@Localizer["Email"]</th>
+            <th>@Localizer["Actions"]</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.FirstName</td>
+                <td>@user.LastName</td>
+                <td>@user.TCNo</td>
+                <td>@user.Email</td>
+                <td>
+                    <form asp-action="UnbanUser" method="post" style="display:inline;">
+                        <input type="hidden" name="tcNo" value="@user.TCNo" />
+                        <button type="submit" class="btn btn-warning btn-sm">@Localizer["RemoveBan"]</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

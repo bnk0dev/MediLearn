@@ -1,0 +1,55 @@
+﻿@model Medilearn.Models.DTOs.ProfileImageDto
+@{
+    Layout = "_LayoutPersonnel";
+    ViewBag.Title = "Profil Resmi Güncelle";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm p-4 mx-auto border-danger" style="max-width: 500px;">
+        <h2 class="text-center mb-4 text-danger fw-bold">
+            <i class="bi bi-image"></i> Profil Resmi Güncelle
+        </h2>
+
+        <form id="imageUploadForm" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="TCNo" value="@Model.TCNo" />
+            <div class="mb-3">
+                <label asp-for="ProfileImage" class="form-label fw-semibold">Profil Resmi</label>
+                <input asp-for="ProfileImage" type="file" class="form-control" name="ProfileImage" />
+                <span asp-validation-for="ProfileImage" class="text-danger small"></span>
+            </div>
+            <button type="submit" class="btn btn-danger w-100 fw-bold">Güncelle</button>
+        </form>
+
+        <div id="uploadMessage" class="mt-3"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $("#imageUploadForm").submit(function (e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: '@Url.Action("UpdateProfileImage", "Personnel")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    if (res.success) {
+                        $("#uploadMessage").html('<div class="alert alert-success">Profil resmi güncellendi.</div>');
+                        $("img[alt='Kullanıcı']").attr("src", res.imageUrl + '?v=' + new Date().getTime());
+                    } else {
+                        $("#uploadMessage").html('<div class="alert alert-danger">' + res.message + '</div>');
+                    }
+                },
+                error: function () {
+                    $("#uploadMessage").html('<div class="alert alert-danger">Beklenmeyen bir hata oluştu.</div>');
+                }
+            });
+        });
+    </script>
+}

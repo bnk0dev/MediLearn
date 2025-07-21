@@ -1,0 +1,36 @@
+﻿@model List<Medilearn.Models.DTOs.UserDto>
+
+@{
+    Layout = "_LayoutAdmin";
+    var name = ViewBag.AdminName as string ?? "Admin";
+}
+
+<h2>Kursa Kayıtlı Personeller</h2>
+<hr />
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-warning">Bu kursa kayıtlı personel bulunmamaktadır.</div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>TC No</th>
+                <th>Ad Soyad</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var personnel in Model)
+            {
+                <tr>
+                    <td>@personnel.TCNo</td>
+                    <td>@personnel.FirstName @personnel.LastName</td>
+                    <td>@personnel.Email</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,80 @@
+﻿@model Medilearn.Models.DTOs.AdminStatisticsDto
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    Layout = "_LayoutAdmin";
+    var name = ViewBag.AdminName as string ?? "Admin";
+}
+
+<br />
+<h2 class="text-center mb-4">@Localizer["StatisticsTitle"]</h2>
+
+<div class="charts-wrapper" style="display:flex; gap:2rem; justify-content:center; flex-wrap: wrap;">
+    <div class="chart-card" style="width: 350px; background: #fff8f5; padding: 1rem; border-radius: 10px; box-shadow: 0 0 10px rgb(161 0 0 / 0.15);">
+        <canvas id="userTypeChart"></canvas>
+    </div>
+
+    <div class="chart-card" style="width: 350px; background: #f0f7fa; padding: 1rem; border-radius: 10px; box-shadow: 0 0 10px rgb(23 162 184 / 0.15);">
+        <canvas id="personnelParticipationChart"></canvas>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const commonOptions = (titleText) => ({
+            responsive: true,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#6c757d',
+                        font: { size: 14 }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: titleText,
+                    color: '#6c757d',
+                    font: { size: 16, weight: 'bold' }
+                }
+            }
+        });
+
+        const userTypeCtx = document.getElementById('userTypeChart').getContext('2d');
+        new Chart(userTypeCtx, {
+            type: 'pie',
+            data: {
+                labels: [
+                    "@Localizer["Instructor"]",
+                    "@Localizer["Personnel"]"
+                ],
+                datasets: [{
+                    label: "@Localizer["UserTypes"]",
+                    data: [@Model.TotalInstructors, @Model.TotalPersonnel],
+                    backgroundColor: ['#a10000cc', '#f5e9dfcc']
+                }]
+            },
+            options: commonOptions("@Localizer["TotalInstructorAndPersonnel"]")
+        });
+
+        const participationCtx = document.getElementById('personnelParticipationChart').getContext('2d');
+        new Chart(participationCtx, {
+            type: 'pie',
+            data: {
+                labels: [
+                    "@Localizer["TotalPersonnel"]",
+                    "@Localizer["TotalParticipation"]"
+                ],
+                datasets: [{
+                    label: "@Localizer["ParticipationStatus"]",
+                    data: [
+                        @Model.TotalPersonnel,
+                        @Model.PersonnelCourseEnrollments.Values.Sum()
+                    ],
+                    backgroundColor: ['#117a8bcc', '#28a745cc']
+                }]
+            },
+            options: commonOptions("@Localizer["PersonnelAndCourseParticipation"]")
+        });
+    </script>
+}

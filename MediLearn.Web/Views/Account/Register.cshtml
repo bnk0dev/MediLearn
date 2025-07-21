@@ -1,0 +1,226 @@
+﻿@model Medilearn.Models.DTOs.UserCreateDto
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["RegisterTitle"];
+    var returnUrl = HttpContextAccessor.HttpContext?.Request?.Path + HttpContextAccessor.HttpContext?.Request?.QueryString;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@Localizer["RegisterTitle"] - Medilearn</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            background: url('/img/inde2.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+        }
+
+        .language-box {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 3;
+            display: flex;
+            gap: 10px;
+        }
+
+            .language-box a img {
+                width: 28px;
+                height: 28px;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: transform 0.2s;
+            }
+
+            .language-box a:hover img {
+                transform: scale(1.1);
+            }
+
+        #layoutAuthentication {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 0;
+            min-height: 100vh;
+        }
+
+        .register-card {
+            width: 100%;
+            max-width: 600px;
+            background-color: #a10000;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+            .register-card h3 {
+                text-align: center;
+                margin-bottom: 1.5rem;
+                color: #fff;
+            }
+
+        label {
+            color: white;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            background-color: transparent;
+            border: 1px solid #ffffffaa;
+            border-radius: 5px;
+            color: white;
+            font-size: 1rem;
+        }
+
+            .form-control::placeholder {
+                color: transparent;
+            }
+
+            .form-control:focus {
+                background-color: transparent;
+                color: white;
+                border-color: #fff;
+                box-shadow: 0 0 5px white;
+                outline: none;
+            }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg fill='white' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+        }
+
+        option {
+            background-color: #a10000;
+            color: white;
+        }
+
+        .text-danger {
+            color: white !important;
+            font-size: 0.9rem;
+        }
+
+        .btn-register {
+            background-color: #ffffff;
+            color: #a10000;
+            font-weight: bold;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 1.25rem;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+            .btn-register:hover {
+                background-color: #ffdddd;
+                color: #7a0000;
+            }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+            .login-link a {
+                color: #fff;
+                text-decoration: underline;
+                font-weight: bold;
+            }
+    </style>
+</head>
+
+<body>
+    <div class="overlay"></div>
+
+    <div class="language-box">
+        <a asp-controller="Account" asp-action="SetLanguage" asp-route-culture="tr" asp-route-returnUrl="@returnUrl" title="Türkçe">
+            <img src="~/img/flags/tr.png" alt="TR" />
+        </a>
+        <a asp-controller="Account" asp-action="SetLanguage" asp-route-culture="en" asp-route-returnUrl="@returnUrl" title="English">
+            <img src="~/img/flags/us.png" alt="EN" />
+        </a>
+        <a asp-controller="Account" asp-action="SetLanguage" asp-route-culture="fr" asp-route-returnUrl="@returnUrl" title="Français">
+            <img src="~/img/flags/fr.png" alt="FR" />
+        </a>
+    </div>
+
+    <div id="layoutAuthentication">
+        <div class="register-card">
+            <h3>@Localizer["RegisterTitle"]</h3>
+            <form asp-action="Register" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label asp-for="TCNo">@Localizer["TCNo"]</label>
+                    <input asp-for="TCNo" class="form-control" />
+                    <span asp-validation-for="TCNo" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="FirstName">@Localizer["FirstName"]</label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="LastName">@Localizer["LastName"]</label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Email">@Localizer["Email"]</label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Password">@Localizer["Password"]</label>
+                    <input asp-for="Password" type="password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Role">@Localizer["Role"]</label>
+                    <select asp-for="Role" class="form-control">
+                        <option value="2">@Localizer["Personnel"]</option>
+                        <option value="1">@Localizer["Instructor"]</option>
+                    </select>
+                    <span asp-validation-for="Role" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn-register">@Localizer["RegisterButton"]</button>
+            </form>
+            <div class="login-link">
+                @Localizer["HaveAccount"] <a asp-action="Login">@Localizer["LoginHere"]</a>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>

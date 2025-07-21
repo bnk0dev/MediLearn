@@ -1,0 +1,208 @@
+﻿@model Medilearn.Models.DTOs.UserLoginDto
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["LoginTitle"];
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>@ViewData["Title"]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            background: url('/img/inde2.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+        }
+
+        .language-box {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 3;
+            display: flex;
+            gap: 10px;
+        }
+
+            .language-box a img {
+                width: 28px;
+                height: 28px;
+                border-radius: 4px;
+                transition: transform 0.2s;
+                cursor: pointer;
+            }
+
+            .language-box a:hover img {
+                transform: scale(1.1);
+            }
+
+        #layoutAuthentication {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background-color: #a10000;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+            .login-card h3 {
+                text-align: center;
+                margin-bottom: 1.5rem;
+                color: #fff;
+            }
+
+        label {
+            display: block;
+            margin-top: 0.5rem;
+            font-weight: 500;
+            color: #fff;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            background-color: transparent;
+            border: 1px solid #ffffffaa;
+            border-radius: 5px;
+            color: white;
+            margin-top: 5px;
+            font-size: 1rem;
+        }
+
+        input::placeholder {
+            color: transparent;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #fff;
+            box-shadow: 0 0 5px white;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+            .form-check input {
+                margin-right: 10px;
+            }
+
+            .form-check label {
+                margin: 0;
+                color: white;
+            }
+
+        .text-danger {
+            color: white;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .btn-login {
+            background-color: #fff;
+            color: #a10000;
+            font-weight: bold;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 8px;
+            width: 100%;
+            margin-top: 1.25rem;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+            .btn-login:hover {
+                background-color: #ffdddd;
+                color: #7a0000;
+            }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+            .register-link a {
+                color: #fff;
+                text-decoration: underline;
+                font-weight: bold;
+            }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="language-box">
+        <a asp-controller="Account" asp-action="SetLanguage" asp-route-culture="tr" asp-route-returnUrl="@returnUrl" title="Türkçe">
+            <img src="~/img/flags/tr.png" alt="TR" />
+        </a>
+        <a asp-controller="Account" asp-action="SetLanguage" asp-route-culture="en" asp-route-returnUrl="@returnUrl" title="English">
+            <img src="~/img/flags/us.png" alt="EN" />
+        </a>
+        <a asp-controller="Account" asp-action="SetLanguage" asp-route-culture="fr" asp-route-returnUrl="@returnUrl" title="Français">
+            <img src="~/img/flags/fr.png" alt="FR" />
+        </a>
+    </div>
+
+    <div id="layoutAuthentication">
+        <div class="login-card">
+            <h3>@Localizer["LoginTitle"]</h3>
+            <form asp-action="Login" method="post">
+                <label asp-for="TCNo">@Localizer["TCNo"]</label>
+                <input asp-for="TCNo" class="form-control" />
+                <span asp-validation-for="TCNo" class="text-danger"></span>
+
+                <label asp-for="Password">@Localizer["Password"]</label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+
+                <div class="form-check">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember">@Localizer["RememberMe"]</label>
+                </div>
+                @Html.ValidationSummary(true, "", new { @class = "validation-summary-errors text-danger" })
+
+                <button type="submit" class="btn-login">@Localizer["LoginButton"]</button>
+            </form>
+
+            <div class="register-link">
+                @Localizer["NoAccount"] <a asp-action="Register">@Localizer["RegisterHere"]</a>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+</body>
+</html>

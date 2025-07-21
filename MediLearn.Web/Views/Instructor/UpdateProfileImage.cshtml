@@ -1,0 +1,45 @@
+﻿@model Medilearn.Models.DTOs.ProfileImageDto
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    Layout = "_LayoutInstructor";
+    ViewBag.Title = Localizer["UpdateProfileImageTitle"];
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm p-4 mx-auto border-danger" style="max-width: 500px;">
+        <h2 class="text-center mb-4 text-danger fw-bold">
+            <i class="bi bi-image"></i> @Localizer["UpdateProfileImageHeading"]
+        </h2>
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+
+
+        <form asp-action="UpdateProfileImage" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+
+            <input asp-for="TCNo" type="hidden" />
+
+            <div class="mb-3">
+                <label asp-for="ProfileImage" class="form-label fw-semibold">@Localizer["SelectNewProfileImage"]</label>
+                <input asp-for="ProfileImage" type="file" class="form-control" />
+                <span asp-validation-for="ProfileImage" class="text-danger small"></span>
+            </div>
+
+            <button type="submit" class="btn btn-danger w-100 fw-bold">
+                <i class="bi bi-upload"></i> @Localizer["UpdateButton"]
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

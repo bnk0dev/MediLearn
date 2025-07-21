@@ -1,0 +1,42 @@
+﻿@model Medilearn.Models.ViewModels.AddMaterialViewModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["AddMaterialPageTitle"];
+    Layout = "_LayoutInstructor";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-danger text-white text-center fs-4 fw-bold">
+                    <i class="bi bi-upload"></i> @Localizer["AddMaterialHeading"]
+                </div>
+                <div class="card-body p-4">
+
+                    <form asp-action="AddMaterial" method="post" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="CourseId" />
+
+                        <div class="mb-4">
+                            <label asp-for="MaterialFile" class="form-label fw-semibold">@Localizer["SelectPowerPointFile"]</label>
+                            <input asp-for="MaterialFile" class="form-control" type="file" accept=".pdf" />
+                            <span asp-validation-for="MaterialFile" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="bi bi-cloud-arrow-up"></i> @Localizer["UploadButton"]
+                            </button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

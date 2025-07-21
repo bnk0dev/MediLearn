@@ -1,0 +1,146 @@
+﻿@model Medilearn.Models.ViewModels.PersonnelDashboardViewModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["PersonnelHomeTitle"];
+    Layout = "_LayoutPersonnel";
+}
+<link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+
+<div class="container my-5">
+    <section>
+        <h2 class="text-danger fw-bold mb-3">@Localizer["MyEnrolledCourses"]</h2>
+
+        @if (Model.EnrolledCourses == null || !Model.EnrolledCourses.Any())
+        {
+            <div class="alert alert-warning">@Localizer["NoEnrolledCourses"]</div>
+        }
+        else
+        {
+            <table id="enrolledCoursesTable" class="table table-striped table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>@Localizer["CourseTitle"]</th>
+                        <th>@Localizer["Description"]</th>
+                        <th>@Localizer["StartDate"]</th>
+                        <th>@Localizer["EndDate"]</th>
+                        <th>@Localizer["Material"]</th>
+                        <th>@Localizer["Action"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var course in Model.EnrolledCourses)
+                    {
+                        <tr>
+                            <td>@course.Title</td>
+                            <td>@course.Description</td>
+                            <td>@course.StartDate.ToString("yyyy-MM-dd")</td>
+                            <td>@course.EndDate.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(course.MaterialFileName))
+                                {
+                                    <a href="@course.MaterialFileName" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        @Localizer["View"]
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic">@Localizer["NoMaterial"]</span>
+                                }
+                            </td>
+                            <td>
+                                <a href="@Url.Action("CourseDetails", "Personnel", new { id = course.Id })" class="btn btn-sm btn-outline-danger">
+                                    @Localizer["Start"]
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </section>
+    <br />
+    <br />
+    <section class="mb-5">
+        <h2 class="text-danger fw-bold mb-3">@Localizer["MyCompletedCourses"]</h2>
+
+        @if (Model.CompletedCourses == null || !Model.CompletedCourses.Any())
+        {
+            <div class="alert alert-warning">@Localizer["NoCompletedCourses"]</div>
+        }
+        else
+        {
+            <table id="completedCoursesTable" class="table table-striped table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>@Localizer["CourseTitle"]</th>
+                        <th>@Localizer["Description"]</th>
+                        <th>@Localizer["StartDate"]</th>
+                        <th>@Localizer["EndDate"]</th>
+                        <th>@Localizer["Material"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var course in Model.CompletedCourses)
+                    {
+                        <tr>
+                            <td>@course.Title</td>
+                            <td>@course.Description</td>
+                            <td>@course.StartDate.ToString("yyyy-MM-dd")</td>
+                            <td>@course.EndDate.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(course.MaterialFileName))
+                                {
+                                    <a href="@course.MaterialFileName" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                        @Localizer["View"]
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic">@Localizer["NoMaterial"]</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </section>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var dataTableLanguage = {
+                search: "@Localizer["search"]",
+                lengthMenu: "@Localizer["lengthMenu"]",
+                zeroRecords: "@Localizer["zeroRecords"]",
+                info: "@Localizer["info"]",
+                infoEmpty: "@Localizer["infoEmpty"]",
+                infoFiltered: "@Localizer["infoFiltered"]",
+                paginate: {
+                    next: "@Localizer["paginate.next"]",
+                    previous: "@Localizer["paginate.previous"]"
+                }
+            };
+
+            $('#completedCoursesTable').DataTable({
+                language: dataTableLanguage,
+                lengthMenu: [5, 10, 15, 25, 50],
+                pageLength: 5,
+                order: [[3, "desc"]]
+            });
+
+            $('#enrolledCoursesTable').DataTable({
+                language: dataTableLanguage,
+                lengthMenu: [5, 10, 15, 25, 50],
+                pageLength: 10,
+                order: [[2, "asc"]]
+            });
+        });
+    </script>
+}
