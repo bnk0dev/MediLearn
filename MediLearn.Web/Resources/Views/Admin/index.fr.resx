@@ -154,7 +154,7 @@
     <value>Recherche:</value>
   </data>
   <data name="DT_LengthMenu" xml:space="preserve">
-    <value>Afficher MENU entrées par page</value>
+    <value>Afficher _MENU_ entrées par page</value>
   </data>
   <data name="DT_Info" xml:space="preserve">
     <value>Affichage de _START_ à _EN sur _TOTAL_ entrées</value>
@@ -173,5 +173,26 @@
   </data>
   <data name="DT_Prev" xml:space="preserve">
     <value>Précédent</value>
+  </data>
+  <data name="Reject" xml:space="preserve">
+    <value>Reddet</value>
+  </data>
+  <data name="Reinstate" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ConfirmRejectInstructor" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ConfirmDeleteInstructor" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ConfirmReinstateInstructor" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RejectedInstructors" xml:space="preserve">
+    <value>Instructeurs rejetés</value>
   </data>
 </root>

@@ -47,6 +47,21 @@
                             </button>
                         </div>
                     </form>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach (var state in ViewData.ModelState.Values)
+                                {
+                                    foreach (var error in state.Errors)
+                                    {
+                                        <li>@error.ErrorMessage</li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    }
+
                 </div>
             </div>
         </div>

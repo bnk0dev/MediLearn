@@ -1,0 +1,52 @@
+﻿@model Medilearn.Models.ViewModels.ViewMaterialsViewModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    Layout = "_LayoutInstructor";
+    ViewData["Title"] = Localizer["MaterialsForCourse"] + ": " + Model.CourseTitle;
+}
+
+<div class="container my-4">
+    <h2>@Localizer["MaterialsForCourse"]: @Model.CourseTitle</h2>
+
+    @if (Model.Materials != null && Model.Materials.Count > 0)
+    {
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>@Localizer["FileName"]</th>
+                    <th>@Localizer["UploadDate"]</th>
+                    <th>@Localizer["Actions"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var material in Model.Materials)
+                {
+                    <tr>
+                        <td>
+                            <a href="@material.MaterialPath" target="_blank">
+                                @System.IO.Path.GetFileName(material.MaterialPath)
+                            </a>
+                        </td>
+                        <td>@material.UploadDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>
+                            <form asp-action="DeleteMaterial" method="post" onsubmit="return confirm('@Localizer["ConfirmDelete"]');">
+                                <input type="hidden" name="materialId" value="@material.Id" />
+                                <input type="hidden" name="courseId" value="@Model.CourseId" />
+                                <button type="submit" class="btn btn-danger btn-sm">@Localizer["Delete"]</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-warning">@Localizer["NoMaterialsFound"]</div>
+    }
+
+    <a asp-action="AddMaterial" asp-route-courseId="@Model.CourseId" class="btn btn-outline-danger mt-3">
+        <i class="fa fa-file-upload me-1"></i> @Localizer["AddMaterial"]
+    </a>
+</div>

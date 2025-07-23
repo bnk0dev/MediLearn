@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Medilearn.Data.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace Medilearn.Models.DTOs
 {
@@ -6,11 +7,18 @@ namespace Medilearn.Models.DTOs
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Kurs başlığı zorunludur")]
+        [Required]
         public string Title { get; set; }
 
-        [Required(ErrorMessage = "Açıklama zorunludur")]
         public string Description { get; set; }
+
+        [DataType(DataType.Date)]
+        public DateTime? StartDate { get; set; }
+
+        [DataType(DataType.Date)]
+        public DateTime? EndDate { get; set; }
+
+        public List<CourseMaterial> Materials { get; set; } = new List<CourseMaterial>();
     }
 
 }

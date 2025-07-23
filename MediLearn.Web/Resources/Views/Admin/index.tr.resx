@@ -174,4 +174,25 @@
   <data name="DT_Prev" xml:space="preserve">
     <value>Önceki</value>
   </data>
+  <data name="Reject" xml:space="preserve">
+    <value>Rejectie</value>
+  </data>
+  <data name="Reinstate" xml:space="preserve">
+    <value>Geri Al</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Sil</value>
+  </data>
+  <data name="ConfirmRejectInstructor" xml:space="preserve">
+    <value>Bu eğitmeni reddetmek istediğinize emin misiniz?</value>
+  </data>
+  <data name="ConfirmDeleteInstructor" xml:space="preserve">
+    <value>Bu eğitmeni silmek istediğinize emin misiniz?</value>
+  </data>
+  <data name="ConfirmReinstateInstructor" xml:space="preserve">
+    <value>Bu eğitmeni tekrar aktif hale getirmek istiyor musunuz?</value>
+  </data>
+  <data name="RejectedInstructors" xml:space="preserve">
+    <value>Reddedilen Eğitmenler</value>
+  </data>
 </root>

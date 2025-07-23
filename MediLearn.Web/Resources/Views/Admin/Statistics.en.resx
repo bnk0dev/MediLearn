@@ -117,31 +117,64 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Instructor" xml:space="preserve">
-    <value>Instructor</value>
+  <data name="AdminStatisticsTitle" xml:space="preserve">
+    <value>Admin Statistics</value>
   </data>
-  <data name="ParticipationStatus" xml:space="preserve">
-    <value>Participation Status</value>
+  <data name="CompletedPersonnel" xml:space="preserve">
+    <value>Completed Personnel</value>
   </data>
-  <data name="Personnel" xml:space="preserve">
-    <value>Personnel</value>
+  <data name="CompletionRate" xml:space="preserve">
+    <value>Completion Rate</value>
   </data>
-  <data name="PersonnelAndCourseParticipation" xml:space="preserve">
-    <value>Personnel and Course Participation</value>
+  <data name="CourseDetails" xml:space="preserve">
+    <value>Course Details</value>
   </data>
-  <data name="StatisticsTitle" xml:space="preserve">
+  <data name="CourseTitle" xml:space="preserve">
+    <value>Course Title</value>
+  </data>
+  <data name="DT_Info" xml:space="preserve">
+    <value>Showing _START_ to _END_ of _TOTAL_ entries</value>
+  </data>
+  <data name="DT_InfoEmpty" xml:space="preserve">
+    <value>No records available</value>
+  </data>
+  <data name="DT_InfoFiltered" xml:space="preserve">
+    <value>(filtered from _MAX_ total records)</value>
+  </data>
+  <data name="DT_LengthMenu" xml:space="preserve">
+    <value>Show _MENU_ entries per page</value>
+  </data>
+  <data name="DT_Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="DT_Prev" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="DT_Search" xml:space="preserve">
+    <value>Search:</value>
+  </data>
+  <data name="DT_ZeroRecords" xml:space="preserve">
+    <value>No matching records found</value>
+  </data>
+  <data name="EnrolledPersonnel" xml:space="preserve">
+    <value>Enrolled Personnel</value>
+  </data>
+  <data name="ExportExcel" xml:space="preserve">
+    <value>Export to Excel</value>
+  </data>
+  <data name="Statistics" xml:space="preserve">
     <value>Statistics</value>
   </data>
-  <data name="TotalInstructorAndPersonnel" xml:space="preserve">
-    <value>Total Instructor and Personnel</value>
+  <data name="TotalBannedUsers" xml:space="preserve">
+    <value>Banned Users</value>
   </data>
-  <data name="TotalParticipation" xml:space="preserve">
-    <value>Total Participation</value>
+  <data name="TotalCourses" xml:space="preserve">
+    <value>Total Courses</value>
+  </data>
+  <data name="TotalInstructors" xml:space="preserve">
+    <value>Total Instructors</value>
   </data>
   <data name="TotalPersonnel" xml:space="preserve">
     <value>Total Personnel</value>
-  </data>
-  <data name="UserTypes" xml:space="preserve">
-    <value>User Types</value>
   </data>
 </root>

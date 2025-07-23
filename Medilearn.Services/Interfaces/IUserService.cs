@@ -1,11 +1,17 @@
 ﻿using Medilearn.Data.Entities;
 using Medilearn.Data.Enums;
 using Medilearn.Models.DTOs;
+using Medilearn.Models.ViewModels;
 
 namespace Medilearn.Services.Interfaces
 {
     public interface IUserService
     {
+        Task<List<UserDto>> GetPendingInstructorsAsync();
+        Task<bool> UpdateUserProfileAsync(ProfileDto model);
+        Task UpdateUserStatusAsync(string tcNo, UserStatus newStatus);
+        Task DeleteUserAsync(string tcNo);
+
         // Sistemdeki tüm kullanıcıları getirir
         Task<IEnumerable<UserDto>> GetAllUsersAsync();
 

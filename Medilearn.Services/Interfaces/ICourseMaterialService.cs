@@ -4,6 +4,9 @@ namespace Medilearn.Services.Interfaces
 {
     public interface ICourseMaterialService
     {
+        Task DeleteCourseMaterialAsync(int materialId);
+        Task<CourseMaterial> GetByIdAsync(int id);
+
         // Yeni bir kurs materyali ekler
         Task AddCourseMaterialAsync(CourseMaterial material);
 

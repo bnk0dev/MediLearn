@@ -138,10 +138,16 @@
   <data name="MyProfileTitle" xml:space="preserve">
     <value>My Profile</value>
   </data>
+  <data name="ProfileHeading" xml:space="preserve">
+    <value>My Profile Information</value>
+  </data>
   <data name="TCNo" xml:space="preserve">
     <value>National ID Number</value>
   </data>
   <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="UpdateButton" xml:space="preserve">
     <value>Update</value>
   </data>
   <data name="UpdateProfileImage" xml:space="preserve">

@@ -12,5 +12,8 @@ namespace Medilearn.Models.DTOs
         [Required]
         [MinLength(8, ErrorMessage = "Şifre en az 8 karakter olmalıdır.")]
         public string Password { get; set; }
+
+        // Beni hatırla checkbox için bool alanı:
+        public bool RememberMe { get; set; }
     }
 }

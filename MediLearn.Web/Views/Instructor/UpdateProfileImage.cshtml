@@ -20,11 +20,12 @@
             </div>
         }
 
+        <div class="text-center mb-3">
+            <img src="@ViewBag.CurrentImagePath" alt="Profil Resmi" class="rounded-circle border" style="width: 120px; height: 120px; object-fit: cover;" />
+        </div>
 
-
-        <form asp-action="UpdateProfileImage" method="post" enctype="multipart/form-data">
+        <form id="profileImageForm" asp-action="UpdateProfileImage" method="post" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
-
             <input asp-for="TCNo" type="hidden" />
 
             <div class="mb-3">
@@ -42,4 +43,32 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $('#profileImageForm').submit(function (e) {
+                e.preventDefault();
+
+                var formData = new FormData(this);
+                $.ajax({
+                    url: '@Url.Action("UpdateProfileImage", "Instructor")',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.success) {
+                            // Profil resmi anlık güncelle
+                            $('#profileImage').attr('src', response.imageUrl + '?v=' + new Date().getTime());
+                            alert("@Localizer["ProfileImageUpdated"]");
+                        } else {
+                            alert(response.error || "Güncelleme başarısız.");
+                        }
+                    },
+                    error: function () {
+                        alert("Sunucu hatası.");
+                    }
+                });
+            });
+        });
+    </script>
 }

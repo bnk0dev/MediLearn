@@ -138,10 +138,16 @@
   <data name="MyProfileTitle" xml:space="preserve">
     <value>Profilim</value>
   </data>
+  <data name="ProfileHeading" xml:space="preserve">
+    <value>Profil Bilgilerim</value>
+  </data>
   <data name="TCNo" xml:space="preserve">
     <value>TC Kimlik No</value>
   </data>
   <data name="Update" xml:space="preserve">
+    <value>Güncelle</value>
+  </data>
+  <data name="UpdateButton" xml:space="preserve">
     <value>Güncelle</value>
   </data>
   <data name="UpdateProfileImage" xml:space="preserve">

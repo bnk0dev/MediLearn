@@ -167,7 +167,7 @@ namespace Medilearn.Web.Controllers
 
             await _enrollmentService.EnrollAsync(tcNo, courseId);
             TempData["Message"] = "Kursa başarıyla kayıt oldunuz.";
-            return RedirectToAction("RegisteredCourses");
+            return RedirectToAction("Courses");
         }
 
         // Personel profilini görüntüleme
@@ -219,7 +219,6 @@ namespace Medilearn.Web.Controllers
             return View(model);
         }
 
-        // Profil resmi güncelleme sayfası
         [HttpGet]
         public async Task<IActionResult> UpdateProfileImage()
         {
@@ -237,7 +236,6 @@ namespace Medilearn.Web.Controllers
             return View(model);
         }
 
-        // Profil resmi güncelleme işlemi JSON döner, AJAX için uygun
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateProfileImage(ProfileImageDto model)
@@ -259,6 +257,7 @@ namespace Medilearn.Web.Controllers
             {
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "profiles");
                 Directory.CreateDirectory(uploadsFolder);
+
                 var uniqueFileName = $"{Guid.NewGuid()}{extension}";
                 var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
@@ -277,5 +276,23 @@ namespace Medilearn.Web.Controllers
                 return Json(new { success = false, message = $"Yükleme hatası: {ex.Message}" });
             }
         }
+
+
+        //materyali indirmek
+        public IActionResult DownloadMaterial(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+                return BadRequest();
+
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "materials");
+            var filePath = Path.Combine(uploadsFolder, fileName);
+
+            if (!System.IO.File.Exists(filePath))
+                return NotFound();
+
+            var mimeType = "application/octet-stream";
+            return PhysicalFile(filePath, mimeType, fileName);
+        }
+
     }
 }

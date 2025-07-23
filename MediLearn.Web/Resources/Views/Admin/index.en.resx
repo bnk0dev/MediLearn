@@ -174,4 +174,25 @@
   <data name="DT_Prev" xml:space="preserve">
     <value>Previous</value>
   </data>
+  <data name="Reject" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="Reinstate" xml:space="preserve">
+    <value>Reinstate</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ConfirmRejectInstructor" xml:space="preserve">
+    <value>Are you sure you want to reject this instructor?</value>
+  </data>
+  <data name="ConfirmDeleteInstructor" xml:space="preserve">
+    <value>Are you sure you want to delete this instructor?</value>
+  </data>
+  <data name="ConfirmReinstateInstructor" xml:space="preserve">
+    <value>Do you want to reinstate this instructor?</value>
+  </data>
+  <data name="RejectedInstructors" xml:space="preserve">
+    <value>Rejected Instructors</value>
+  </data>
 </root>

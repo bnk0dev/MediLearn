@@ -1,28 +1,107 @@
 ﻿@model Medilearn.Models.DTOs.CourseEditDto
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
 @{
     Layout = "_LayoutAdmin";
-    ViewBag.Title = "Kurs Düzenle";
+    ViewBag.Title = Localizer["EditCourseTitle"];
 }
 
-<h2>Kursu Düzenle</h2>
+<h2 class="text-danger fw-bold mb-4">@Localizer["EditCourseTitle"]</h2>
 
-<form asp-action="EditCourse" method="post" class="card">
+<form asp-action="EditCourse" method="post" class="card p-4 mb-5 border border-danger rounded">
     <input type="hidden" asp-for="Id" />
 
     <div class="mb-3">
-        <label asp-for="Title" class="form-label"></label>
-        <input asp-for="Title" class="form-control" />
-        <span asp-validation-for="Title" class="text-danger"></span>
+        <label asp-for="Title" class="form-label fw-semibold text-danger">@Localizer["CourseTitle"]</label>
+        <input asp-for="Title" class="form-control border border-danger" />
+        <span asp-validation-for="Title" class="text-danger small"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Description" class="form-label"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
+        <label asp-for="Description" class="form-label fw-semibold text-danger">@Localizer["CourseDescription"]</label>
+        <textarea asp-for="Description" class="form-control border border-danger"></textarea>
+        <span asp-validation-for="Description" class="text-danger small"></span>
     </div>
 
-    <button type="submit" class="btn btn-success">Kaydet</button>
-    <a asp-action="InstructorsWithCourses" class="btn btn-secondary">İptal</a>
+    <div class="mb-3">
+        <label asp-for="StartDate" class="form-label fw-semibold text-danger">@Localizer["StartDate"]</label>
+        <input asp-for="StartDate" type="date" class="form-control border border-danger" />
+        <span asp-validation-for="StartDate" class="text-danger small"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="EndDate" class="form-label fw-semibold text-danger">@Localizer["EndDate"]</label>
+        <input asp-for="EndDate" type="date" class="form-control border border-danger" />
+        <span asp-validation-for="EndDate" class="text-danger small"></span>
+    </div>
+
+    <button type="submit" class="btn btn-danger fw-bold">@Localizer["SaveButton"]</button>
+    <a asp-action="InstructorsWithCourses" class="btn btn-outline-danger ms-2">@Localizer["CancelButton"]</a>
+</form>
+
+<hr class="border-danger" />
+
+<h3 class="text-danger fw-bold mb-3">@Localizer["MaterialsHeading"]</h3>
+
+@if (Model.Materials != null && Model.Materials.Any())
+{
+    <table class="table table-bordered border-danger">
+        <thead class="table-danger text-danger">
+            <tr>
+                <th>@Localizer["FileName"]</th>
+                <th>@Localizer["View"]</th>
+                <th style="width: 110px;">@Localizer["Actions"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var material in Model.Materials)
+            {
+                <tr>
+                    <td>@System.IO.Path.GetFileName(material.MaterialPath)</td>
+                    <td>
+                        <a href="@material.MaterialPath" target="_blank" class="text-danger text-decoration-underline fw-semibold">
+                            @Localizer["Open"]
+                        </a>
+                    </td>
+                    <td>
+                        <form asp-action="DeleteMaterial" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="materialId" value="@material.Id" />
+                            <input type="hidden" name="courseId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('@Localizer["ConfirmDeleteMaterial"]');">
+                                <i class="bi bi-trash"></i> @Localizer["Delete"]
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-danger fst-italic">@Localizer["NoMaterialsMessage"]</p>
+}
+
+<h4 class="text-danger fw-bold mt-5 mb-3">@Localizer["UploadNewMaterial"]</h4>
+
+<form asp-action="AddMaterial" method="post" enctype="multipart/form-data" class="card p-3 border border-danger rounded" style="max-width: 500px;">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="courseId" value="@Model.Id" />
+
+    <div class="mb-3">
+        <label for="materialFile" class="form-label fw-semibold text-danger">@Localizer["SelectFileLabel"]</label>
+        <input name="materialFile" id="materialFile" type="file" class="form-control border border-danger" required />
+        <span class="text-danger small">
+            @ViewData.ModelState["materialFile"]?.Errors.FirstOrDefault()?.ErrorMessage
+        </span>
+    </div>
+
+    <button type="submit" class="btn btn-danger w-100 fw-bold">
+        <i class="bi bi-upload"></i> @Localizer["UploadButton"]
+    </button>
 </form>
 
 @section Scripts {

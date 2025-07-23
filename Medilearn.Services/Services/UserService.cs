@@ -2,6 +2,7 @@
 using Medilearn.Data.Entities;
 using Medilearn.Data.Enums;
 using Medilearn.Models.DTOs;
+using Medilearn.Models.ViewModels;
 using Medilearn.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
@@ -15,6 +16,44 @@ namespace Medilearn.Services.Services
         public UserService(MedilearnDbContext context)
         {
             _context = context;
+        }
+        public async Task<bool> UpdateUserProfileAsync(ProfileDto model)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.TCNo == model.TCNo);
+            if (user == null) return false;
+
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+            user.Email = model.Email;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<List<UserDto>> GetPendingInstructorsAsync()
+        {
+            return await _context.Users
+                .Where(u => u.Role == UserRole.Instructor && u.Status == UserStatus.Pending)
+                .Select(u => new UserDto { /* ilgili alanlar */ })
+                .ToListAsync();
+        }
+
+        public async Task UpdateUserStatusAsync(string tcNo, UserStatus newStatus)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.TCNo == tcNo);
+            if (user == null) return;
+
+            user.Status = newStatus;
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteUserAsync(string tcNo)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.TCNo == tcNo);
+            if (user == null) return;
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
         }
 
         // TCNo ile kullanıcıyı bulup UserDto olarak döner

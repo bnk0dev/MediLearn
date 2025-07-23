@@ -30,7 +30,9 @@ namespace Medilearn.Services.Services
                     Description = c.Description,
                     StartDate = c.StartDate,
                     EndDate = c.EndDate,
-                    InstructorTCNo = c.InstructorTCNo
+                    InstructorTCNo = c.InstructorTCNo,
+                    MaterialFileName = c.MaterialPath // BURAYA DİKKAT
+
                 })
                 .ToListAsync();
         }

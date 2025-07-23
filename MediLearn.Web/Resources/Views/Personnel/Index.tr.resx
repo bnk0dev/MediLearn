@@ -126,6 +126,9 @@
   <data name="Description" xml:space="preserve">
     <value>Açıklama</value>
   </data>
+  <data name="Daown" xml:space="preserve">
+    <value>İndir</value>
+  </data>
   <data name="EndDate" xml:space="preserve">
     <value>Bitiş Tarihi</value>
   </data>

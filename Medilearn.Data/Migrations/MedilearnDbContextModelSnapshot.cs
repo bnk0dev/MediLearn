@@ -44,6 +44,9 @@ namespace Medilearn.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(11)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("MaterialPath")
                         .HasColumnType("nvarchar(max)");
 

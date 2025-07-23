@@ -29,25 +29,20 @@
     <title>@ViewBag.Title - @Localizer["InstructorPanel"]</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Stil dosyaları -->
     <link href="~/css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 <body class="sb-nav-fixed">
-    <!-- Üst navbar -->
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <!-- Sol Logo -->
         <a class="navbar-brand ps-3" href="#">@Localizer["InstructorPanel"]</a>
 
-        <!-- Sidebar aç/kapa -->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle">
             <i class="fas fa-bars"></i>
         </button>
 
-        <!-- Sağ üst kullanıcı ve dil seçimi -->
         <ul class="navbar-nav ms-auto me-3 align-items-center">
             <li class="nav-item d-flex align-items-center me-3">
-                <img src="@profileImage" alt="Kullanıcı" class="rounded-circle" style="width:32px; height:32px; object-fit:cover; border: 1px solid #fff;" />
+                <img src="@profileImage" alt="Kullanıcı" id="profileImage" class="rounded-circle" style="width:32px; height:32px; object-fit:cover; border: 1px solid #fff;" />
                 <span class="text-white ms-2">@fullName</span>
             </li>
             <li class="nav-item dropdown">
@@ -76,13 +71,11 @@
     </nav>
 
     <div id="layoutSidenav">
-        <!-- Sidebar -->
         <div id="layoutSidenav_nav">
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">@Localizer["Menu"]</div>
-
                         <a class="nav-link" href="/Instructor/Index">
                             <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div>
                             @Localizer["Home"]
@@ -108,14 +101,12 @@
             </nav>
         </div>
 
-        <!-- İçerik -->
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
                     @RenderBody()
                 </div>
             </main>
-
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
@@ -137,6 +128,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>

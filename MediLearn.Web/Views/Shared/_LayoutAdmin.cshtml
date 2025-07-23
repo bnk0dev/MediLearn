@@ -2,40 +2,50 @@
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
+    // ClaimsIdentity alınıyor
     var claimsIdentity = User.Identity as ClaimsIdentity;
+
+    // İsim bilgileri claims'den
     var firstName = claimsIdentity?.FindFirst("FirstName")?.Value ?? "";
     var lastName = claimsIdentity?.FindFirst("LastName")?.Value ?? "";
     var fullName = $"{firstName} {lastName}".Trim();
+
     if (string.IsNullOrEmpty(fullName))
     {
-        fullName = User.Identity.Name;
+        // Eğer isim yoksa User.Identity.Name veya "Admin"
+        fullName = User.Identity?.Name ?? "Admin";
     }
 
+    // Profil resmi claim'den okunuyor, yoksa default sudo.png kullanılıyor
     var profileImage = claimsIdentity?.FindFirst("ProfileImage")?.Value;
     if (string.IsNullOrEmpty(profileImage))
     {
         profileImage = Url.Content("~/uploads/profiles/sudo.png");
     }
 
+    // Dil ve bayrak kodu
     var currentCulture = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower();
-    var flagCode = currentCulture == "en" ? "us" : currentCulture; // "en" için "us" bayrağı kullan
+    var flagCode = currentCulture == "en" ? "us" : currentCulture;
+
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
 }
 
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="@currentCulture">
 <head>
     <meta charset="utf-8" />
-    <title>Admin Paneli - Sağlık Eğitim</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Localizer["AdminPanel"] - Sağlık Eğitim</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="~/css/styles.css" rel="stylesheet" />
     <link href="~/css/site.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <script src="~/js/site.js" defer></script>
+    @RenderSection("Styles", required: false)
 </head>
 <body class="sb-nav-fixed">
 
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand ps-3" href="#">@Localizer["welcm"]</a>
+        <a class="navbar-brand ps-3" href="#">@Localizer["AdminPanel"]</a>
 
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle">
             <i class="fas fa-bars"></i>
@@ -43,7 +53,7 @@
 
         <ul class="navbar-nav ms-auto me-3 align-items-center">
             <li class="nav-item d-flex align-items-center me-3">
-                <img src="@profileImage" alt="Kullanıcı" class="rounded-circle" style="width:32px; height:32px; object-fit:cover; border: 1px solid #fff;" />
+                <img id="profileImage" src="@profileImage" alt="Profil Resmi" class="rounded-circle" style="width:32px; height:32px; object-fit:cover; border: 1px solid #fff;" />
                 <span class="text-white ms-2">@fullName</span>
             </li>
 
@@ -51,9 +61,6 @@
                 <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <img src="~/img/flags/@(flagCode).png" alt="Dil" width="24" height="24" />
                 </a>
-                @{
-                    var returnUrl = Context.Request.Path + Context.Request.QueryString;
-                }
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
                     <li>
                         <a class="dropdown-item d-flex align-items-center" asp-controller="Account" asp-action="SetLanguage" asp-route-culture="tr" asp-route-returnUrl="@returnUrl">
@@ -75,13 +82,13 @@
         </ul>
     </nav>
 
-    <!-- ANA GÖVDE -->
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">@Localizer["AdminMenuHeading"]</div>
+
                         <a class="nav-link" asp-action="Index" asp-controller="Admin">
                             <div class="sb-nav-link-icon"><i class="fas fa-home"></i></div> @Localizer["Home"]
                         </a>
@@ -97,7 +104,9 @@
                         <a class="nav-link text-danger fw-bold" asp-controller="Admin" asp-action="BannedUsers" title="Banlı Kullanıcılar">
                             <div class="sb-nav-link-icon"><i class="fas fa-users-slash"></i></div> @Localizer["BannedUsers"]
                         </a>
-
+                        <a class="nav-link" asp-controller="Admin" asp-action="Profile">
+                            <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div> @Localizer["Profile"]
+                        </a>
                         <a class="nav-link" asp-controller="Account" asp-action="Logout">
                             <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt"></i></div> @Localizer["Logout"]
                         </a>
@@ -110,8 +119,6 @@
             </nav>
         </div>
 
-
-        <!-- SAYFA İÇERİĞİ -->
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
@@ -122,15 +129,18 @@
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">@Localizer["mod"] © Sağlık Bakanlığı 2025</div>
+                        <div class="text-muted">@Localizer["AdminModule"] © @Localizer["Ministry"] 2025</div>
                         <div>
-                            <a href="#">@Localizer["gzllk"]</a> &middot; <a href="#">@Localizer["kssl"]</a>
+                            <a href="#">@Localizer["Privacy"]</a>
+                            &middot;
+                            <a href="#">@Localizer["Terms"]</a>
                         </div>
                     </div>
                 </div>
             </footer>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="~/js/scripts.js"></script>
     @RenderSection("Scripts", required: false)

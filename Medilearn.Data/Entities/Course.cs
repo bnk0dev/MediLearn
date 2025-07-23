@@ -27,6 +27,7 @@ namespace Medilearn.Data.Entities
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public bool IsActive { get; set; } // Bu satırı EKLE
 
         public string? MaterialPath { get; set; }
         public List<Enrollment>? Enrollments { get; set; }

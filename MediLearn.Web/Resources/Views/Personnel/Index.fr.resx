@@ -126,6 +126,9 @@
   <data name="Description" xml:space="preserve">
     <value>Description</value>
   </data>
+  <data name="Daown" xml:space="preserve">
+    <value>Télécharger</value>
+  </data>
   <data name="EndDate" xml:space="preserve">
     <value>Date de fin</value>
   </data>

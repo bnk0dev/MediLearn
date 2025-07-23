@@ -156,6 +156,9 @@
   <data name="StartDate" xml:space="preserve">
     <value>Başlangıç Tarihi</value>
   </data>
+  <data name="ViewMaterial" xml:space="preserve">
+    <value>Materyalleri Gör</value>
+  </data>
   <data name="zeroRecords" xml:space="preserve">
     <value>Eşleşen kurs bulunamadı</value>
   </data>

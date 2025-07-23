@@ -156,6 +156,9 @@
   <data name="StartDate" xml:space="preserve">
     <value>Start Date</value>
   </data>
+  <data name="ViewMaterial" xml:space="preserve">
+    <value>View Material</value>
+  </data>
   <data name="zeroRecords" xml:space="preserve">
     <value>No matching courses found</value>
   </data>

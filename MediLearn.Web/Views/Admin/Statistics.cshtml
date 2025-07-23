@@ -1,80 +1,145 @@
-﻿@model Medilearn.Models.DTOs.AdminStatisticsDto
+﻿@model MediLearn.Models.DTOs.AdminStatisticsViewModel
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
     Layout = "_LayoutAdmin";
-    var name = ViewBag.AdminName as string ?? "Admin";
 }
 
-<br />
-<h2 class="text-center mb-4">@Localizer["StatisticsTitle"]</h2>
+<h2 class="text-danger mb-4 text-center">@Localizer["AdminStatisticsTitle"]</h2>
 
-<div class="charts-wrapper" style="display:flex; gap:2rem; justify-content:center; flex-wrap: wrap;">
-    <div class="chart-card" style="width: 350px; background: #fff8f5; padding: 1rem; border-radius: 10px; box-shadow: 0 0 10px rgb(161 0 0 / 0.15);">
-        <canvas id="userTypeChart"></canvas>
-    </div>
-
-    <div class="chart-card" style="width: 350px; background: #f0f7fa; padding: 1rem; border-radius: 10px; box-shadow: 0 0 10px rgb(23 162 184 / 0.15);">
-        <canvas id="personnelParticipationChart"></canvas>
+<div class="mb-4">
+    <div class="row text-center text-white">
+        <div class="col-md-3 bg-danger p-3 rounded mx-2">
+            <h4>@Model.TotalCourses</h4>
+            <p>@Localizer["TotalCourses"]</p>
+        </div>
+        <div class="col-md-3 bg-danger p-3 rounded mx-2">
+            <h4>@Model.TotalInstructors</h4>
+            <p>@Localizer["TotalInstructors"]</p>
+        </div>
+        <div class="col-md-3 bg-danger p-3 rounded mx-2">
+            <h4>@Model.TotalPersonnel</h4>
+            <p>@Localizer["TotalPersonnel"]</p>
+        </div>
+        <div class="col-md-3 bg-danger p-3 rounded mx-2">
+            <h4>@Model.TotalBannedUsers</h4>
+            <p>@Localizer["TotalBannedUsers"]</p>
+        </div>
     </div>
 </div>
 
+<!-- Pasta Grafik -->
+<div class="mb-4" style="max-width:500px; margin:auto;">
+    <canvas id="pieChart"></canvas>
+</div>
+
+<h3 class="mb-3 text-danger">@Localizer["CourseDetails"]</h3>
+
+<!-- Excel Export Button -->
+<div class="mb-3 text-end">
+    <form asp-action="ExportStatisticsExcel" method="post">
+        <button type="submit" class="btn btn-danger fw-bold">
+            <i class="bi bi-file-earmark-spreadsheet"></i> @Localizer["ExportExcel"]
+        </button>
+    </form>
+</div>
+
+<table id="coursesTable" class="table table-bordered table-striped table-hover">
+    <thead class="table-danger">
+        <tr>
+            <th>@Localizer["CourseTitle"]</th>
+            <th>@Localizer["EnrolledPersonnel"]</th>
+            <th>@Localizer["CompletedPersonnel"]</th>
+            <th>@Localizer["CompletionRate"]</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var course in Model.CoursesSummary)
+        {
+            <tr>
+                <td>@course.CourseTitle</td>
+                <td>@course.EnrolledPersonnelCount</td>
+                <td>@course.CompletedPersonnelCount</td>
+                <td>@($"{course.CompletionRate:F2} %")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Styles {
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+}
+
 @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
     <script>
-        const commonOptions = (titleText) => ({
-            responsive: true,
-            plugins: {
-                legend: {
-                    labels: {
-                        color: '#6c757d',
-                        font: { size: 14 }
+        $(document).ready(function () {
+            // DataTables başlat
+            $('#coursesTable').DataTable({
+                lengthMenu: [5, 10, 15, 50],
+                pageLength: 10,
+                language: {
+                    search: "@Localizer["DT_Search"]",
+                    lengthMenu: "@Localizer["DT_LengthMenu"]",
+                    zeroRecords: "@Localizer["DT_ZeroRecords"]",
+                    info: "@Localizer["DT_Info"]",
+                    infoEmpty: "@Localizer["DT_InfoEmpty"]",
+                    infoFiltered: "@Localizer["DT_InfoFiltered"]",
+                    paginate: {
+                        next: "@Localizer["DT_Next"]",
+                        previous: "@Localizer["DT_Prev"]"
                     }
-                },
-                title: {
-                    display: true,
-                    text: titleText,
-                    color: '#6c757d',
-                    font: { size: 16, weight: 'bold' }
                 }
-            }
-        });
+            });
 
-        const userTypeCtx = document.getElementById('userTypeChart').getContext('2d');
-        new Chart(userTypeCtx, {
-            type: 'pie',
-            data: {
-                labels: [
-                    "@Localizer["Instructor"]",
-                    "@Localizer["Personnel"]"
-                ],
-                datasets: [{
-                    label: "@Localizer["UserTypes"]",
-                    data: [@Model.TotalInstructors, @Model.TotalPersonnel],
-                    backgroundColor: ['#a10000cc', '#f5e9dfcc']
-                }]
-            },
-            options: commonOptions("@Localizer["TotalInstructorAndPersonnel"]")
-        });
-
-        const participationCtx = document.getElementById('personnelParticipationChart').getContext('2d');
-        new Chart(participationCtx, {
-            type: 'pie',
-            data: {
-                labels: [
-                    "@Localizer["TotalPersonnel"]",
-                    "@Localizer["TotalParticipation"]"
-                ],
-                datasets: [{
-                    label: "@Localizer["ParticipationStatus"]",
-                    data: [
-                        @Model.TotalPersonnel,
-                        @Model.PersonnelCourseEnrollments.Values.Sum()
+            // Pasta grafik
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            const pieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: [
+                        '@Localizer["TotalCourses"]',
+                        '@Localizer["TotalInstructors"]',
+                        '@Localizer["TotalPersonnel"]',
+                        '@Localizer["TotalBannedUsers"]'
                     ],
-                    backgroundColor: ['#117a8bcc', '#28a745cc']
-                }]
-            },
-            options: commonOptions("@Localizer["PersonnelAndCourseParticipation"]")
+                    datasets: [{
+                        label: '@Localizer["Statistics"]',
+                        data: [
+                            @Model.TotalCourses,
+                            @Model.TotalInstructors,
+                            @Model.TotalPersonnel,
+                            @Model.TotalBannedUsers
+                        ],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.7)',    // kırmızı
+                            'rgba(54, 162, 235, 0.7)',    // mavi
+                            'rgba(255, 206, 86, 0.7)',    // sarı
+                            'rgba(75, 192, 192, 0.7)'     // yeşil
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
         });
     </script>
 }

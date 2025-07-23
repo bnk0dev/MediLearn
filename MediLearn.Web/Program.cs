@@ -1,4 +1,4 @@
-using Medilearn.Data.Contexts;
+ï»¿using Medilearn.Data.Contexts;
 using Medilearn.Data.Entities;
 using Medilearn.Services;
 using Medilearn.Services.Interfaces;
@@ -12,12 +12,12 @@ using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Localization ayarlarý ve desteklenen diller
+// 1. Localization ayarlarÄ± ve desteklenen diller
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 var supportedCultures = new[] { "tr", "en", "fr" };
 var cultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
 
-// 2. Scoped servisler ve baðýmlýlýklar
+// 2. Scoped servisler ve baÄŸÄ±mlÄ±lÄ±klar
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IInstructorService, InstructorService>();
@@ -25,7 +25,7 @@ builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 builder.Services.AddScoped<ICourseMaterialService, CourseMaterialService>();
 
-// 3. DbContext ayarý
+// 3. DbContext ayarÄ±
 builder.Services.AddDbContext<MedilearnDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -33,7 +33,7 @@ builder.Services.AddDbContext<MedilearnDbContext>(options =>
 builder.Services.AddControllersWithViews()
     .AddViewLocalization();
 
-// 5. Authentication (Cookie) ayarlarý
+// 5. Authentication (Cookie) ayarlarÄ±
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -44,7 +44,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 // 6. HttpContextAccessor mutlaka eklenmeli
 builder.Services.AddHttpContextAccessor();
 
-// 7. Dosya yükleme boyut limiti (max 10 MB)
+// 7. Dosya yÃ¼kleme boyut limiti (max 10 MB)
 builder.Services.Configure<FormOptions>(options =>
 {
     options.MultipartBodyLengthLimit = 10 * 1024 * 1024; // 10 MB
@@ -52,7 +52,7 @@ builder.Services.Configure<FormOptions>(options =>
 
 var app = builder.Build();
 
-// 8. Localization middleware ayarlarý
+// 8. Localization middleware ayarlarÄ±
 var localizationOptions = new RequestLocalizationOptions
 {
     DefaultRequestCulture = new RequestCulture("tr"),
@@ -67,7 +67,7 @@ var localizationOptions = new RequestLocalizationOptions
 };
 app.UseRequestLocalization(localizationOptions);
 
-// 9. Pipeline yapýlandýrmasý
+// 9. Pipeline yapÄ±landÄ±rmasÄ±
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -82,7 +82,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// 10. Route tanýmlamasý
+// 10. Route tanÄ±mlamasÄ±
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

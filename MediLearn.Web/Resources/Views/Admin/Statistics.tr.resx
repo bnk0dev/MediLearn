@@ -117,31 +117,64 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Instructor" xml:space="preserve">
-    <value>Eğitmen</value>
+  <data name="AdminStatisticsTitle" xml:space="preserve">
+    <value>Admin İstatistikler</value>
   </data>
-  <data name="ParticipationStatus" xml:space="preserve">
-    <value>Katılım Durumu</value>
+  <data name="CompletedPersonnel" xml:space="preserve">
+    <value>Tamamlayan Personel</value>
   </data>
-  <data name="Personnel" xml:space="preserve">
-    <value>Personel</value>
+  <data name="CompletionRate" xml:space="preserve">
+    <value>Tamamlama Oranı</value>
   </data>
-  <data name="PersonnelAndCourseParticipation" xml:space="preserve">
-    <value>Personel ve Kurs Katılımı</value>
+  <data name="CourseDetails" xml:space="preserve">
+    <value>Kurs Bazında Detaylar</value>
   </data>
-  <data name="StatisticsTitle" xml:space="preserve">
+  <data name="CourseTitle" xml:space="preserve">
+    <value>Kurs Adı</value>
+  </data>
+  <data name="DT_Info" xml:space="preserve">
+    <value>_TOTAL_ kayıttan _START_ - _END_ arası gösteriliyor</value>
+  </data>
+  <data name="DT_InfoEmpty" xml:space="preserve">
+    <value>Gösterilecek kayıt yok</value>
+  </data>
+  <data name="DT_InfoFiltered" xml:space="preserve">
+    <value>(_MAX_ kayıt içerisinden filtrelendi)</value>
+  </data>
+  <data name="DT_LengthMenu" xml:space="preserve">
+    <value>Sayfa başına _MENU_ kayıt göster</value>
+  </data>
+  <data name="DT_Next" xml:space="preserve">
+    <value>Sonraki</value>
+  </data>
+  <data name="DT_Prev" xml:space="preserve">
+    <value>Önceki</value>
+  </data>
+  <data name="DT_Search" xml:space="preserve">
+    <value> Ara:</value>
+  </data>
+  <data name="DT_ZeroRecords" xml:space="preserve">
+    <value>Eşleşen kayıt bulunamadı</value>
+  </data>
+  <data name="EnrolledPersonnel" xml:space="preserve">
+    <value>Kayıtlı Personel</value>
+  </data>
+  <data name="ExportExcel" xml:space="preserve">
+    <value>Excel Olarak Dışa Aktar</value>
+  </data>
+  <data name="Statistics" xml:space="preserve">
     <value>İstatistikler</value>
   </data>
-  <data name="TotalInstructorAndPersonnel" xml:space="preserve">
-    <value>Toplam Eğitmen ve Personel Sayısı</value>
+  <data name="TotalBannedUsers" xml:space="preserve">
+    <value>Banlanan Kullanıcılar</value>
   </data>
-  <data name="TotalParticipation" xml:space="preserve">
-    <value>Toplam Katılım</value>
+  <data name="TotalCourses" xml:space="preserve">
+    <value>Kurs Sayısı</value>
+  </data>
+  <data name="TotalInstructors" xml:space="preserve">
+    <value>Eğitmen Sayısı</value>
   </data>
   <data name="TotalPersonnel" xml:space="preserve">
-    <value>Toplam Personel</value>
-  </data>
-  <data name="UserTypes" xml:space="preserve">
-    <value>Kullanıcı Türleri</value>
+    <value>Personel Sayısı</value>
   </data>
 </root>

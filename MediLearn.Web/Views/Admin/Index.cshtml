@@ -23,6 +23,9 @@
     <li class="nav-item" role="presentation">
         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#new-personnel">@Localizer["NewPersonnel"]</button>
     </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rejected">@Localizer["RejectedInstructors"]</button>
+    </li>
 </ul>
 
 <div class="tab-content">
@@ -47,9 +50,13 @@
                         <td>@u.LastName</td>
                         <td>@u.Email</td>
                         <td>
-                            <form asp-action="ApproveInstructor" method="post">
+                            <form asp-action="ApproveInstructor" method="post" style="display:inline;">
                                 <input type="hidden" name="tcNo" value="@u.TCNo" />
                                 <button class="btn btn-sm btn-success">@Localizer["Approve"]</button>
+                            </form>
+                            <form asp-action="RejectInstructor" method="post" style="display:inline;" onsubmit="return confirm('@Localizer["ConfirmRejectInstructor"]');">
+                                <input type="hidden" name="tcNo" value="@u.TCNo" />
+                                <button class="btn btn-sm btn-danger">@Localizer["Reject"]</button>
                             </form>
                         </td>
                     </tr>
@@ -111,11 +118,47 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Reddedilen Eğitmenler -->
+    <div class="tab-pane fade" id="rejected">
+        <table id="rejectedTable" class="table table-striped table-hover">
+            <thead class="table-warning">
+                <tr>
+                    <th>@Localizer["TCNo"]</th>
+                    <th>@Localizer["FirstName"]</th>
+                    <th>@Localizer["LastName"]</th>
+                    <th>@Localizer["Email"]</th>
+                    <th>@Localizer["Action"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var u in Model.RejectedInstructors)
+                {
+                    <tr>
+                        <td>@u.TCNo</td>
+                        <td>@u.FirstName</td>
+                        <td>@u.LastName</td>
+                        <td>@u.Email</td>
+                        <td>
+                            <form asp-action="ReinstateInstructor" method="post" style="display:inline;" onsubmit="return confirm('@Localizer["ConfirmReinstateInstructor"]');">
+                                <input type="hidden" name="tcNo" value="@u.TCNo" />
+                                <button class="btn btn-sm btn-success">@Localizer["Reinstate"]</button>
+                            </form>
+                            <form asp-action="DeleteInstructor" method="post" style="display:inline;" onsubmit="return confirm('@Localizer["ConfirmDeleteInstructor"]');">
+                                <input type="hidden" name="tcNo" value="@u.TCNo" />
+                                <button class="btn btn-sm btn-danger">@Localizer["Delete"]</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <script>
     $(document).ready(function () {
-        $('#pendingTable, #newInstructorTable, #newPersonnelTable').DataTable({
+        $('#pendingTable, #newInstructorTable, #newPersonnelTable, #rejectedTable').DataTable({
             pageLength: 5,
             lengthMenu: [[5, 10, 15, 50], [5, 10, 15, 50]],
             language: {
@@ -133,4 +176,3 @@
         });
     });
 </script>
-

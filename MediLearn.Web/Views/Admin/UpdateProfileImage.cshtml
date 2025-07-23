@@ -1,0 +1,91 @@
+﻿@model Medilearn.Models.DTOs.ProfileImageDto
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    Layout = "_LayoutAdmin";
+    ViewBag.Title = Localizer["Profil Resmi Güncelle"];
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm p-4 mx-auto border-danger" style="max-width: 500px;">
+        <h2 class="text-center mb-4 text-danger fw-bold">
+            <i class="bi bi-image"></i> @Localizer["Profil Resmi Güncelle"]
+        </h2>
+
+        <div class="text-center mb-3">
+            <!-- Mevcut profil resmi önizlemesi -->
+            <img id="previewImage" src="@ViewBag.CurrentImagePath"
+                 class="rounded-circle border"
+                 style="width: 150px; height: 150px; object-fit: cover;"
+                 alt="Profil Resmi Önizleme" />
+        </div>
+
+        <form id="imageUploadForm" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label asp-for="ProfileImage" class="form-label fw-semibold">@Localizer["Yeni Profil Resmi Seç"]</label>
+                <input name="ProfileImage" class="form-control" type="file" accept=".jpg,.jpeg,.png" required />
+                <span asp-validation-for="ProfileImage" class="text-danger small"></span>
+            </div>
+
+            <!-- TCNo gizli olarak formda gönderiliyor -->
+            <input type="hidden" name="TCNo" value="@Model.TCNo" />
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-danger fw-bold">
+                    <i class="bi bi-upload"></i> @Localizer["Güncelle"]
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-3 text-center">
+            <span id="resultMessage" class="text-success"></span>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById("imageUploadForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            var form = e.target;
+            var formData = new FormData(form);
+
+            // AntiForgeryToken'ı formData'ya ekle (bazı durumlarda gerekebilir)
+            var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+            formData.append("__RequestVerificationToken", token);
+
+            fetch('@Url.Action("UpdateProfileImage", "Admin")', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Sunucu hatası");
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Önizleme resmini güncelle
+                    document.getElementById("previewImage").src = data.imageUrl + '?' + new Date().getTime();
+
+                    // Navbar'daki profil resmini güncelle
+                    var layoutImage = document.getElementById("profileImage");
+                    if (layoutImage) {
+                        layoutImage.src = data.imageUrl + '?' + new Date().getTime();
+                    }
+
+                    document.getElementById("resultMessage").innerText = "@Localizer["Profil resminiz başarıyla güncellendi."]";
+                } else {
+                    document.getElementById("resultMessage").innerHTML = '<div class="alert alert-danger">' + (data.error || "Bir hata oluştu.") + '</div>';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById("resultMessage").innerHTML = '<div class="alert alert-danger">@Localizer["Bir hata oluştu."]</div>';
+            });
+        });
+    </script>
+}

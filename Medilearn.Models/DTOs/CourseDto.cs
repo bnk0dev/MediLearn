@@ -19,6 +19,9 @@ namespace Medilearn.Models.DTOs
 
         public string InstructorTCNo { get; set; } = string.Empty;  
         public string InstructorId { get; set; }   
-        public string MaterialFileName { get; set; }  
+        public string MaterialFileName { get; set; }
+
+        public bool HasMaterial { get; set; }   // Materyal var mı
+        public string MaterialUrl { get; set; } = string.Empty; // Materyalin görüntüleneceği URL
     }
 }

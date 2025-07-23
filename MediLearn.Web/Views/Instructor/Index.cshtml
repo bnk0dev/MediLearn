@@ -32,10 +32,20 @@
                     <td>@course.StartDate.ToString("yyyy-MM-dd")</td>
                     <td>@course.EndDate.ToString("yyyy-MM-dd")</td>
                     <td>
-                        <a asp-action="AddMaterial" asp-route-courseId="@course.Id" class="btn btn-outline-danger btn-sm">
-                            <i class="fa fa-file-upload me-1"></i> @Localizer["AddMaterial"]
-                        </a>
+                        @if (course.HasMaterial)
+                        {
+                            <a href="@course.MaterialUrl" target="_blank" class="btn btn-primary btn-sm">
+                                <i class="fa fa-file-pdf me-1"></i> @Localizer["ViewMaterial"]
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-action="AddMaterial" asp-route-courseId="@course.Id" class="btn btn-outline-danger btn-sm">
+                                <i class="fa fa-file-upload me-1"></i> @Localizer["AddMaterial"]
+                            </a>
+                        }
                     </td>
+
                 </tr>
             }
         </tbody>

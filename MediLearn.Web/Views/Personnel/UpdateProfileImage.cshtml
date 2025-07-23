@@ -1,55 +1,69 @@
-﻿@model Medilearn.Models.DTOs.ProfileImageDto
-@{
-    Layout = "_LayoutPersonnel";
-    ViewBag.Title = "Profil Resmi Güncelle";
-}
+﻿    @model Medilearn.Models.DTOs.ProfileImageDto
+    @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
-<div class="container mt-4">
-    <div class="card shadow-sm p-4 mx-auto border-danger" style="max-width: 500px;">
-        <h2 class="text-center mb-4 text-danger fw-bold">
-            <i class="bi bi-image"></i> Profil Resmi Güncelle
-        </h2>
+    @{
+        Layout = "_LayoutPersonnel";
+        ViewBag.Title = Localizer["UpdateProfileImageTitle"];
+    }
 
-        <form id="imageUploadForm" enctype="multipart/form-data">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="TCNo" value="@Model.TCNo" />
-            <div class="mb-3">
-                <label asp-for="ProfileImage" class="form-label fw-semibold">Profil Resmi</label>
-                <input asp-for="ProfileImage" type="file" class="form-control" name="ProfileImage" />
-                <span asp-validation-for="ProfileImage" class="text-danger small"></span>
+    <div class="container mt-4">
+        <div class="card shadow-sm p-4 mx-auto border-danger" style="max-width: 500px;">
+            <h2 class="text-center mb-4 text-danger fw-bold">
+                <i class="bi bi-image"></i> @Localizer["UpdateProfileImageHeading"]
+            </h2>
+
+            <div class="text-center mb-3">
+                <img src="@ViewBag.CurrentImagePath" alt="Kullanıcı" class="rounded-circle border" style="width: 120px; height: 120px; object-fit: cover;" />
             </div>
-            <button type="submit" class="btn btn-danger w-100 fw-bold">Güncelle</button>
-        </form>
 
-        <div id="uploadMessage" class="mt-3"></div>
+            <form id="imageUploadForm" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="TCNo" value="@Model.TCNo" />
+
+                <div class="mb-3">
+                    <label asp-for="ProfileImage" class="form-label fw-semibold">@Localizer["SelectNewProfileImage"]</label>
+                    <input asp-for="ProfileImage" type="file" class="form-control" name="ProfileImage" />
+                    <span asp-validation-for="ProfileImage" class="text-danger small"></span>
+                </div>
+
+                <button type="submit" class="btn btn-danger w-100 fw-bold">
+                    <i class="bi bi-upload"></i> @Localizer["UpdateButton"]
+                </button>
+            </form>
+
+            <div id="uploadMessage" class="mt-3"></div>
+        </div>
     </div>
-</div>
 
-@section Scripts {
-    <script>
-        $("#imageUploadForm").submit(function (e) {
-            e.preventDefault();
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+        <script>
+            $("#imageUploadForm").submit(function (e) {
+                e.preventDefault();
 
-            var formData = new FormData(this);
+                var formData = new FormData(this);
 
-            $.ajax({
-                url: '@Url.Action("UpdateProfileImage", "Personnel")',
-                type: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (res) {
-                    if (res.success) {
-                        $("#uploadMessage").html('<div class="alert alert-success">Profil resmi güncellendi.</div>');
-                        $("img[alt='Kullanıcı']").attr("src", res.imageUrl + '?v=' + new Date().getTime());
-                    } else {
-                        $("#uploadMessage").html('<div class="alert alert-danger">' + res.message + '</div>');
+                $.ajax({
+                    url: '@Url.Action("UpdateProfileImage", "Personnel")',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (res) {
+                        if (res.success) {
+                            $("#uploadMessage").html('<div class="alert alert-success">' + '@Localizer["ProfileImageUpdated"]' + '</div>');
+                            $("img[alt='Kullanıcı']").attr("src", res.imagePath + '?v=' + new Date().getTime());
+                        } else {
+                            $("#uploadMessage").html('<div class="alert alert-danger">' + res.message + '</div>');
+                        }
+                    },
+                    error: function () {
+                        $("#uploadMessage").html('<div class="alert alert-danger">' + '@Localizer["UnexpectedError"]' + '</div>');
                     }
-                },
-                error: function () {
-                    $("#uploadMessage").html('<div class="alert alert-danger">Beklenmeyen bir hata oluştu.</div>');
-                }
+                });
             });
-        });
-    </script>
-}
+        </script>
+    }
