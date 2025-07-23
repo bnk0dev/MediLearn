@@ -30,6 +30,8 @@ namespace Medilearn.Data.Entities
         public bool IsActive { get; set; } // Bu satırı EKLE
 
         public string? MaterialPath { get; set; }
+        public string? PptxFileName { get; set; }
+
         public List<Enrollment>? Enrollments { get; set; }
         public ICollection<CourseMaterial> CourseMaterials { get; set; } = new List<CourseMaterial>();
     }

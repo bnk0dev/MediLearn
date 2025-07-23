@@ -20,7 +20,8 @@
 
                         <div class="mb-4">
                             <label asp-for="MaterialFile" class="form-label fw-semibold">@Localizer["SelectPowerPointFile"]</label>
-                            <input asp-for="MaterialFile" class="form-control" type="file" accept=".pdf" />
+                            <!-- Burada accept PDF'den ppt, pptx olarak değişti -->
+                            <input asp-for="MaterialFile" class="form-control" type="file" accept=".ppt,.pptx" />
                             <span asp-validation-for="MaterialFile" class="text-danger small"></span>
                         </div>
 

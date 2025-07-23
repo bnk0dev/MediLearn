@@ -4,6 +4,7 @@ namespace Medilearn.Services.Interfaces
 {
     public interface ICourseService
     {
+
         // Belirli bir eğitmene ait kursları döndürür
         Task<IEnumerable<CourseDto>> GetCoursesByInstructorAsync(string instructorTcNo);
 

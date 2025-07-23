@@ -23,13 +23,6 @@
                         </div>
                     }
 
-                    @if (ViewBag.Message != null)
-                    {
-                        <div class="alert alert-success text-center">
-                            @ViewBag.Message
-                        </div>
-                    }
-
                     <form asp-action="Profile" method="post" novalidate>
                         <div class="mb-3">
                             <label asp-for="TCNo" class="form-label fw-semibold">@Localizer["TCNo"]</label>

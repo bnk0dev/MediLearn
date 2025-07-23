@@ -12,6 +12,21 @@
     <br />
     <h2 class="text-center mb-4">@Localizer["RegisteredUsersTitle"]</h2>
 
+    @if (TempData["UserDeletedSuccess"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["UserDeletedSuccess"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["bannedsuccess"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["bannedsuccess"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <table id="usersTable" class="custom-table table table-bordered table-hover table-striped">
         <thead class="table-light">
             <tr>

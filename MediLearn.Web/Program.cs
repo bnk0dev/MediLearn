@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 var supportedCultures = new[] { "tr", "en", "fr" };
 var cultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
-
+builder.Services.AddScoped<PowerPointConversionService>();
 // 2. Scoped servisler ve bağımlılıklar
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IUserService, UserService>();

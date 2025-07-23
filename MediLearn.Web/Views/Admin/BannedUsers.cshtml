@@ -9,6 +9,14 @@
 <br />
 <h2 class="text-center mb-4">@Localizer["BannedUsersHeading"]</h2>
 
+@if (TempData["unbannedsucces"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["unbannedsucces"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <table class="table table-bordered table-striped">
     <thead>
         <tr>

@@ -276,23 +276,48 @@ namespace Medilearn.Web.Controllers
                 return Json(new { success = false, message = $"Yükleme hatası: {ex.Message}" });
             }
         }
-
-
-        //materyali indirmek
-        public IActionResult DownloadMaterial(string fileName)
+        [HttpGet]
+        public async Task<IActionResult> DownloadOriginalMaterial(int courseId)
         {
-            if (string.IsNullOrEmpty(fileName))
-                return BadRequest();
+            var course = await _courseService.GetCourseByIdAsync(courseId);
+            if (course == null)
+                return NotFound("Kurs bulunamadı.");
 
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "materials");
-            var filePath = Path.Combine(uploadsFolder, fileName);
+            if (string.IsNullOrEmpty(course.PptxFileName))
+                return NotFound("PowerPoint dosyası mevcut değil.");
 
-            if (!System.IO.File.Exists(filePath))
-                return NotFound();
+            // Veritabanında tam path değilse relative path olarak varsayalım
+            var pptRelativePath = course.PptxFileName.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+            var pptPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", pptRelativePath);
 
-            var mimeType = "application/octet-stream";
-            return PhysicalFile(filePath, mimeType, fileName);
+            Console.WriteLine($"[DownloadOriginalMaterial] Dosya yolu: {pptPath}");
+            bool fileExists = System.IO.File.Exists(pptPath);
+            Console.WriteLine($"[DownloadOriginalMaterial] Dosya var mı? {fileExists}");
+
+            if (!fileExists)
+                return NotFound("PowerPoint dosyası bulunamadı.");
+
+            var pptMime = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+
+            try
+            {
+                var stream = new FileStream(pptPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                return File(stream, pptMime, Path.GetFileName(pptPath));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[DownloadOriginalMaterial] Dosya indirirken hata: {ex}");
+                return StatusCode(500, $"Dosya indirilemedi: {ex.Message}");
+            }
         }
+
+
+
+
+
+
+
+
 
     }
 }

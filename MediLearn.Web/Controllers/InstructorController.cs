@@ -2,6 +2,7 @@
 using Medilearn.Models.DTOs;
 using Medilearn.Models.ViewModels;
 using Medilearn.Services.Interfaces;
+using Medilearn.Services.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -19,14 +20,16 @@ namespace Medilearn.Web.Controllers
         private readonly IUserService _userService;
         private readonly ICourseMaterialService _courseMaterialService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly PowerPointConversionService _pptConverter;
 
         // Constructor ile gerekli servisler dependency injection yoluyla alınır
-        public InstructorController(ICourseService courseService, IUserService userService, ICourseMaterialService courseMaterialService, IWebHostEnvironment webHostEnvironment)
+        public InstructorController(ICourseService courseService, IUserService userService, ICourseMaterialService courseMaterialService, IWebHostEnvironment webHostEnvironment, PowerPointConversionService pptConverter)
         {
             _courseService = courseService;
             _userService = userService;
             _courseMaterialService = courseMaterialService;
             _webHostEnvironment = webHostEnvironment;
+            _pptConverter = pptConverter;
         }
 
         // Eğitmen ana sayfası, kendi kurslarını listeler
@@ -239,42 +242,61 @@ namespace Medilearn.Web.Controllers
             }
 
             var extension = Path.GetExtension(model.MaterialFile.FileName).ToLowerInvariant();
-            if (extension != ".pdf")
+            if (extension != ".ppt" && extension != ".pptx")
             {
-                ModelState.AddModelError("MaterialFile", "Sadece PDF dosyaları yüklenebilir.");
+                ModelState.AddModelError("MaterialFile", "Sadece .ppt veya .pptx dosyaları yükleyebilirsiniz.");
                 return View(model);
             }
 
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/materials");
-            if (!Directory.Exists(uploadsFolder))
-                Directory.CreateDirectory(uploadsFolder);
+            // 1. PPT dosyasını kaydet
+            var pptUploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "ppt");
+            if (!Directory.Exists(pptUploadsFolder))
+                Directory.CreateDirectory(pptUploadsFolder);
 
-            var uniqueFileName = Guid.NewGuid() + extension;
-            var fullPath = Path.Combine(uploadsFolder, uniqueFileName);
+            var pptFileName = Guid.NewGuid() + extension;
+            var pptFilePath = Path.Combine(pptUploadsFolder, pptFileName);
 
-            using (var stream = new FileStream(fullPath, FileMode.Create))
+            using (var stream = new FileStream(pptFilePath, FileMode.Create))
             {
                 await model.MaterialFile.CopyToAsync(stream);
             }
 
-            var relativePath = "/uploads/materials/" + uniqueFileName;
+            // 2. PDF klasörü hazırla ve PPT -> PDF dönüştür
+            var pdfUploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "pdf");
+            if (!Directory.Exists(pdfUploadsFolder))
+                Directory.CreateDirectory(pdfUploadsFolder);
 
-            var material = new CourseMaterial
+            var pdfFileName = Path.ChangeExtension(pptFileName, ".pdf");
+            var pdfFilePath = Path.Combine(pdfUploadsFolder, pdfFileName);
+
+            try
             {
-                CourseId = model.CourseId,
-                MaterialPath = relativePath,
-                UploadDate = DateTime.Now
-            };
-            await _courseMaterialService.AddCourseMaterialAsync(material);
+                _pptConverter.ConvertPptToPdf(pptFilePath, pdfFilePath);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "PowerPoint dosyası PDF'ye dönüştürülemedi: " + ex.Message);
+                return View(model);
+            }
 
+            // 3. Veritabanını güncelle (PptxFileName ve MaterialFileName)
             var courseDto = await _courseService.GetCourseByIdAsync(model.CourseId);
             if (courseDto != null)
             {
-                courseDto.MaterialFileName = relativePath;
+                // DİKKAT: Veritabanına göre mutlak ya da göreceli yol kullan
+                // Burada göreceli yol örneği verildi, ihtiyacına göre düzenle
+                courseDto.PptxFileName = "/uploads/ppt/" + pptFileName;
+                courseDto.MaterialFileName = "/uploads/pdf/" + pdfFileName;
+
                 await _courseService.UpdateCourseAsync(courseDto);
             }
-            return RedirectToAction("Index");
+
+            TempData["Success"] = "Materyal başarıyla yüklendi ve PDF'ye dönüştürüldü.";
+            return RedirectToAction("Index", new { courseId = model.CourseId });
         }
+
+
+
 
         public async Task<IActionResult> MyCourses()
         {
@@ -356,7 +378,61 @@ namespace Medilearn.Web.Controllers
         }
 
 
+        //SSSSSSSSSSSSSSSSSSSSSSSSSSS
 
+        [HttpGet]
+        public IActionResult UploadCourseMaterial(int courseId)
+        {
+            var model = new CourseMaterialUploadDto { CourseId = courseId };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadCourseMaterial(CourseMaterialUploadDto model)
+        {
+            if (model.PowerPointFile == null || (model.PowerPointFile.FileName.EndsWith(".pptx") == false && model.PowerPointFile.FileName.EndsWith(".ppt") == false))
+            {
+                ModelState.AddModelError("PowerPointFile", "Sadece .ppt veya .pptx dosyası yükleyebilirsiniz.");
+                return View(model);
+            }
+
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/ppt");
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
+
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(model.PowerPointFile.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await model.PowerPointFile.CopyToAsync(fileStream);
+            }
+
+            // PDF olarak kaydetmek için yol belirle
+            var pdfFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads/pdf");
+            if (!Directory.Exists(pdfFolder))
+                Directory.CreateDirectory(pdfFolder);
+
+            var pdfFileName = Path.ChangeExtension(fileName, ".pdf");
+            var pdfFilePath = Path.Combine(pdfFolder, pdfFileName);
+
+            try
+            {
+                _pptConverter.ConvertPptToPdf(filePath, pdfFilePath);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "PowerPoint dosyası PDF'ye dönüştürülemedi: " + ex.Message);
+                return View(model);
+            }
+
+            // TODO: Burada pdfFileName'i ve courseId'yi DB'ye kaydet (Course materyal alanı vb.)
+
+            TempData["Success"] = "Materyal başarıyla yüklendi.";
+            return RedirectToAction("CourseMaterials", new { courseId = model.CourseId });
+        }
+
+       
 
     }
 }

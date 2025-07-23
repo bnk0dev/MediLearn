@@ -91,8 +91,8 @@ namespace Medilearn.Web.Controllers
 
             await _userService.UpdateUserAsync(user);
 
-            ViewBag.Message = "Profiliniz başarıyla güncellendi.";
-            return View(model);
+            TempData["Success"] = "Profiliniz başarıyla güncellendi.";
+            return RedirectToAction(nameof(Profile));
         }
         // Admin ana sayfa dashboard
         public async Task<IActionResult> Index()
@@ -145,7 +145,7 @@ namespace Medilearn.Web.Controllers
             bool result = await _userService.ApproveUserAsync(tcNo);
 
             if (result)
-                TempData["Success"] = "Eğitmen başarıyla onaylandı.";
+                TempData["onayegitmen"] = "Eğitmen başarıyla onaylandı.";
             else
                 TempData["Error"] = "Onaylama işlemi başarısız oldu.";
 
@@ -161,7 +161,7 @@ namespace Medilearn.Web.Controllers
 
             await _userService.UpdateUserStatusAsync(tcNo, UserStatus.Banned);
 
-            TempData["Success"] = "Eğitmen banlandı.";
+            TempData["egitmensil"] = "Eğitmen banlandı.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -174,7 +174,7 @@ namespace Medilearn.Web.Controllers
 
             await _userService.UpdateUserStatusAsync(tcNo, UserStatus.Active);
 
-            TempData["Success"] = "Eğitmen yeniden aktif edildi.";
+            TempData["egitmenaktif"] = "Eğitmen yeniden aktif edildi.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -187,7 +187,7 @@ namespace Medilearn.Web.Controllers
 
             await _userService.DeleteUserAsync(tcNo);
 
-            TempData["Success"] = "Eğitmen başarıyla silindi.";
+            TempData["basariylasil"] = "Eğitmen başarıyla silindi.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -369,7 +369,7 @@ namespace Medilearn.Web.Controllers
 
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Kullanıcı güncellendi.";
+            TempData["kullaniciguncelle"] = "Kullanıcı güncellendi.";
             return RedirectToAction(nameof(Users));
         }
 
@@ -382,7 +382,7 @@ namespace Medilearn.Web.Controllers
             {
                 _context.Users.Remove(user);
                 await _context.SaveChangesAsync();
-                TempData["Success"] = "Kullanıcı başarıyla silindi.";
+                TempData["UserDeletedSuccess"] = "Kullanıcı başarıyla silindi.";
             }
             return RedirectToAction(nameof(Users));
         }
@@ -536,7 +536,7 @@ namespace Medilearn.Web.Controllers
             user.Status = UserStatus.Banned;
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Kullanıcı başarıyla yasaklandı.";
+            TempData["bannedsuccess"] = "Kullanıcı başarıyla yasaklandı.";
             return RedirectToAction(nameof(Users));
         }
 
@@ -554,7 +554,7 @@ namespace Medilearn.Web.Controllers
             user.Status = UserStatus.Active;
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "Kullanıcının yasağı kaldırıldı.";
+            TempData["unbannedsucces"] = "Kullanıcının yasağı kaldırıldı.";
             return RedirectToAction(nameof(BannedUsers));
         }
 
@@ -621,7 +621,7 @@ namespace Medilearn.Web.Controllers
             userToUpdate.PasswordHash = HashPassword(NewPassword);
             await _userService.UpdateUserAsync(userToUpdate);
 
-            TempData["Success"] = "Şifre başarıyla değiştirildi.";
+            TempData["sifredegisti"] = "Şifre başarıyla değiştirildi.";
             return RedirectToAction(nameof(Users));
         }
 
@@ -703,6 +703,56 @@ namespace Medilearn.Web.Controllers
             {
                 return Json(new { success = false, error = "Dosya yüklenirken hata oluştu: " + ex.Message });
             }
+
+
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteCourse(int id)
+        {
+            var course = await _context.Courses
+                .Include(c => c.CourseMaterials)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (course == null)
+            {
+                TempData["Error"] = "Kurs bulunamadı.";
+                return RedirectToAction(nameof(InstructorsWithCourses));
+            }
+
+            // Kursa ait materyallerin fiziksel dosyalarını sil
+            foreach (var material in course.CourseMaterials)
+            {
+                var fullPath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot",
+                    material.MaterialPath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar)
+                );
+
+                if (System.IO.File.Exists(fullPath))
+                {
+                    System.IO.File.Delete(fullPath);
+                }
+            }
+
+            // Veritabanından materyal kayıtlarını kaldır
+            _context.CourseMaterials.RemoveRange(course.CourseMaterials);
+
+            // Kursa ait personel kayıtlarını kaldır
+            var enrollments = await _context.Enrollments
+                .Where(e => e.CourseId == id)
+                .ToListAsync();
+
+            _context.Enrollments.RemoveRange(enrollments);
+
+            // Kursu kaldır
+            _context.Courses.Remove(course);
+
+            await _context.SaveChangesAsync();
+
+            TempData["CourseDeletedSuccess"] = "Kurs başarıyla silindi.";
+            return RedirectToAction(nameof(InstructorsWithCourses));
+        }
+
     }
 }

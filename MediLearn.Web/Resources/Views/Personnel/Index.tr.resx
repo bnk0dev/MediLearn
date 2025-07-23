@@ -186,4 +186,7 @@
   <data name="zeroRecords" xml:space="preserve">
     <value>Eşleşen kayıt bulunamadı</value>
   </data>
+  <data name="Mattee" xml:space="preserve">
+    <value>Sunuyu İndir</value>
+  </data>
 </root>

@@ -39,15 +39,15 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(course.MaterialFileName))
                                 {
-                                    <a href="@course.MaterialFileName" download class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-download"></i> @Localizer["Daown"]
-                                    </a>
+                                        <a href="@Url.Action("DownloadOriginalMaterial", "Personnel", new { courseId = course.Id })" class="btn btn-primary">
+                                        @Localizer["Mattee"]
+                                        </a>
                                 }
                                 else
                                 {
                                     <span class="text-muted fst-italic">@Localizer["NoMaterial"]</span>
                                 }
-                            </td>
+                            </td> 
                             <td>
                                 <a href="@Url.Action("CourseDetails", "Personnel", new { id = course.Id })" class="btn btn-sm btn-outline-danger">
                                     @Localizer["Start"]
@@ -91,9 +91,8 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(course.MaterialFileName))
                                 {
-                                    <a href="@course.MaterialFileName" download class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-download"></i> @Localizer["Daown"]
-                                    </a>
+                                    <a href="@Url.Action("DownloadOriginalMaterial", "Personnel", new { courseId = course.Id })">@Localizer["Daown"]</a>
+
                                 }
                                 else
                                 {

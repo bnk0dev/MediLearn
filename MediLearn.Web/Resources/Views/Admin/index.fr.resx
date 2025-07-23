@@ -175,10 +175,10 @@
     <value>Précédent</value>
   </data>
   <data name="Reject" xml:space="preserve">
-    <value>Reddet</value>
+    <value>rejeter</value>
   </data>
   <data name="Reinstate" xml:space="preserve">
-    <value />
+    <value>Défaire</value>
   </data>
   <data name="Delete" xml:space="preserve">
     <value />
@@ -194,5 +194,8 @@
   </data>
   <data name="RejectedInstructors" xml:space="preserve">
     <value>Instructeurs rejetés</value>
+  </data>
+  <data name="matte" xml:space="preserve">
+    <value />
   </data>
 </root>

@@ -18,7 +18,13 @@
         </ul>
     </div>
 }
-
+@if (TempData["sifredegisti"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["sifredegisti"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 <div class="row">
     <div class="col-md-6">
         <form asp-action="EditUser" method="post" class="border p-4 rounded bg-light">

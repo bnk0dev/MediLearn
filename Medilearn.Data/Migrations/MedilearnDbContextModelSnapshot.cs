@@ -50,6 +50,9 @@ namespace Medilearn.Data.Migrations
                     b.Property<string>("MaterialPath")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PptxFileName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 

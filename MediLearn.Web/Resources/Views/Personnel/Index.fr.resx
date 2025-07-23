@@ -186,4 +186,7 @@
   <data name="zeroRecords" xml:space="preserve">
     <value>Aucun enregistrement correspondant</value>
   </data>
+  <data name="Mattee" xml:space="preserve">
+    <value>Télécharger la présentation</value>
+  </data>
 </root>

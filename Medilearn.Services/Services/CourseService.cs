@@ -96,10 +96,14 @@ namespace Medilearn.Services.Services
                     Description = c.Description,
                     StartDate = c.StartDate,
                     EndDate = c.EndDate,
-                    InstructorTCNo = c.InstructorTCNo
+                    InstructorTCNo = c.InstructorTCNo,
+                    MaterialFileName = c.MaterialPath,   // PDF yolu
+                    PptxFileName = c.PptxFileName
                 })
                 .ToListAsync();
         }
+
+
 
         // Sistemdeki tüm kursları getirir
         public async Task<IEnumerable<CourseDto>> GetAllCoursesAsync()
@@ -121,7 +125,7 @@ namespace Medilearn.Services.Services
         public async Task<CourseDto> GetCourseByIdAsync(int courseId)
         {
             var course = await _context.Courses
-                .AsNoTracking()
+                .AsNoTracking() // Böylece EF cache kullanmaz, her seferinde DB'den getirir
                 .FirstOrDefaultAsync(c => c.Id == courseId);
 
             if (course == null)
@@ -135,25 +139,32 @@ namespace Medilearn.Services.Services
                 StartDate = course.StartDate,
                 EndDate = course.EndDate,
                 InstructorTCNo = course.InstructorTCNo,
-                MaterialFileName = course.MaterialPath
+                PptxFileName = course.PptxFileName,    // burada db'deki güncel değer gelmeli
+                MaterialFileName = course.MaterialPath  // varsa güncel PDF yolu
             };
         }
+
+
 
         // Var olan kursu günceller
         public async Task<bool> UpdateCourseAsync(CourseDto courseDto)
         {
-            var course = await _context.Courses.FindAsync(courseDto.Id);
-            if (course == null) return false;
+            var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == courseDto.Id);
+            if (course == null)
+                return false;
 
             course.Title = courseDto.Title;
             course.Description = courseDto.Description;
             course.StartDate = courseDto.StartDate;
             course.EndDate = courseDto.EndDate;
             course.MaterialPath = courseDto.MaterialFileName;
+            course.PptxFileName = courseDto.PptxFileName; // 🔸 pptx dosya adını veritabanına yaz
 
             await _context.SaveChangesAsync();
             return true;
         }
+
+
 
         // Eğitmenin TC'siyle birlikte yeni kurs ekler
         public async Task<bool> AddCourseAsync(CourseDto courseDto, string instructorTcNo)
