@@ -56,5 +56,6 @@ namespace Medilearn.Services.Interfaces
 
         // Kullanıcıyı günceller
         Task UpdateUserAsync(User user);
+
     }
 }

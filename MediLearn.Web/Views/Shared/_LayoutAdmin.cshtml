@@ -12,7 +12,6 @@
 
     if (string.IsNullOrEmpty(fullName))
     {
-        // Eğer isim yoksa User.Identity.Name veya "Admin"
         fullName = User.Identity?.Name ?? "Admin";
     }
 
@@ -53,6 +52,7 @@
 
         <ul class="navbar-nav ms-auto me-3 align-items-center">
             <li class="nav-item d-flex align-items-center me-3">
+                <!-- Burada id mutlaka profileImage olmalı ki JS güncellemesi yapabilelim -->
                 <img id="profileImage" src="@profileImage" alt="Profil Resmi" class="rounded-circle" style="width:32px; height:32px; object-fit:cover; border: 1px solid #fff;" />
                 <span class="text-white ms-2">@fullName</span>
             </li>

@@ -9,33 +9,33 @@
 
 <div class="mb-4">
     <div class="row text-center text-white">
-        <div class="col-md-3 bg-danger p-3 rounded mx-2">
-            <h4>@Model.TotalCourses</h4>
-            <p>@Localizer["TotalCourses"]</p>
+        <div class="col-md-3 bg-danger py-2 rounded mx-1 shadow-sm">
+            <h5 class="mb-0 fw-bold">@Model.TotalCourses</h5>
+            <small>@Localizer["TotalCourses"]</small>
         </div>
-        <div class="col-md-3 bg-danger p-3 rounded mx-2">
-            <h4>@Model.TotalInstructors</h4>
-            <p>@Localizer["TotalInstructors"]</p>
+        <div class="col-md-3 bg-danger py-2 rounded mx-1 shadow-sm">
+            <h5 class="mb-0 fw-bold">@Model.TotalInstructors</h5>
+            <small>@Localizer["TotalInstructors"]</small>
         </div>
-        <div class="col-md-3 bg-danger p-3 rounded mx-2">
-            <h4>@Model.TotalPersonnel</h4>
-            <p>@Localizer["TotalPersonnel"]</p>
+        <div class="col-md-3 bg-danger py-2 rounded mx-1 shadow-sm">
+            <h5 class="mb-0 fw-bold">@Model.TotalPersonnel</h5>
+            <small>@Localizer["TotalPersonnel"]</small>
         </div>
-        <div class="col-md-3 bg-danger p-3 rounded mx-2">
-            <h4>@Model.TotalBannedUsers</h4>
-            <p>@Localizer["TotalBannedUsers"]</p>
+        <div class="col-md-3 bg-danger py-2 rounded mx-1 shadow-sm">
+            <h5 class="mb-0 fw-bold">@Model.TotalBannedUsers</h5>
+            <small>@Localizer["TotalBannedUsers"]</small>
         </div>
     </div>
 </div>
 
-<!-- Pasta Grafik -->
-<div class="mb-4" style="max-width:500px; margin:auto;">
-    <canvas id="pieChart"></canvas>
+<div class="my-4 d-flex justify-content-center">
+    <div style="width:300px; height:300px;">
+        <canvas id="pieChart"></canvas>
+    </div>
 </div>
 
 <h3 class="mb-3 text-danger">@Localizer["CourseDetails"]</h3>
 
-<!-- Excel Export Button -->
 <div class="mb-3 text-end">
     <form asp-action="ExportStatisticsExcel" method="post">
         <button type="submit" class="btn btn-danger fw-bold">
@@ -48,6 +48,7 @@
     <thead class="table-danger">
         <tr>
             <th>@Localizer["CourseTitle"]</th>
+            <th>@Localizer["InstructorName"]</th>
             <th>@Localizer["EnrolledPersonnel"]</th>
             <th>@Localizer["CompletedPersonnel"]</th>
             <th>@Localizer["CompletionRate"]</th>
@@ -58,6 +59,7 @@
         {
             <tr>
                 <td>@course.CourseTitle</td>
+                <td>@course.InstructorName</td>
                 <td>@course.EnrolledPersonnelCount</td>
                 <td>@course.CompletedPersonnelCount</td>
                 <td>@($"{course.CompletionRate:F2} %")</td>
@@ -79,7 +81,6 @@
 
     <script>
         $(document).ready(function () {
-            // DataTables başlat
             $('#coursesTable').DataTable({
                 lengthMenu: [5, 10, 15, 50],
                 pageLength: 10,
@@ -97,7 +98,6 @@
                 }
             });
 
-            // Pasta grafik
             const ctx = document.getElementById('pieChart').getContext('2d');
             const pieChart = new Chart(ctx, {
                 type: 'pie',
@@ -117,25 +117,30 @@
                             @Model.TotalBannedUsers
                         ],
                         backgroundColor: [
-                            'rgba(255, 99, 132, 0.7)',    // kırmızı
-                            'rgba(54, 162, 235, 0.7)',    // mavi
-                            'rgba(255, 206, 86, 0.7)',    // sarı
-                            'rgba(75, 192, 192, 0.7)'     // yeşil
+                            'rgba(220, 53, 69, 0.9)',     
+                            'rgba(13, 110, 253, 0.9)',    
+                            'rgba(255, 193, 7, 0.9)',     
+                            'rgba(40, 167, 69, 0.9)'      
                         ],
                         borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)'
+                            'rgba(220, 53, 69, 1)',
+                            'rgba(13, 110, 253, 1)',
+                            'rgba(255, 193, 7, 1)',
+                            'rgba(40, 167, 69, 1)'
                         ],
-                        borderWidth: 1
+                        borderWidth: 2,
+                        hoverOffset: 8
                     }]
                 },
                 options: {
                     responsive: true,
                     plugins: {
                         legend: {
-                            position: 'bottom'
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 16,
+                                padding: 10
+                            }
                         }
                     }
                 }

@@ -4,6 +4,8 @@
     {
         public int CourseId { get; set; }
         public string CourseTitle { get; set; }
+        public string InstructorName { get; set; } // ✅ Eklendi
+
         public int EnrolledPersonnelCount { get; set; }
         public int CompletedPersonnelCount { get; set; }
         public double CompletionRate { get; set; }

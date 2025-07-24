@@ -12,25 +12,17 @@
             <i class="bi bi-image"></i> @Localizer["UpdateProfileImageHeading"]
         </h2>
 
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                @TempData["Success"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
-
         <div class="text-center mb-3">
-            <img src="@ViewBag.CurrentImagePath" alt="Profil Resmi" class="rounded-circle border" style="width: 120px; height: 120px; object-fit: cover;" />
+            <img src="@ViewBag.CurrentImagePath" alt="Profil Resmi" id="currentProfileImage" class="rounded-circle border" style="width: 120px; height: 120px; object-fit: cover;" />
         </div>
 
-        <form id="profileImageForm" asp-action="UpdateProfileImage" method="post" enctype="multipart/form-data">
+        <form id="imageUploadForm" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
-            <input asp-for="TCNo" type="hidden" />
+            <input type="hidden" name="TCNo" value="@Model.TCNo" />
 
             <div class="mb-3">
                 <label asp-for="ProfileImage" class="form-label fw-semibold">@Localizer["SelectNewProfileImage"]</label>
-                <input asp-for="ProfileImage" type="file" class="form-control" />
+                <input asp-for="ProfileImage" type="file" class="form-control" name="ProfileImage" />
                 <span asp-validation-for="ProfileImage" class="text-danger small"></span>
             </div>
 
@@ -38,36 +30,44 @@
                 <i class="bi bi-upload"></i> @Localizer["UpdateButton"]
             </button>
         </form>
+
+        <div id="uploadMessage" class="mt-3"></div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        $(document).ready(function () {
-            $('#profileImageForm').submit(function (e) {
-                e.preventDefault();
+        $("#imageUploadForm").submit(function (e) {
+            e.preventDefault();
 
-                var formData = new FormData(this);
-                $.ajax({
-                    url: '@Url.Action("UpdateProfileImage", "Instructor")',
-                    type: 'POST',
-                    data: formData,
-                    contentType: false,
-                    processData: false,
-                    success: function (response) {
-                        if (response.success) {
-                            // Profil resmi anlık güncelle
-                            $('#profileImage').attr('src', response.imageUrl + '?v=' + new Date().getTime());
-                            alert("@Localizer["ProfileImageUpdated"]");
-                        } else {
-                            alert(response.error || "Güncelleme başarısız.");
-                        }
-                    },
-                    error: function () {
-                        alert("Sunucu hatası.");
+            var formData = new FormData(this);
+
+            $.ajax({
+                url: '@Url.Action("UpdateProfileImage", "Instructor")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (res) {
+                    if (res.success) {
+                        // Sayfadaki profil resmini güncelle
+                        $("#currentProfileImage").attr("src", res.imagePath + '?v=' + new Date().getTime());
+
+                        // Layouttaki profil resmini güncelle
+                        $("#layoutProfileImage").attr("src", res.imagePath + '?v=' + new Date().getTime());
+
+                        $("#uploadMessage").html('<div class="alert alert-success">Profil fotoğrafı başarıyla güncellendi.</div>');
+                    } else {
+                        $("#uploadMessage").html('<div class="alert alert-danger">' + res.message + '</div>');
                     }
-                });
+                },
+                error: function () {
+                    $("#uploadMessage").html('<div class="alert alert-danger">Beklenmeyen bir hata oluştu.</div>');
+                }
             });
         });
     </script>

@@ -276,6 +276,7 @@ namespace Medilearn.Web.Controllers
                 return Json(new { success = false, message = $"Yükleme hatası: {ex.Message}" });
             }
         }
+
         [HttpGet]
         public async Task<IActionResult> DownloadOriginalMaterial(int courseId)
         {
@@ -315,8 +316,57 @@ namespace Medilearn.Web.Controllers
 
 
 
+        //ŞİFRE DEĞİŞTİR
+        // Şifre değiştirme sayfasını gösterir
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(string CurrentPassword, string NewPassword, string ConfirmPassword)
+        {
+            var tcNo = User.Identity?.Name;
+            if (string.IsNullOrEmpty(tcNo))
+                return Unauthorized();
 
+            if (string.IsNullOrEmpty(CurrentPassword) || string.IsNullOrEmpty(NewPassword) || string.IsNullOrEmpty(ConfirmPassword))
+            {
+                TempData["sifreError"] = "Lütfen tüm alanları doldurunuz.";
+                return RedirectToAction("Profile");
+            }
+
+            if (NewPassword != ConfirmPassword)
+            {
+                TempData["YesifreError"] = "Yeni şifre ve tekrar şifre eşleşmiyor.";
+                return RedirectToAction("Profile");
+            }
+
+            var user = await _userService.GetUserByTCNoAsync(tcNo);
+            if (user == null)
+            {
+                TempData["KulError"] = "Kullanıcı bulunamadı.";
+                return RedirectToAction("Profile");
+            }
+
+            var hashedCurrent = _userService.HashPassword(CurrentPassword);
+            var storedHash = await _userService.GetPasswordHashByTCNoAsync(tcNo);
+            if (hashedCurrent != storedHash)
+            {
+                TempData["mevsifError"] = "Mevcut şifre yanlış.";
+                return RedirectToAction("Profile");
+            }
+
+            var newHashedPassword = _userService.HashPassword(NewPassword);
+            user.PasswordHash = newHashedPassword;
+
+            await _userService.UpdateUserAsync(user);
+
+            TempData["Success"] = "Şifreniz başarıyla değiştirildi.";
+            return RedirectToAction("Profile");
+        }
 
 
     }

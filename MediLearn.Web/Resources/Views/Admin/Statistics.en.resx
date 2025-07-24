@@ -162,6 +162,9 @@
   <data name="ExportExcel" xml:space="preserve">
     <value>Export to Excel</value>
   </data>
+  <data name="InstructorName" xml:space="preserve">
+    <value>Instructor Name</value>
+  </data>
   <data name="Statistics" xml:space="preserve">
     <value>Statistics</value>
   </data>

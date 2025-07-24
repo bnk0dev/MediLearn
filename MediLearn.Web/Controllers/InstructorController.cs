@@ -157,58 +157,46 @@ namespace Medilearn.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateProfileImage(ProfileImageDto model)
+        public async Task<JsonResult> UpdateProfileImage(ProfileImageDto model)
         {
-            if (!ModelState.IsValid)
-                return Json(new { success = false, error = "Form doğrulama hatası." });
-
-            if (model.ProfileImage == null || model.ProfileImage.Length == 0)
-                return Json(new { success = false, error = "Lütfen bir dosya seçiniz." });
-
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
-            var extension = Path.GetExtension(model.ProfileImage.FileName).ToLowerInvariant();
-
-            if (!allowedExtensions.Contains(extension))
-                return Json(new { success = false, error = "Sadece .jpg, .jpeg veya .png dosyaları yüklenebilir." });
-
-            var user = await _userService.GetUserByTCNoAsync(model.TCNo);
-            if (user == null)
-                return Json(new { success = false, error = "Kullanıcı bulunamadı." });
-
-            try
+            if (model.ProfileImage != null && model.ProfileImage.Length > 0)
             {
-                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "profiles");
-                Directory.CreateDirectory(uploadsFolder);
+                string fileName = $"{model.TCNo}_{Guid.NewGuid()}.jpg";
+                string savePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "profiles", fileName);
 
-                var uniqueFileName = $"{Guid.NewGuid()}{extension}";
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                using (var stream = new FileStream(savePath, FileMode.Create))
                 {
-                    await model.ProfileImage.CopyToAsync(fileStream);
+                    await model.ProfileImage.CopyToAsync(stream);
                 }
 
-                user.ProfileImagePath = "/uploads/profiles/" + uniqueFileName;
-                await _userService.UpdateUserAsync(user);
+                string imagePath = $"/uploads/profiles/{fileName}"; // 🔥 Veritabanında bu path tutulacak
 
-                // CLAIM GÜNCELLE
+                // Kullanıcıyı al ve profile image'ı güncelle
+                var user = await _userService.GetUserByTCNoAsync(model.TCNo);
+                if (user == null)
+                {
+                    return Json(new { success = false, message = "Kullanıcı bulunamadı." });
+                }
+
+                user.ProfileImagePath = imagePath;
+                await _userService.UpdateUserAsync(user); // 🔥 VERİTABANINA YAZILAN YER
+
+                // Claims güncelle
                 var identity = (ClaimsIdentity)User.Identity;
-                var existingClaim = identity.FindFirst("ProfileImage");
-                if (existingClaim != null)
-                    identity.RemoveClaim(existingClaim);
+                var claim = identity.FindFirst("ProfileImage");
+                if (claim != null)
+                    identity.RemoveClaim(claim);
+                identity.AddClaim(new Claim("ProfileImage", imagePath));
 
-                identity.AddClaim(new Claim("ProfileImage", user.ProfileImagePath));
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(identity));
+                await HttpContext.SignInAsync(new ClaimsPrincipal(identity));
 
-                return Json(new { success = true, imageUrl = user.ProfileImagePath });
+                return Json(new { success = true, imagePath });
             }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, error = "Dosya yüklenirken hata oluştu: " + ex.Message });
-            }
+
+            return Json(new { success = false, message = "Lütfen bir resim seçiniz." });
         }
+
+
 
 
         // Kurs materyallerini listeleme
@@ -261,7 +249,6 @@ namespace Medilearn.Web.Controllers
                 await model.MaterialFile.CopyToAsync(stream);
             }
 
-            // 2. PDF klasörü hazırla ve PPT -> PDF dönüştür
             var pdfUploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "pdf");
             if (!Directory.Exists(pdfUploadsFolder))
                 Directory.CreateDirectory(pdfUploadsFolder);
@@ -279,12 +266,9 @@ namespace Medilearn.Web.Controllers
                 return View(model);
             }
 
-            // 3. Veritabanını güncelle (PptxFileName ve MaterialFileName)
             var courseDto = await _courseService.GetCourseByIdAsync(model.CourseId);
             if (courseDto != null)
             {
-                // DİKKAT: Veritabanına göre mutlak ya da göreceli yol kullan
-                // Burada göreceli yol örneği verildi, ihtiyacına göre düzenle
                 courseDto.PptxFileName = "/uploads/ppt/" + pptFileName;
                 courseDto.MaterialFileName = "/uploads/pdf/" + pdfFileName;
 
@@ -432,7 +416,62 @@ namespace Medilearn.Web.Controllers
             return RedirectToAction("CourseMaterials", new { courseId = model.CourseId });
         }
 
-       
+
+        //ŞİFRE DEĞİŞTİR
+        // Şifre değiştirme sayfasını gösterir
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        // Şifre değiştirme işlemini yapar
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(string CurrentPassword, string NewPassword, string ConfirmPassword)
+        {
+            var tcNo = User.Identity?.Name;
+            if (string.IsNullOrEmpty(tcNo))
+                return Unauthorized();
+
+            if (string.IsNullOrEmpty(CurrentPassword) || string.IsNullOrEmpty(NewPassword) || string.IsNullOrEmpty(ConfirmPassword))
+            {
+                TempData["Error"] = "Lütfen tüm alanları doldurunuz.";
+                return RedirectToAction("Profile");
+            }
+
+            if (NewPassword != ConfirmPassword)
+            {
+                TempData["Error"] = "Yeni şifre ve tekrar şifre eşleşmiyor.";
+                return RedirectToAction("Profile");
+            }
+
+            var user = await _userService.GetUserByTCNoAsync(tcNo);
+            if (user == null)
+            {
+                TempData["Error"] = "Kullanıcı bulunamadı.";
+                return RedirectToAction("Profile");
+            }
+
+            // Şifre doğrulama
+            var hashedCurrent = _userService.HashPassword(CurrentPassword);
+            var storedHash = await _userService.GetPasswordHashByTCNoAsync(tcNo);
+            if (hashedCurrent != storedHash)
+            {
+                TempData["Errorsif"] = "Mevcut şifre yanlış.";
+                return RedirectToAction("Profile");
+            }
+
+            // Yeni şifre hashlenip kaydedilir
+            var newHashedPassword = _userService.HashPassword(NewPassword);
+            user.PasswordHash = newHashedPassword;
+
+            await _userService.UpdateUserAsync(user);
+
+            TempData["sifreSuccess"] = "Şifreniz başarıyla değiştirildi.";
+            return RedirectToAction("Profile");
+        }
+
 
     }
 }

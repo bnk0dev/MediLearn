@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 var supportedCultures = new[] { "tr", "en", "fr" };
 var cultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
-builder.Services.AddScoped<PowerPointConversionService>();
+
 // 2. Scoped servisler ve bağımlılıklar
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IUserService, UserService>();
@@ -24,6 +24,7 @@ builder.Services.AddScoped<IInstructorService, InstructorService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IEnrollmentService, EnrollmentService>();
 builder.Services.AddScoped<ICourseMaterialService, CourseMaterialService>();
+builder.Services.AddScoped<PowerPointConversionService>();
 
 // 3. DbContext ayarı
 builder.Services.AddDbContext<MedilearnDbContext>(options =>
@@ -38,7 +39,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     .AddCookie(options =>
     {
         options.LoginPath = "/Account/Login";
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+
+        // Remember Me ile uyumlu kalıcı cookie süresi 30 gün
+        options.ExpireTimeSpan = TimeSpan.FromDays(30);
+
+        options.SlidingExpiration = true; // Oturum süresi aktif kullanıcıya göre yenilenir
+        options.Cookie.HttpOnly = true;   // Güvenlik için HttpOnly cookie
+        options.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always; // HTTPS zorunlu
+        options.Cookie.Name = "MedilearnAuth"; // İsteğe bağlı cookie ismi
     });
 
 // 6. HttpContextAccessor mutlaka eklenmeli
@@ -79,8 +87,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseAuthentication(); // Kimlik doğrulama
+app.UseAuthorization();  // Yetkilendirme
 
 // 10. Route tanımlaması
 app.MapControllerRoute(

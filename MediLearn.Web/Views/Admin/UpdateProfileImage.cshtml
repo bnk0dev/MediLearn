@@ -13,7 +13,6 @@
         </h2>
 
         <div class="text-center mb-3">
-            <!-- Mevcut profil resmi önizlemesi -->
             <img id="previewImage" src="@ViewBag.CurrentImagePath"
                  class="rounded-circle border"
                  style="width: 150px; height: 150px; object-fit: cover;"
@@ -25,7 +24,7 @@
 
             <div class="mb-3">
                 <label asp-for="ProfileImage" class="form-label fw-semibold">@Localizer["Yeni Profil Resmi Seç"]</label>
-                <input name="ProfileImage" class="form-control" type="file" accept=".jpg,.jpeg,.png" required />
+                <input asp-for="ProfileImage" name="ProfileImage" class="form-control" type="file" accept=".jpg,.jpeg,.png" required />
                 <span asp-validation-for="ProfileImage" class="text-danger small"></span>
             </div>
 
@@ -39,9 +38,7 @@
             </div>
         </form>
 
-        <div class="mt-3 text-center">
-            <span id="resultMessage" class="text-success"></span>
-        </div>
+        <div class="mt-3 text-center" id="resultMessage"></div>
     </div>
 </div>
 
@@ -54,7 +51,7 @@
             var form = e.target;
             var formData = new FormData(form);
 
-            // AntiForgeryToken'ı formData'ya ekle (bazı durumlarda gerekebilir)
+            // AntiForgeryToken'ı formData'ya ekle
             var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
             formData.append("__RequestVerificationToken", token);
 
@@ -71,7 +68,7 @@
                     // Önizleme resmini güncelle
                     document.getElementById("previewImage").src = data.imageUrl + '?' + new Date().getTime();
 
-                    // Navbar'daki profil resmini güncelle
+                    // Layouttaki navbar profil resmini güncelle
                     var layoutImage = document.getElementById("profileImage");
                     if (layoutImage) {
                         layoutImage.src = data.imageUrl + '?' + new Date().getTime();
@@ -79,7 +76,7 @@
 
                     document.getElementById("resultMessage").innerText = "@Localizer["Profil resminiz başarıyla güncellendi."]";
                 } else {
-                    document.getElementById("resultMessage").innerHTML = '<div class="alert alert-danger">' + (data.error || "Bir hata oluştu.") + '</div>';
+                    document.getElementById("resultMessage").innerHTML = '<div class="alert alert-danger">' + (data.message || "Bir hata oluştu.") + '</div>';
                 }
             })
             .catch(err => {

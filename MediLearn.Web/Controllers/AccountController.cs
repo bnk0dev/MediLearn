@@ -131,18 +131,24 @@ namespace Medilearn.Web.Controllers
                 : user.ProfileImagePath;
 
             var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.TCNo),
-                new Claim(ClaimTypes.Role, user.Role.ToString()),
-                new Claim("FirstName", user.FirstName ?? ""),
-                new Claim("LastName", user.LastName ?? ""),
-                new Claim("ProfileImage", profileImagePath)
-            };
+    {
+        new Claim(ClaimTypes.Name, user.TCNo),
+        new Claim(ClaimTypes.Role, user.Role.ToString()),
+        new Claim("FirstName", user.FirstName ?? ""),
+        new Claim("LastName", user.LastName ?? ""),
+        new Claim("ProfileImage", profileImagePath)
+    };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = model.RememberMe,  // Remember Me checkbox değeri
+                ExpiresUtc = model.RememberMe ? DateTimeOffset.UtcNow.AddDays(30) : (DateTimeOffset?)null
+            };
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);
 
             return user.Role switch
             {
@@ -152,6 +158,7 @@ namespace Medilearn.Web.Controllers
                 _ => RedirectToAction("Login")
             };
         }
+
 
         // Oturumu kapatır ve giriş sayfasına yönlendirir
         [HttpGet]

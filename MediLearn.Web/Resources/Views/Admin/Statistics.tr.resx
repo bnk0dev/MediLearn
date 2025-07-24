@@ -162,6 +162,9 @@
   <data name="ExportExcel" xml:space="preserve">
     <value>Excel Olarak Dışa Aktar</value>
   </data>
+  <data name="InstructorName" xml:space="preserve">
+    <value>Eğitmen Adı</value>
+  </data>
   <data name="Statistics" xml:space="preserve">
     <value>İstatistikler</value>
   </data>

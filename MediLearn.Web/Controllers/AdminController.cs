@@ -38,16 +38,13 @@ namespace Medilearn.Web.Controllers
             ICourseService courseService,
             IInstructorService instructorService)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
-            _enrollmentService = enrollmentService ?? throw new ArgumentNullException(nameof(enrollmentService));
-            _courseService = courseService ?? throw new ArgumentNullException(nameof(courseService));
-            _instructorService = instructorService ?? throw new ArgumentNullException(nameof(instructorService));
+            _context = context;
+            _userService = userService;
+            _enrollmentService = enrollmentService;
+            _courseService = courseService;
+            _instructorService = instructorService;
         }
-        // Profil resmi güncelleme sayfası
        
-
-
         [HttpGet]
         public async Task<IActionResult> Profile()
         {
@@ -216,16 +213,22 @@ namespace Medilearn.Web.Controllers
                 int completedCount = enrolled.Count(e => e.IsCompleted);
                 double completionRate = enrolledCount == 0 ? 0 : (double)completedCount / enrolledCount * 100;
 
+                var instructor = users.FirstOrDefault(u => u.TCNo == course.InstructorTCNo);
+                string instructorName = instructor != null ? $"{instructor.FirstName} {instructor.LastName}" : "—";
+
                 return new CourseSummaryDto
                 {
                     CourseId = course.Id,
                     CourseTitle = course.Title,
+                    InstructorName = instructorName,
                     EnrolledPersonnelCount = enrolledCount,
                     CompletedPersonnelCount = completedCount,
                     CompletionRate = Math.Round(completionRate, 2),
                     IsActive = course.IsActive
                 };
             }).ToList();
+
+
 
             var model = new AdminStatisticsViewModel
             {
@@ -253,20 +256,23 @@ namespace Medilearn.Web.Controllers
             var worksheet = workbook.Worksheets.Add("İstatistikler");
 
             worksheet.Cell(1, 1).Value = "Kurs Adı";
-            worksheet.Cell(1, 2).Value = "Kayıtlı Personel";
-            worksheet.Cell(1, 3).Value = "Tamamlayan Personel";
-            worksheet.Cell(1, 4).Value = "Tamamlanma Oranı (%)";
-            worksheet.Cell(1, 5).Value = "Aktif Mi?";
+            worksheet.Cell(1, 2).Value = "Eğitmen";
+            worksheet.Cell(1, 3).Value = "Kayıtlı Personel";
+            worksheet.Cell(1, 4).Value = "Tamamlayan Personel";
+            worksheet.Cell(1, 5).Value = "Tamamlanma Oranı (%)";
+            worksheet.Cell(1, 6).Value = "Aktif Mi?";
+
 
             int row = 2;
 
             foreach (var course in model.CoursesSummary)
             {
                 worksheet.Cell(row, 1).Value = course.CourseTitle;
-                worksheet.Cell(row, 2).Value = course.EnrolledPersonnelCount;
-                worksheet.Cell(row, 3).Value = course.CompletedPersonnelCount;
-                worksheet.Cell(row, 4).Value = course.CompletionRate;
-                worksheet.Cell(row, 5).Value = course.IsActive ? "Evet" : "Hayır";
+                worksheet.Cell(row, 2).Value = course.InstructorName;
+                worksheet.Cell(row, 3).Value = course.EnrolledPersonnelCount;
+                worksheet.Cell(row, 4).Value = course.CompletedPersonnelCount;
+                worksheet.Cell(row, 5).Value = course.CompletionRate;
+                worksheet.Cell(row, 6).Value = course.IsActive ? "Evet" : "Hayır";
                 row++;
             }
 
@@ -279,7 +285,6 @@ namespace Medilearn.Web.Controllers
                 "KursIstatistikleri.xlsx");
         }
 
-        // Yardımcı metot - istatistik modelini hazırla
         private async Task<AdminStatisticsViewModel> GetStatisticsModelAsync()
         {
             var users = await _context.Users.ToListAsync();
@@ -300,10 +305,14 @@ namespace Medilearn.Web.Controllers
                 int completedCount = enrolled.Count(e => e.IsCompleted);
                 double completionRate = enrolledCount == 0 ? 0 : (double)completedCount / enrolledCount * 100;
 
+                var instructor = users.FirstOrDefault(u => u.TCNo == course.InstructorTCNo);
+                string instructorName = instructor != null ? $"{instructor.FirstName} {instructor.LastName}" : "—";
+
                 return new CourseSummaryDto
                 {
                     CourseId = course.Id,
                     CourseTitle = course.Title,
+                    InstructorName = instructorName, // ✅ Eksik olan kısım bu
                     EnrolledPersonnelCount = enrolledCount,
                     CompletedPersonnelCount = completedCount,
                     CompletionRate = Math.Round(completionRate, 2),
@@ -322,6 +331,7 @@ namespace Medilearn.Web.Controllers
                 CoursesSummary = coursesSummary
             };
         }
+
 
         // Kullanıcı listesi (Eğitmen ve Personel)
         public async Task<IActionResult> Users()
@@ -625,6 +635,8 @@ namespace Medilearn.Web.Controllers
             return RedirectToAction(nameof(Users));
         }
 
+
+
         [HttpGet]
         public async Task<IActionResult> UpdateProfileImage()
         {
@@ -636,32 +648,29 @@ namespace Medilearn.Web.Controllers
             if (user == null)
                 return NotFound();
 
-            // Profil resmi yoksa default resim kullan
             ViewBag.CurrentImagePath = user.ProfileImagePath ?? "/uploads/profiles/default.png";
 
             var model = new ProfileImageDto { TCNo = tcNo };
             return View(model);
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateProfileImage(ProfileImageDto model)
         {
-            if (!ModelState.IsValid)
-                return Json(new { success = false, error = "Form doğrulama hatası." });
-
             if (model.ProfileImage == null || model.ProfileImage.Length == 0)
-                return Json(new { success = false, error = "Lütfen bir dosya seçiniz." });
+                return Json(new { success = false, message = "Lütfen bir dosya seçiniz." });
 
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
             var extension = Path.GetExtension(model.ProfileImage.FileName).ToLowerInvariant();
 
             if (!allowedExtensions.Contains(extension))
-                return Json(new { success = false, error = "Sadece .jpg, .jpeg veya .png dosyaları yüklenebilir." });
+                return Json(new { success = false, message = "Sadece .jpg, .jpeg veya .png uzantılı dosyalar yüklenebilir." });
 
             var user = await _userService.GetUserByTCNoAsync(model.TCNo);
             if (user == null)
-                return Json(new { success = false, error = "Kullanıcı bulunamadı." });
+                return Json(new { success = false, message = "Kullanıcı bulunamadı." });
 
             try
             {
@@ -679,10 +688,7 @@ namespace Medilearn.Web.Controllers
                 user.ProfileImagePath = "/uploads/profiles/" + uniqueFileName;
                 await _userService.UpdateUserAsync(user);
 
-                // -----------------------------------
-                // CLAIM GÜNCELLEME VE COOKIE İMZALAMA
-                // -----------------------------------
-
+                // Claims güncelleme ve cookie yenileme
                 var identity = User.Identity as ClaimsIdentity;
                 if (identity != null)
                 {
@@ -701,11 +707,10 @@ namespace Medilearn.Web.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, error = "Dosya yüklenirken hata oluştu: " + ex.Message });
+                return Json(new { success = false, message = "Dosya yüklenirken hata oluştu: " + ex.Message });
             }
-
-
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteCourse(int id)
@@ -752,6 +757,58 @@ namespace Medilearn.Web.Controllers
 
             TempData["CourseDeletedSuccess"] = "Kurs başarıyla silindi.";
             return RedirectToAction(nameof(InstructorsWithCourses));
+        }
+
+
+        //ŞİFRE DEĞİŞTİR
+        // Şifre değiştirme sayfasını gösterir
+        [HttpGet]
+        public IActionResult AdminChangePassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AdminChangePassword(string CurrentPassword, string NewPassword, string ConfirmPassword)
+        {
+            var tcNo = User.Identity?.Name;
+            if (string.IsNullOrEmpty(tcNo))
+                return Unauthorized();
+
+            if (string.IsNullOrEmpty(CurrentPassword) || string.IsNullOrEmpty(NewPassword) || string.IsNullOrEmpty(ConfirmPassword))
+            {
+                TempData["Error"] = "Lütfen tüm alanları doldurunuz.";
+                return RedirectToAction("Profile");
+            }
+
+            if (NewPassword != ConfirmPassword)
+            {
+                TempData["Error"] = "Yeni şifre ve tekrar şifre eşleşmiyor.";
+                return RedirectToAction("Profile");
+            }
+
+            var user = await _userService.GetUserByTCNoAsync(tcNo);
+            if (user == null)
+            {
+                TempData["Error"] = "Kullanıcı bulunamadı.";
+                return RedirectToAction("Profile");
+            }
+
+            var hashedCurrent = _userService.HashPassword(CurrentPassword);
+            var storedHash = await _userService.GetPasswordHashByTCNoAsync(tcNo);
+            if (hashedCurrent != storedHash)
+            {
+                TempData["Error"] = "Mevcut şifre yanlış.";
+                return RedirectToAction("Profile");
+            }
+
+            var newHashedPassword = _userService.HashPassword(NewPassword);
+            user.PasswordHash = newHashedPassword;
+
+            await _userService.UpdateUserAsync(user);
+
+            TempData["Success"] = "Şifreniz başarıyla değiştirildi.";
+            return RedirectToAction("Profile");
         }
 
     }

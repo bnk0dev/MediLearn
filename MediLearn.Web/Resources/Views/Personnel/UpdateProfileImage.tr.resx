@@ -117,8 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ProfileImageUpdated" xml:space="preserve">
+    <value>Profil resmi güncellendi</value>
+  </data>
   <data name="SelectNewProfileImage" xml:space="preserve">
-    <value>Yeni Profil Resmi Seç</value>
+    <value>Yeni Profil Resmini Seçin</value>
   </data>
   <data name="UpdateButton" xml:space="preserve">
     <value>Resmi Güncelle</value>

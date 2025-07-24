@@ -23,13 +23,15 @@
                         </div>
                     }
 
-                    @if (ViewBag.Message != null)
+                    @if (TempData["Error"] != null)
                     {
-                        <div class="alert alert-success text-center">
-                            @ViewBag.Message
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            @TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     }
 
+                    <!-- Profil Güncelleme Formu -->
                     <form asp-action="Profile" method="post" novalidate>
                         <div class="mb-3">
                             <label asp-for="TCNo" class="form-label fw-semibold">@Localizer["TCNo"]</label>
@@ -54,7 +56,7 @@
                             <span asp-validation-for="Email" class="text-danger small"></span>
                         </div>
 
-                        <div class="d-grid">
+                        <div class="d-grid mb-4">
                             <button type="submit" class="btn btn-danger btn-lg">
                                 <i class="bi bi-check-circle me-1"></i> @Localizer["UpdateButton"]
                             </button>
@@ -63,11 +65,37 @@
 
                     <hr class="my-4" />
 
-                    <div class="text-center">
+                    <div class="text-center mb-4">
                         <a asp-action="UpdateProfileImage" class="btn btn-outline-danger btn-sm">
                             <i class="bi bi-image"></i> @Localizer["UpdateProfileImage"]
                         </a>
                     </div>
+
+                    <!-- Şifre Değiştirme Formu -->
+                    <h5 class="text-danger fw-bold mb-3">@Localizer["ChangePasswordHeading"]</h5>
+                    <form asp-action="ChangePassword" method="post" novalidate>
+                        <div class="mb-3">
+                            <label for="CurrentPassword" class="form-label fw-semibold">@Localizer["CurrentPassword"]</label>
+                            <input type="password" name="CurrentPassword" id="CurrentPassword" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="NewPassword" class="form-label fw-semibold">@Localizer["NewPassword"]</label>
+                            <input type="password" name="NewPassword" id="NewPassword" class="form-control" required minlength="6" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="ConfirmPassword" class="form-label fw-semibold">@Localizer["ConfirmPassword"]</label>
+                            <input type="password" name="ConfirmPassword" id="ConfirmPassword" class="form-control" required minlength="6" />
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="bi bi-key-fill"></i> @Localizer["ChangePasswordButton"]
+                            </button>
+                        </div>
+                    </form>
+
                 </div>
             </div>
         </div>

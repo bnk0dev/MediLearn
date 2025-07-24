@@ -117,6 +117,24 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Change Password</value>
+  </data>
+  <data name="ChangePasswordButton" xml:space="preserve">
+    <value>Change Password</value>
+  </data>
+  <data name="ChangePasswordHeading" xml:space="preserve">
+    <value>Change Password</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Confirm Password</value>
+  </data>
+  <data name="CurrentPassword" xml:space="preserve">
+    <value>Current Password</value>
+  </data>
+  <data name="CurrentPasswordWrong" xml:space="preserve">
+    <value>Current password is incorrect</value>
+  </data>
   <data name="Email" xml:space="preserve">
     <value>Email</value>
   </data>
@@ -128,6 +146,18 @@
   </data>
   <data name="MyProfileTitle" xml:space="preserve">
     <value>My Profile</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>New Password</value>
+  </data>
+  <data name="PasswordChangeSuccess" xml:space="preserve">
+    <value>Your password has been changed successfully</value>
+  </data>
+  <data name="PasswordFieldsRequired" xml:space="preserve">
+    <value>Please fill all fields</value>
+  </data>
+  <data name="PasswordsDoNotMatch" xml:space="preserve">
+    <value>New password and confirmation do not match</value>
   </data>
   <data name="ProfileHeading" xml:space="preserve">
     <value>My Profile Information </value>

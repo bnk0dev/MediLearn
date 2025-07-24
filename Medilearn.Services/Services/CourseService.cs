@@ -72,7 +72,8 @@ namespace Medilearn.Services.Services
                 Description = courseDto.Description!,
                 StartDate = courseDto.StartDate,
                 EndDate = courseDto.EndDate,
-                InstructorTCNo = courseDto.InstructorTCNo!
+                InstructorTCNo = courseDto.InstructorTCNo!,
+                IsActive = DateTime.Now >= courseDto.StartDate && DateTime.Now <= courseDto.EndDate
             };
 
             _context.Courses.Add(course);
@@ -80,6 +81,7 @@ namespace Medilearn.Services.Services
 
             return true;
         }
+
 
         // Personele ait kayıtlı kursları getirir
         public async Task<List<CourseDto>> GetCoursesByPersonnelAsync(string personnelTcNo)
@@ -158,11 +160,14 @@ namespace Medilearn.Services.Services
             course.StartDate = courseDto.StartDate;
             course.EndDate = courseDto.EndDate;
             course.MaterialPath = courseDto.MaterialFileName;
-            course.PptxFileName = courseDto.PptxFileName; // 🔸 pptx dosya adını veritabanına yaz
+            course.PptxFileName = courseDto.PptxFileName;
+
+            course.IsActive = DateTime.Now >= courseDto.StartDate && DateTime.Now <= courseDto.EndDate;
 
             await _context.SaveChangesAsync();
             return true;
         }
+
 
 
 
@@ -175,12 +180,14 @@ namespace Medilearn.Services.Services
                 Description = courseDto.Description,
                 StartDate = courseDto.StartDate,
                 EndDate = courseDto.EndDate,
-                InstructorTCNo = instructorTcNo
+                InstructorTCNo = instructorTcNo,
+                IsActive = DateTime.Now >= courseDto.StartDate && DateTime.Now <= courseDto.EndDate
             };
 
             _context.Courses.Add(course);
             return await _context.SaveChangesAsync() > 0;
         }
+
 
         // Eğitmenin oluşturduğu son kursu getirir
         public async Task<CourseDto> GetLatestCourseByInstructor(string instructorTcNo)
@@ -211,7 +218,8 @@ namespace Medilearn.Services.Services
                 Description = dto.Description,
                 StartDate = dto.StartDate,
                 EndDate = dto.EndDate,
-                InstructorTCNo = instructorTcNo
+                InstructorTCNo = instructorTcNo,
+                IsActive = DateTime.Now >= dto.StartDate && DateTime.Now <= dto.EndDate
             };
 
             _context.Courses.Add(course);
@@ -219,6 +227,7 @@ namespace Medilearn.Services.Services
 
             return course.Id;
         }
+
 
         // Kursu veritabanından siler
         public async Task<bool> DeleteCourseAsync(int courseId)
