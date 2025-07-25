@@ -85,17 +85,17 @@ Here's a glimpse of MediLearn in action:
   
   ### Admin Panel 
   
-  ![Admin Screenshot](gitImages/admin.png) 
+  ![Admin Screenshot](gitImages/admin.PNG) 
   
   --- 
   
   ### Personnel Panel 
-  ![Personnel Screenshot](gitImages/personel.png) 
+  ![Personnel Screenshot](gitImages/personel.PNG) 
 
 --- 
 ### Instructor Panel - Manage Courses 
 
-![Instructor Screenshot](gitImages/instructor.png) 
+![Instructor Screenshot](gitImages/instructor.PNG) 
 
 --- 
 
