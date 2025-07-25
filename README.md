@@ -59,22 +59,22 @@ MediLearn is built using a robust and modern technology stack:
 ## 🧩 Project Architecture
 
 The project follows a layered architectural approach for maintainability and scalability:
-MediLearn/ 
-├── MediLearn.Web --> UI Layer (Razor Views) 
-│ ├── Controllers/ 
-│ ├── Views/
-│ ├── wwwroot/ 
-├── Medilearn.Services --> Business Logic Layer 
-│ ├── Helpers/
-│ ├── Interfaces/
-│ ├── Services/
-├── Medilearn.Data --> Entities Layer
-│ ├── Context/
-│ ├── Entities/
-│ ├── Enums/
-├── Medilearn.Models --> DTOs, ViewModels Layer
-│ ├── DTOs/ 
-│ ├── ViewMoedels/
+MediLearn/  
+├── MediLearn.Web              --> UI Layer (Razor Views)  
+│   ├── Controllers/  
+│   ├── Views/  
+│   └── wwwroot/  
+├── Medilearn.Services         --> Business Logic Layer  
+│   ├── Helpers/  
+│   ├── Interfaces/  
+│   └── Services/  
+├── Medilearn.Data             --> Entities Layer  
+│   ├── Context/  
+│   ├── Entities/  
+│   └── Enums/  
+└── Medilearn.Models           --> DTOs, ViewModels Layer  
+    ├── DTOs/  
+    └── ViewModels/
 
  ---
   ## 📸 Screenshots 
