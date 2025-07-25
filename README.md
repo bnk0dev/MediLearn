@@ -95,7 +95,7 @@ Here's a glimpse of MediLearn in action:
 --- 
 ### Instructor Panel - Manage Courses 
 
-![Instructor Screenshot](gitImages/personel/instructor.png) 
+![Instructor Screenshot](gitImages/instructor.png) 
 
 --- 
 
