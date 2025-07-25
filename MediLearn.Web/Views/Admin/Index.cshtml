@@ -9,9 +9,15 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-
+<style>
+    .section-title {
+        color: #dc3545;
+        font-weight: 700;
+        text-align: center;
+        margin: 2rem 0 1rem;
+    }</style>
 <br />
-<h2 class="text-center mb-4">@Localizer["HomeTitle"]</h2>
+<h2 class="section-title">@Localizer["HomeTitle"]</h2>
 @if (TempData["onayegitmen"] != null)
 {
     <div class="alert alert-success alert-dismissible fade show" role="alert">

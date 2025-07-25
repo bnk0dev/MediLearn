@@ -7,9 +7,15 @@
 }
 
 <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
-
+<style>
+    .section-title {
+        color: #dc3545;
+        font-weight: 700;
+        text-align: center;
+        margin: 2rem 0 1rem;
+</style>
 <div class="courses-container mt-4">
-    <h2 class="text-center mb-4">@Localizer["InstructorAndCoursesTitle"]</h2>
+    <h2 class="section-title">@Localizer["InstructorAndCoursesTitle"]</h2>
 
     @* Silme işlemi sonrası başarı mesajı *@
     @if (TempData["CourseDeletedSuccess"] != null)

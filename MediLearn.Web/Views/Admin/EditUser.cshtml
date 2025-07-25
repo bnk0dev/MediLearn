@@ -5,7 +5,14 @@
     var name = ViewBag.AdminName as string ?? "Admin";
 }
 
-<h2 class="text-danger mb-4">Kullanıcı Bilgilerini Güncelle</h2>
+<style>
+    .section-title {
+        color: #dc3545;
+        font-weight: 700;
+        text-align: center;
+        margin: 2rem 0 1rem;
+</style>
+<h2 class="section-title">Kullanıcı Bilgilerini Güncelle</h2>
 
 @if (!ViewData.ModelState.IsValid)
 {

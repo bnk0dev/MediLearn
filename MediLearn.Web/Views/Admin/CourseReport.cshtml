@@ -4,8 +4,15 @@
     Layout = "_LayoutAdmin";
     var name = ViewBag.AdminName as string ?? "Admin";
 }
+<style>
+    .section-title {
+        color: #dc3545;
+        font-weight: 700;
+        text-align: center;
+        margin: 2rem 0 1rem;
+</style>
 
-<h2>Kursa Kayıtlı Personeller</h2>
+<h2 class="section-title">Kursa Kayıtlı Personeller</h2>
 <hr />
 
 @if (Model == null || !Model.Any())

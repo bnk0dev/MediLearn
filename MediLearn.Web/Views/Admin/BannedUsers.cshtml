@@ -7,7 +7,14 @@
 }
 
 <br />
-<h2 class="text-center mb-4">@Localizer["BannedUsersHeading"]</h2>
+<style>
+    .section-title {
+        color: #dc3545;
+        font-weight: 700;
+        text-align: center;
+        margin: 2rem 0 1rem;
+</style>
+<h2 class="section-title">@Localizer["BannedUsersHeading"]</h2>
 
 @if (TempData["unbannedsucces"] != null)
 {

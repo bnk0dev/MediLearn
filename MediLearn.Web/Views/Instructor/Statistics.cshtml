@@ -56,9 +56,15 @@
         max-width: 400px;
         margin: 0 auto 1rem auto;
     }
+
+    .section-title {
+        color: #dc3545;
+        font-weight: 700;
+        text-align: center;
+        margin: 2rem 0 1rem;
 </style>
 
-<h2 class="text-danger text-center">@ViewBag.Title</h2>
+<h2 class="section-title">@ViewBag.Title</h2>
 
 <div class="summary-box">
     @Localizer["TotalCourses"]: <strong>@Model.TotalCourses</strong> |

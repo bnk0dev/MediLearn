@@ -5,8 +5,15 @@
     Layout = "_LayoutAdmin";
     ViewBag.Title = Localizer["EditCourseTitle"];
 }
+<style>
+    .section-title {
+        color: #dc3545;
+        font-weight: 700;
+        text-align: center;
+        margin: 2rem 0 1rem;
+</style>
 
-<h2 class="text-danger fw-bold mb-4">@Localizer["EditCourseTitle"]</h2>
+<h2 class="section-title">@Localizer["EditCourseTitle"]</h2>
 
 <form asp-action="EditCourse" method="post" class="card p-4 mb-5 border border-danger rounded">
     <input type="hidden" asp-for="Id" />
