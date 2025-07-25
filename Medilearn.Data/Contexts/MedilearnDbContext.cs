@@ -28,18 +28,17 @@ namespace Medilearn.Data.Contexts
             modelBuilder.Entity<User>()
                 .Property(u => u.Status)
                 .HasDefaultValue(Data.Enums.UserStatus.Pending);
+            modelBuilder.Entity<Enrollment>()
+                .HasOne(e => e.Personnel)
+                .WithMany()  
+                .HasForeignKey(e => e.PersonnelTCNo)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Enrollment>()
-                .HasOne(e => e.Personnel) 
-                .WithMany()               
-                .HasForeignKey(e => e.PersonnelTCNo) 
-                .OnDelete(DeleteBehavior.Restrict); 
-
-            modelBuilder.Entity<Enrollment>()
-                .HasOne(e => e.Course) 
-                .WithMany()            
-                .HasForeignKey(e => e.CourseId) 
-                .OnDelete(DeleteBehavior.Cascade); 
+                .HasOne(e => e.Course)
+                .WithMany(c => c.Enrollments)  
+                .HasForeignKey(e => e.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Course>()
                 .HasOne(c => c.Instructor) 

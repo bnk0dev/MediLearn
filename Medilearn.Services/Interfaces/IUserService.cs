@@ -7,6 +7,8 @@ namespace Medilearn.Services.Interfaces
 {
     public interface IUserService
     {
+
+        //Eğitmen istatistikleri
         Task<List<UserDto>> GetPendingInstructorsAsync();
         Task<bool> UpdateUserProfileAsync(ProfileDto model);
         Task UpdateUserStatusAsync(string tcNo, UserStatus newStatus);

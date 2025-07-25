@@ -12,7 +12,6 @@ namespace Medilearn.Services.Services
     {
         private readonly MedilearnDbContext _context;
 
-        // Constructor: DbContext injection ile alınıyor
         public CourseMaterialService(MedilearnDbContext context)
         {
             _context = context;

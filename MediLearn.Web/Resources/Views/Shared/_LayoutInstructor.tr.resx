@@ -150,6 +150,9 @@
   <data name="Role" xml:space="preserve">
     <value>Rol</value>
   </data>
+  <data name="Statistics" xml:space="preserve">
+    <value>İstatistikler</value>
+  </data>
   <data name="Terms" xml:space="preserve">
     <value>Koşullar</value>
   </data>

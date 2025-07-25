@@ -150,6 +150,9 @@
   <data name="Role" xml:space="preserve">
     <value>Rôle</value>
   </data>
+  <data name="Statistics" xml:space="preserve">
+    <value>Statistiques</value>
+  </data>
   <data name="Terms" xml:space="preserve">
     <value>Conditions</value>
   </data>

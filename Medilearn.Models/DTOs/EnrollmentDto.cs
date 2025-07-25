@@ -7,5 +7,7 @@
         public int CourseId { get; set; }
         public System.DateTime EnrollmentDate { get; set; }
         public bool Completed { get; set; }
+        public string CourseTitle { get; set; }
+
     }
 }

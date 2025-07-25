@@ -5,47 +5,97 @@
     Layout = "_LayoutAdmin";
 }
 
-<h2 class="text-danger mb-4 text-center">@Localizer["AdminStatisticsTitle"]</h2>
+@section Styles {
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <style>
+        .stats-card {
+            background: linear-gradient(135deg, #dc3545, #b02a37);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+        }
 
-<div class="mb-4">
-    <div class="row text-center text-white">
-        <div class="col-md-3 bg-danger py-2 rounded mx-1 shadow-sm">
-            <h5 class="mb-0 fw-bold">@Model.TotalCourses</h5>
+            .stats-card h3 {
+                margin: 0;
+                font-size: 2rem;
+                font-weight: bold;
+            }
+
+            .stats-card small {
+                font-size: 0.95rem;
+            }
+
+        .chart-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 2rem auto;
+        }
+
+        .section-title {
+            color: #dc3545;
+            font-weight: 700;
+            text-align: center;
+            margin: 2rem 0 1rem;
+        }
+
+        .btn-export {
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+        }
+
+        #coursesTable_wrapper {
+            margin-top: 1rem;
+        }
+    </style>
+}
+
+<h2 class="section-title">@Localizer["AdminStatisticsTitle"]</h2>
+
+<div class="row text-center">
+    <div class="col-md-3">
+        <div class="stats-card">
+            <h3>@Model.TotalCourses</h3>
             <small>@Localizer["TotalCourses"]</small>
         </div>
-        <div class="col-md-3 bg-danger py-2 rounded mx-1 shadow-sm">
-            <h5 class="mb-0 fw-bold">@Model.TotalInstructors</h5>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <h3>@Model.TotalInstructors</h3>
             <small>@Localizer["TotalInstructors"]</small>
         </div>
-        <div class="col-md-3 bg-danger py-2 rounded mx-1 shadow-sm">
-            <h5 class="mb-0 fw-bold">@Model.TotalPersonnel</h5>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <h3>@Model.TotalPersonnel</h3>
             <small>@Localizer["TotalPersonnel"]</small>
         </div>
-        <div class="col-md-3 bg-danger py-2 rounded mx-1 shadow-sm">
-            <h5 class="mb-0 fw-bold">@Model.TotalBannedUsers</h5>
+    </div>
+    <div class="col-md-3">
+        <div class="stats-card">
+            <h3>@Model.TotalBannedUsers</h3>
             <small>@Localizer["TotalBannedUsers"]</small>
         </div>
     </div>
 </div>
 
-<div class="my-4 d-flex justify-content-center">
-    <div style="width:300px; height:300px;">
-        <canvas id="pieChart"></canvas>
-    </div>
+<div class="chart-container">
+    <canvas id="pieChart"></canvas>
 </div>
 
-<h3 class="mb-3 text-danger">@Localizer["CourseDetails"]</h3>
-
-<div class="mb-3 text-end">
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="section-title mb-0">@Localizer["CourseDetails"]</h3>
     <form asp-action="ExportStatisticsExcel" method="post">
-        <button type="submit" class="btn btn-danger fw-bold">
-            <i class="bi bi-file-earmark-spreadsheet"></i> @Localizer["ExportExcel"]
+        <button type="submit" class="btn btn-danger btn-export">
+            <i class="bi bi-file-earmark-excel"></i> @Localizer["ExportExcel"]
         </button>
     </form>
 </div>
 
-<table id="coursesTable" class="table table-bordered table-striped table-hover">
-    <thead class="table-danger">
+<table id="coursesTable" class="table table-bordered table-hover">
+    <thead class="table-danger text-white">
         <tr>
             <th>@Localizer["CourseTitle"]</th>
             <th>@Localizer["InstructorName"]</th>
@@ -67,11 +117,6 @@
         }
     </tbody>
 </table>
-
-@section Styles {
-    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
-}
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -99,8 +144,8 @@
             });
 
             const ctx = document.getElementById('pieChart').getContext('2d');
-            const pieChart = new Chart(ctx, {
-                type: 'pie',
+            new Chart(ctx, {
+                type: 'doughnut',
                 data: {
                     labels: [
                         '@Localizer["TotalCourses"]',
@@ -109,7 +154,6 @@
                         '@Localizer["TotalBannedUsers"]'
                     ],
                     datasets: [{
-                        label: '@Localizer["Statistics"]',
                         data: [
                             @Model.TotalCourses,
                             @Model.TotalInstructors,
@@ -117,10 +161,10 @@
                             @Model.TotalBannedUsers
                         ],
                         backgroundColor: [
-                            'rgba(220, 53, 69, 0.9)',     
-                            'rgba(13, 110, 253, 0.9)',    
-                            'rgba(255, 193, 7, 0.9)',     
-                            'rgba(40, 167, 69, 0.9)'      
+                            'rgba(220, 53, 69, 0.9)', 
+                            'rgba(13, 110, 253, 0.9)', 
+                            'rgba(255, 193, 7, 0.9)',  
+                            'rgba(40, 167, 69, 0.9)'   
                         ],
                         borderColor: [
                             'rgba(220, 53, 69, 1)',
@@ -138,8 +182,10 @@
                         legend: {
                             position: 'bottom',
                             labels: {
-                                boxWidth: 16,
-                                padding: 10
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
                             }
                         }
                     }

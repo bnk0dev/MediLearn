@@ -7,12 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Medilearn.Data\Medilearn.Data.csproj" />
-    <ProjectReference Include="..\Medilearn.Models\Medilearn.Models.csproj" />
+    <Compile Remove="Helpers\Validation\**" />
+    <EmbeddedResource Remove="Helpers\Validation\**" />
+    <None Remove="Helpers\Validation\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Helpers\Validation\" />
+    <ProjectReference Include="..\Medilearn.Data\Medilearn.Data.csproj" />
+    <ProjectReference Include="..\Medilearn.Models\Medilearn.Models.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -27,12 +27,12 @@ namespace Medilearn.Data.Entities
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public bool IsActive { get; set; } // Bu satırı EKLE
+        public bool IsActive { get; set; }
 
         public string? MaterialPath { get; set; }
         public string? PptxFileName { get; set; }
 
-        public List<Enrollment>? Enrollments { get; set; }
-        public ICollection<CourseMaterial> CourseMaterials { get; set; } = new List<CourseMaterial>();
+        public virtual ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+        public virtual ICollection<CourseMaterial> CourseMaterials { get; set; } = new List<CourseMaterial>();
     }
 }

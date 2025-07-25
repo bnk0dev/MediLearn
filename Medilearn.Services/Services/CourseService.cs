@@ -17,6 +17,27 @@ namespace Medilearn.Services.Services
             _context = context;
             _enrollmentService = enrollmentService;
         }
+        public async Task<IEnumerable<CourseDto>> GetCoursesByPersonnelAsync(string personnelTcNo)
+        {
+            // Örnek içerik, kendi mantığına göre düzenle
+            var enrollments = await _context.Enrollments
+                .Where(e => e.PersonnelTCNo == personnelTcNo)
+                .Include(e => e.Course)
+                .Select(e => new CourseDto
+                {
+                    Id = e.Course.Id,
+                    Title = e.Course.Title,
+                    Description = e.Course.Description,
+                    StartDate = e.Course.StartDate,
+                    EndDate = e.Course.EndDate,
+                    InstructorTCNo = e.Course.InstructorTCNo,
+                    MaterialFileName = e.Course.MaterialPath,
+                    PptxFileName = e.Course.PptxFileName
+                })
+                .ToListAsync();
+
+            return enrollments;
+        }
 
         // Belirli bir eğitmene ait kursları getirir
         public async Task<IEnumerable<CourseDto>> GetCoursesByInstructorAsync(string instructorTcNo)
@@ -84,28 +105,23 @@ namespace Medilearn.Services.Services
 
 
         // Personele ait kayıtlı kursları getirir
-        public async Task<List<CourseDto>> GetCoursesByPersonnelAsync(string personnelTcNo)
+        public async Task<List<EnrollmentDto>> GetEnrollmentsByPersonnelAsync(string personnelTcNo)
         {
-            var enrollments = await _enrollmentService.GetEnrollmentsByPersonnelAsync(personnelTcNo);
-            var courseIds = enrollments.Select(e => e.CourseId).Distinct();
-
-            return await _context.Courses
-                .Where(c => courseIds.Contains(c.Id))
-                .Select(c => new CourseDto
-                {
-                    Id = c.Id,
-                    Title = c.Title,
-                    Description = c.Description,
-                    StartDate = c.StartDate,
-                    EndDate = c.EndDate,
-                    InstructorTCNo = c.InstructorTCNo,
-                    MaterialFileName = c.MaterialPath,   // PDF yolu
-                    PptxFileName = c.PptxFileName
-                })
+            var enrollments = await _context.Enrollments
+                .Include(e => e.Course)  // Include eklendi
+                .Where(e => e.PersonnelTCNo == personnelTcNo)
                 .ToListAsync();
+
+            return enrollments.Select(e => new EnrollmentDto
+            {
+                Id = e.Id,
+                CourseId = e.CourseId,
+                PersonnelTCNo = e.PersonnelTCNo,
+                EnrollmentDate = e.EnrollmentDate,
+                Completed = e.Completed,
+                CourseTitle = e.Course.Title
+            }).ToList();
         }
-
-
 
         // Sistemdeki tüm kursları getirir
         public async Task<IEnumerable<CourseDto>> GetAllCoursesAsync()
@@ -146,8 +162,6 @@ namespace Medilearn.Services.Services
             };
         }
 
-
-
         // Var olan kursu günceller
         public async Task<bool> UpdateCourseAsync(CourseDto courseDto)
         {
@@ -167,8 +181,6 @@ namespace Medilearn.Services.Services
             await _context.SaveChangesAsync();
             return true;
         }
-
-
 
 
         // Eğitmenin TC'siyle birlikte yeni kurs ekler

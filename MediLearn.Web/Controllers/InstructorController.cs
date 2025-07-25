@@ -1,4 +1,5 @@
-﻿using Medilearn.Data.Entities;
+﻿using Medilearn.Data.Contexts;
+using Medilearn.Data.Entities;
 using Medilearn.Models.DTOs;
 using Medilearn.Models.ViewModels;
 using Medilearn.Services.Interfaces;
@@ -9,6 +10,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using DTOs = Medilearn.Models.DTOs;
+using VMs = Medilearn.Models.ViewModels;
 
 
 namespace Medilearn.Web.Controllers
@@ -21,16 +25,24 @@ namespace Medilearn.Web.Controllers
         private readonly ICourseMaterialService _courseMaterialService;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly PowerPointConversionService _pptConverter;
+        private readonly MedilearnDbContext _context;
+
 
         // Constructor ile gerekli servisler dependency injection yoluyla alınır
-        public InstructorController(ICourseService courseService, IUserService userService, ICourseMaterialService courseMaterialService, IWebHostEnvironment webHostEnvironment, PowerPointConversionService pptConverter)
+        public InstructorController(ICourseService courseService, IUserService userService, ICourseMaterialService courseMaterialService, 
+            IWebHostEnvironment webHostEnvironment, PowerPointConversionService pptConverter, MedilearnDbContext context)
         {
             _courseService = courseService;
             _userService = userService;
             _courseMaterialService = courseMaterialService;
             _webHostEnvironment = webHostEnvironment;
             _pptConverter = pptConverter;
+            _context = context;
         }
+        //istatistik
+
+
+
 
         // Eğitmen ana sayfası, kendi kurslarını listeler
         public async Task<IActionResult> Index()
@@ -362,7 +374,7 @@ namespace Medilearn.Web.Controllers
         }
 
 
-        //SSSSSSSSSSSSSSSSSSSSSSSSSSS
+        //Kurs materyalleri ekleme
 
         [HttpGet]
         public IActionResult UploadCourseMaterial(int courseId)
@@ -470,6 +482,56 @@ namespace Medilearn.Web.Controllers
 
             TempData["sifreSuccess"] = "Şifreniz başarıyla değiştirildi.";
             return RedirectToAction("Profile");
+        }
+
+        //İSTATİSTİK
+        [HttpGet]
+        public async Task<IActionResult> Statistics()
+        {
+            var instructorTCNo = User.Identity?.Name;
+            if (string.IsNullOrEmpty(instructorTCNo))
+                return Unauthorized();
+
+            var model = await GetStatisticsModelAsync(instructorTCNo);
+            return View(model);
+        }
+
+        private async Task<InstructorStatisticsViewModel> GetStatisticsModelAsync(string instructorTCNo)
+        {
+            var courses = await _context.Courses
+                .Where(c => c.InstructorTCNo == instructorTCNo)
+                .Include(c => c.Enrollments)
+                    .ThenInclude(e => e.Personnel)
+                .ToListAsync();
+
+            var model = new InstructorStatisticsViewModel
+            {
+                TotalCourses = courses.Count,
+                TotalEnrollments = courses.Sum(c => c.Enrollments.Count),
+                Courses = new List<CourseStatisticsDto>()
+            };
+
+            foreach (var course in courses)
+            {
+                var courseDto = new CourseStatisticsDto
+                {
+                    CourseId = course.Id,
+                    CourseTitle = course.Title,
+                    Personnel = course.Enrollments.Select(e => new PersonnelDto
+                    {
+                        TCNo = e.Personnel.TCNo,
+                        FirstName = e.Personnel.FirstName,
+                        LastName = e.Personnel.LastName,
+                        Email = e.Personnel.Email,
+                        IsCompleted = e.IsCompleted
+                    }).ToList(),
+                    CompletedCount = course.Enrollments.Count(e => e.IsCompleted)
+                };
+
+                model.Courses.Add(courseDto);
+            }
+
+            return model;
         }
 
 

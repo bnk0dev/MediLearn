@@ -10,6 +10,6 @@ namespace Medilearn.Models.DTOs
     public class CourseMaterialUploadDto
     {
         public IFormFile PowerPointFile { get; set; }
-        public int CourseId { get; set; }  // Hangi kursa yükleneceği için
+        public int CourseId { get; set; }
     }
 }

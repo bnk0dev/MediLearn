@@ -4,6 +4,7 @@ namespace Medilearn.Services.Interfaces
 {
     public interface ICourseService
     {
+        Task<IEnumerable<CourseDto>> GetCoursesByPersonnelAsync(string personnelTcNo);
 
         // Belirli bir eğitmene ait kursları döndürür
         Task<IEnumerable<CourseDto>> GetCoursesByInstructorAsync(string instructorTcNo);
@@ -33,7 +34,7 @@ namespace Medilearn.Services.Interfaces
         Task<bool> DeleteCourseAsync(int courseId);
 
         // Belirli bir personele ait kayıtlı olduğu kursları getirir
-        Task<List<CourseDto>> GetCoursesByPersonnelAsync(string personnelTcNo);
+       // Task<List<CourseDto>> GetCoursesByPersonnelAsync(string personnelTcNo);
 
         // Sistemdeki toplam kurs sayısını döndürür
         Task<int> GetTotalCoursesAsync();
