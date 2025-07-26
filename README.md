@@ -58,23 +58,22 @@ MediLearn is built using a robust and modern technology stack:
 
 ## 🧩 Project Architecture
 
-The project follows a layered architectural approach for maintainability and scalability:
-MediLearn/ 
-├── MediLearn.Web --> UI Layer (Razor Views) 
-│ ├── Controllers/ 
-│ ├── Views/
-│ ├── wwwroot/ 
-├── Medilearn.Services --> Business Logic Layer 
-│ ├── Helpers/
-│ ├── Interfaces/
-│ ├── Services/
-├── Medilearn.Data --> Entities Layer
-│ ├── Context/
-│ ├── Entities/
-│ ├── Enums/
-├── Medilearn.Models --> DTOs, ViewModels Layer
-│ ├── DTOs/ 
-│ ├── ViewMoedels/
+MediLearn/  
+├── MediLearn.Web              --> UI Layer (Razor Views)  
+│   ├── Controllers/  
+│   ├── Views/  
+│   └── wwwroot/  
+├── Medilearn.Services         --> Business Logic Layer  
+│   ├── Helpers/  
+│   ├── Interfaces/  
+│   └── Services/  
+├── Medilearn.Data             --> Entities Layer  
+│   ├── Context/  
+│   ├── Entities/  
+│   └── Enums/  
+└── Medilearn.Models           --> DTOs, ViewModels Layer  
+    ├── DTOs/  
+    └── ViewModels/
 
  ---
   ## 📸 Screenshots 
@@ -95,7 +94,7 @@ Here's a glimpse of MediLearn in action:
 --- 
 ### Instructor Panel - Manage Courses 
 
-![Instructor Screenshot](gitImages/personel/instructor.png) 
+![Instructor Screenshot](gitImages/instructor.png) 
 
 --- 
 
@@ -130,3 +129,7 @@ MediLearn leverages several powerful external services and libraries:
 * **DeepSeek API(SOON):** Used for intelligent **quiz generation** directly from course content. 
 * **PDF.js:** Facilitates the rendering of course materials as interactive PDFs, enhancing the reading experience. 
 * **DataTables:** Provides advanced features like powerful filtering, sorting, and pagination for clear and efficient data presentation in admin views.
+
+## License
+
+This project is licensed under the [MIT License](./LICENSE).
