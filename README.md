@@ -58,6 +58,10 @@ MediLearn is built using a robust and modern technology stack:
 
 ## 🧩 Project Architecture
 
+<<<<<<< HEAD
+=======
+The project follows a layered architectural approach for maintainability and scalability:
+>>>>>>> 8f10b8226c153634632034e3ddc9f4a0efa3ac9d
 MediLearn/  
 ├── MediLearn.Web              --> UI Layer (Razor Views)  
 │   ├── Controllers/  
@@ -84,17 +88,21 @@ Here's a glimpse of MediLearn in action:
   
   ### Admin Panel 
   
-  ![Admin Screenshot](gitImages/admin.png) 
+  ![Admin Screenshot](gitImages/admin.PNG) 
   
   --- 
   
   ### Personnel Panel 
-  ![Personnel Screenshot](gitImages/personel.png) 
+  ![Personnel Screenshot](gitImages/personel.PNG) 
 
 --- 
 ### Instructor Panel - Manage Courses 
 
+<<<<<<< HEAD
 ![Instructor Screenshot](gitImages/instructor.png) 
+=======
+![Instructor Screenshot](gitImages/instructor.PNG) 
+>>>>>>> 8f10b8226c153634632034e3ddc9f4a0efa3ac9d
 
 --- 
 
@@ -129,7 +137,10 @@ MediLearn leverages several powerful external services and libraries:
 * **DeepSeek API(SOON):** Used for intelligent **quiz generation** directly from course content. 
 * **PDF.js:** Facilitates the rendering of course materials as interactive PDFs, enhancing the reading experience. 
 * **DataTables:** Provides advanced features like powerful filtering, sorting, and pagination for clear and efficient data presentation in admin views.
+<<<<<<< HEAD
 
 ## License
 
 This project is licensed under the [MIT License](./LICENSE).
+=======
+>>>>>>> 8f10b8226c153634632034e3ddc9f4a0efa3ac9d
