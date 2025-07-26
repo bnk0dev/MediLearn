@@ -58,7 +58,8 @@ MediLearn is built using a robust and modern technology stack:
 
 ## 🧩 Project Architecture
 
-=======
+
+
 The project follows a layered architectural approach for maintainability and scalability:
 MediLearn/  
 ├── MediLearn.Web              --> UI Layer (Razor Views)  
@@ -94,10 +95,7 @@ Here's a glimpse of MediLearn in action:
   ![Personnel Screenshot](gitImages/personel.PNG) 
 
 --- 
-### Instructor Panel - Manage Courses 
-
-![Instructor Screenshot](gitImages/instructor.png) 
-=======
+### Instructor Panel
 ![Instructor Screenshot](gitImages/instructor.PNG) 
 
 --- 
