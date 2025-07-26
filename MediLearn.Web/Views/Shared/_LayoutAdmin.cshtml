@@ -15,14 +15,12 @@
         fullName = User.Identity?.Name ?? "Admin";
     }
 
-    // Profil resmi claim'den okunuyor, yoksa default sudo.png kullanılıyor
     var profileImage = claimsIdentity?.FindFirst("ProfileImage")?.Value;
     if (string.IsNullOrEmpty(profileImage))
     {
         profileImage = Url.Content("~/uploads/profiles/sudo.png");
     }
 
-    // Dil ve bayrak kodu
     var currentCulture = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower();
     var flagCode = currentCulture == "en" ? "us" : currentCulture;
 
@@ -129,12 +127,7 @@
             <footer class="py-4 bg-light mt-auto">
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
-                        <div class="text-muted">@Localizer["AdminModule"] © @Localizer["Ministry"] 2025</div>
-                        <div>
-                            <a href="#">@Localizer["Privacy"]</a>
-                            &middot;
-                            <a href="#">@Localizer["Terms"]</a>
-                        </div>
+                        <div class="text-muted">@Localizer["AdminModule"] © 2025</div>
                     </div>
                 </div>
             </footer>

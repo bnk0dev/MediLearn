@@ -120,6 +120,9 @@
   <data name="AdminMenuHeading" xml:space="preserve">
     <value>Menu Admin</value>
   </data>
+  <data name="AdminModule" xml:space="preserve">
+    <value>Admin Modülü</value>
+  </data>
   <data name="AdminPanel" xml:space="preserve">
     <value>Panneau d'administration</value>
   </data>

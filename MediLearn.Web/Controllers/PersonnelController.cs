@@ -312,10 +312,6 @@ namespace Medilearn.Web.Controllers
             }
         }
 
-
-
-
-
         //ŞİFRE DEĞİŞTİR
         // Şifre değiştirme sayfasını gösterir
         [HttpGet]

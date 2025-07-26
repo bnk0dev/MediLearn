@@ -39,10 +39,6 @@ namespace Medilearn.Web.Controllers
             _pptConverter = pptConverter;
             _context = context;
         }
-        //istatistik
-
-
-
 
         // Eğitmen ana sayfası, kendi kurslarını listeler
         public async Task<IActionResult> Index()

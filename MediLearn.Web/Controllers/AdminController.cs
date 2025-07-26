@@ -312,7 +312,7 @@ namespace Medilearn.Web.Controllers
                 {
                     CourseId = course.Id,
                     CourseTitle = course.Title,
-                    InstructorName = instructorName, // ✅ Eksik olan kısım bu
+                    InstructorName = instructorName,
                     EnrolledPersonnelCount = enrolledCount,
                     CompletedPersonnelCount = completedCount,
                     CompletionRate = Math.Round(completionRate, 2),

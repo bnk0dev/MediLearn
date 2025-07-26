@@ -1,0 +1,109 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <title>@Localizer["PageNotFoundTitle"] - Medilearn</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background: #000000; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ff4c4c; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container-16-9 {
+            width: 80vw;
+            max-width: 900px;
+            aspect-ratio: 16 / 9;
+            background: #000000; 
+            box-shadow: none;
+            border-radius: 15px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        svg {
+            max-height: 50%;
+            max-width: 100%;
+            margin-bottom: 1.5rem;
+            stroke: #ff4c4c;
+            fill: none;
+        }
+
+        .svg-fill-light {
+            fill: #220000;
+            stroke: #ff4c4c;
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            color: #ff4c4c;
+        }
+
+        p {
+            font-size: 1.25rem;
+            margin-top: 0.5rem;
+            margin-bottom: 2rem;
+            font-weight: 500;
+            color: #ff6e6e;
+        }
+
+        a.button-home {
+            text-decoration: none;
+            background-color: #ff4c4c;
+            color: #121212;
+            font-weight: 700;
+            padding: 0.9rem 2.5rem;
+            border-radius: 30px;
+            box-shadow: 0 0 8px rgba(255, 76, 76, 0.6);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            user-select: none;
+        }
+
+            a.button-home:hover, a.button-home:focus {
+                background-color: #cc3a3a;
+                box-shadow: 0 0 15px rgba(204, 58, 58, 0.9);
+                outline: none;
+            }
+    </style>
+</head>
+<body>
+    <div class="container-16-9" role="main" aria-labelledby="title404" aria-describedby="desc404">
+        <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 64 64" aria-hidden="true" focusable="false" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="32" cy="32" r="30" class="svg-fill-light" />
+            <ellipse cx="20" cy="24" rx="6" ry="8" class="svg-fill-light" />
+            <ellipse cx="44" cy="24" rx="6" ry="8" class="svg-fill-light" />
+            <path d="M20 46 Q32 38 44 46" stroke="#ff4c4c" stroke-width="3" fill="none" />
+            <path d="M14 18 Q20 12 26 18" stroke="#ff4c4c" stroke-width="2" fill="none" />
+            <path d="M38 18 Q44 12 50 18" stroke="#ff4c4c" stroke-width="2" fill="none" />
+        </svg>
+
+        <h1 id="title404">@Localizer["PageNotFoundHeader"]</h1>
+        <p id="desc404">@Localizer["PageNotFoundDescription"]</p>
+
+        <a href="~/" class="button-home" role="button" aria-label="@Localizer["HomePageButtonAriaLabel"]">
+            @Localizer["HomePageButtonText"]
+        </a>
+    </div>
+</body>
+</html>

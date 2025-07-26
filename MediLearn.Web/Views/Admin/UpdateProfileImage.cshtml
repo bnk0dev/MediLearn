@@ -28,7 +28,6 @@
                 <span asp-validation-for="ProfileImage" class="text-danger small"></span>
             </div>
 
-            <!-- TCNo gizli olarak formda gönderiliyor -->
             <input type="hidden" name="TCNo" value="@Model.TCNo" />
 
             <div class="d-grid">
@@ -51,7 +50,6 @@
             var form = e.target;
             var formData = new FormData(form);
 
-            // AntiForgeryToken'ı formData'ya ekle
             var token = document.querySelector('input[name="__RequestVerificationToken"]').value;
             formData.append("__RequestVerificationToken", token);
 

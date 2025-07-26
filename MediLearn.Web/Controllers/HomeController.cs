@@ -23,6 +23,7 @@ namespace MediLearn.Web.Controllers
             return View();
         }
 
+
         // Ana sayfa aksiyonu, burada özel bir layout kullanýlacaðý ViewData ile belirtilmiþ
         public IActionResult Index()
         {

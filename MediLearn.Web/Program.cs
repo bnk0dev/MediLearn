@@ -82,6 +82,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+//Error sayfa
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
