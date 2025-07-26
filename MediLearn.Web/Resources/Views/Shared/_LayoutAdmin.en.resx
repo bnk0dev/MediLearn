@@ -120,6 +120,9 @@
   <data name="AdminMenuHeading" xml:space="preserve">
     <value>Admin Menu</value>
   </data>
+  <data name="AdminPanel" xml:space="preserve">
+    <value>Admin Panel</value>
+  </data>
   <data name="BannedUsers" xml:space="preserve">
     <value>Banned Users</value>
   </data>
